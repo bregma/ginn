@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/select.h>
+#include "cJSON.h"
 
 
 static void
@@ -138,6 +139,35 @@ parse_opts(int argc, char* argv[], uint32_t *window_id)
   return 1;
 }
 
+int
+parse_wishes(char *text)
+{
+        char *out;
+	cJSON *json;
+        json=cJSON_Parse(text);
+        out=cJSON_Print(json);
+        cJSON_Delete(json);
+        //printf("%s\n",out);
+        //free(out);
+	return 1;
+}
+
+int 
+load_wishes(char *filename)
+{
+        FILE *f=fopen(filename,"rb");
+	//printf("aaaaaaa");
+	fseek(f,0,SEEK_END);
+	long len=ftell(f);
+	fseek(f,0,SEEK_SET);
+        char *data=malloc(len+1);
+	fread(data,1,len,f);
+	fclose(f);
+        parse_wishes(data);
+        free(data);
+	return 1;
+}
+
 
 int
 main(int argc, char* argv[])
@@ -157,7 +187,12 @@ main(int argc, char* argv[])
   if (!parse_opts(argc, argv, &xcb_win_info.window_id))
   {
     fprintf(stderr, "usage: %s windowid\n", argv[0]);
-    printf("If no parameters are received, root window '0xfe' is taken \n");
+    fprintf(stdout, "If no parameters are received, root window '0xfe' is taken \n");
+    return -1;
+  }
+
+  if(!load_wishes("wishes.conf")) {
+    fprintf(stderr, "Could not load Ginn whishes\n");
     return -1;
   }
 

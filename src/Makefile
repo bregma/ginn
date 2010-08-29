@@ -5,7 +5,7 @@ OBJ=$(SRC:.c=.o)
 CFLAGS=-g -Wall 
 
 ginn: $(OBJ)
-	$(CC) $(FLAGS) $(OBJ) -lutouch-geis -o ginn
+	$(CC) $(FLAGS) $(OBJ) -lutouch-geis -lm -g -o ginn
 
 $(OBJ): %.o: %.c $(headers)
 
