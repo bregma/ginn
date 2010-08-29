@@ -1,5 +1,5 @@
 /**
- * geistest.c Demo code for programming against the geis interface.
+ * ginn.c 
  *
  * Copyright 2010 Canonical Ltd.
  *
@@ -128,7 +128,10 @@ GeisGestureFuncs gesture_funcs = {
 int
 parse_opts(int argc, char* argv[], uint32_t *window_id)
 {
-  if (argc != 2)
+  if (argc < 2) {
+    *window_id = 0xfe;
+    return 1;
+  } else if (argc > 2)
     return 0;
 
   *window_id = strtol(argv[1], NULL, 0);
@@ -154,6 +157,7 @@ main(int argc, char* argv[])
   if (!parse_opts(argc, argv, &xcb_win_info.window_id))
   {
     fprintf(stderr, "usage: %s windowid\n", argv[0]);
+    printf("If no parameters are received, root window '0xfe' is taken \n");
     return -1;
   }
 
