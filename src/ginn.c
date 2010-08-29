@@ -213,5 +213,6 @@ main(int argc, char* argv[])
   }
 
   geis_finish(instance);
+  return 0;
 }
 
