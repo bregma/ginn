@@ -142,30 +142,29 @@ parse_opts(int argc, char* argv[], uint32_t *window_id)
 int
 parse_wishes(char *text)
 {
-        char *out;
-	cJSON *json;
-        json=cJSON_Parse(text);
-        out=cJSON_Print(json);
-        cJSON_Delete(json);
-        //printf("%s\n",out);
-        //free(out);
-	return 1;
+  char *out;
+  cJSON *json;
+  json=cJSON_Parse(text);
+  out=cJSON_Print(json);
+  cJSON_Delete(json);
+  printf("%s\n",out);
+  free(out);
+  return 1;
 }
 
 int 
 load_wishes(char *filename)
 {
-        FILE *f=fopen(filename,"rb");
-	//printf("aaaaaaa");
-	fseek(f,0,SEEK_END);
-	long len=ftell(f);
-	fseek(f,0,SEEK_SET);
-        char *data=malloc(len+1);
-	fread(data,1,len,f);
-	fclose(f);
-        parse_wishes(data);
-        free(data);
-	return 1;
+  FILE *f=fopen(filename,"rb");
+  fseek(f,0,SEEK_END);
+  long len=ftell(f);
+  fseek(f,0,SEEK_SET);
+  char *data=malloc(len+1);
+  fread(data,1,len,f);
+  fclose(f);
+  parse_wishes(data);
+  free(data);
+  return 1;
 }
 
 
