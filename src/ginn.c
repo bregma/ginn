@@ -146,7 +146,7 @@ parse_wishes(char *text)
   cJSON *json;
   json=cJSON_Parse(text);
   out=cJSON_Print(json);
-  cJSON_Delete(json);
+  //cJSON_Delete(json);
   printf("%s\n",out);
   free(out);
   return 1;
