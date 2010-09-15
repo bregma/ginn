@@ -1,5 +1,5 @@
 /**
- * ginn.c 
+ * ginn.c
  *
  * Copyright 2010 Canonical Ltd.
  *
@@ -17,14 +17,13 @@
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
-#include <errno.h>
+#include "config.h"
 #include <geis/geis.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/select.h>
-#include "cJSON.h"
-
 
 static void
 print_attr(GeisGestureAttr *attr)
@@ -49,7 +48,6 @@ print_attr(GeisGestureAttr *attr)
       break;
   }
 }
-
 
 static void
 gesture_added(void            *cookie,
@@ -126,50 +124,7 @@ GeisGestureFuncs gesture_funcs = {
 };
 
 
-int
-parse_opts(int argc, char* argv[], uint32_t *window_id)
-{
-  if (argc < 2) {
-    *window_id = 0xfe;
-    return 1;
-  } else if (argc > 2)
-    return 0;
-
-  *window_id = strtol(argv[1], NULL, 0);
-  return 1;
-}
-
-int
-parse_wishes(char *text)
-{
-  char *out;
-  cJSON *json;
-  json=cJSON_Parse(text);
-  out=cJSON_Print(json);
-  //cJSON_Delete(json);
-  printf("%s\n",out);
-  free(out);
-  return 1;
-}
-
-int 
-load_wishes(char *filename)
-{
-  FILE *f=fopen(filename,"rb");
-  fseek(f,0,SEEK_END);
-  long len=ftell(f);
-  fseek(f,0,SEEK_SET);
-  char *data=malloc(len+1);
-  fread(data,1,len,f);
-  fclose(f);
-  parse_wishes(data);
-  free(data);
-  return 1;
-}
-
-
-int
-main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   GeisStatus status = GEIS_UNKNOWN_ERROR;
   GeisXcbWinInfo xcb_win_info = {
@@ -182,18 +137,18 @@ main(int argc, char* argv[])
     &xcb_win_info
   };
   GeisInstance instance;
+  struct ginn_config cfg;
 
-  if (!parse_opts(argc, argv, &xcb_win_info.window_id))
-  {
-    fprintf(stderr, "usage: %s windowid\n", argv[0]);
-    fprintf(stdout, "If no parameters are received, root window '0xfe' is taken \n");
-    return -1;
+  if (argc < 2) {
+	  fprintf(stderr, "usage: %s <configxml>\n", argv[0]);
+	  return -1;
   }
 
-  if(!load_wishes("wishes.conf")) {
-    fprintf(stderr, "Could not load Ginn whishes\n");
-    return -1;
+  if (ginn_config_open(&cfg, argv[1])) {
+	  fprintf(stderr, "Could not load Ginn whishes\n");
+	  return -1;
   }
+  ginn_config_print(&cfg);
 
   status = geis_init(&win_info, &instance);
   if (status != GEIS_STATUS_SUCCESS)

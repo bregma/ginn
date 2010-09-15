@@ -1,0 +1,11 @@
+<ginn>
+  <wish name="wish1">
+    <gesture name="pinch" fingers="2">
+      <action name="action1">
+	<trigger prop="0" min="-5" max="1000"/>
+	<application>Inkscape</application>
+	<key>XK_KP_Substract</key>
+      </action>
+    </gesture>
+  </wish>
+</ginn>
