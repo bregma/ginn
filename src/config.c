@@ -19,6 +19,7 @@
 #include "config.h"
 #include <libxml/parser.h>
 
+
 int ginn_config_open(struct ginn_config *cfg, const char *path)
 {
 	memset(cfg, 0, sizeof(*cfg));
@@ -55,3 +56,4 @@ void ginn_config_print(const struct ginn_config *cfg)
 	const xmlNode *root = xmlDocGetRootElement(cfg->doc);
 	print_node(root, 0);
 }
+
