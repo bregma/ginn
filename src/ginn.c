@@ -27,6 +27,27 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/select.h>
+#include <X11/Xlib.h>
+
+
+static Window getRootWindow()
+{
+  Display *display = NULL;
+  Window window = 0;
+  
+  display = XOpenDisplay(NULL);
+  if (!display)
+  {
+    fprintf(stderr, "error opening X11 display.\n");
+    exit(1);
+  }
+
+  window = DefaultRootWindow(display);
+
+  XCloseDisplay(display);
+
+  return window;
+}
 
 static void
 print_attr(GeisGestureAttr *attr)
@@ -133,7 +154,7 @@ int main(int argc, char* argv[])
   GeisXcbWinInfo xcb_win_info = {
     .display_name  = NULL,
     .screenp       = NULL,
-    .window_id     = 0x296
+    .window_id     = getRootWindow()
   };
   GeisWinInfo win_info = {
     GEIS_XCB_FULL_WINDOW,

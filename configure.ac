@@ -23,6 +23,9 @@ AC_PROG_CC
 AC_PROG_INSTALL
 
 PKG_CHECK_MODULES([GEIS], [libutouch-geis >= 1.0.10])
+PKG_CHECK_MODULES([X11],  [x11 >= 1.3.3])
+PKG_CHECK_MODULES([XML2], [libxml-2.0 >= 2.7.7])
+PKG_CHECK_MODULES([XTST], [xtst >= 1.1.0])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
