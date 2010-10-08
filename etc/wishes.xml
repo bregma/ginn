@@ -4,7 +4,7 @@
       <action name="action1">
 	<trigger prop="0" min="-5" max="1000"/>
 	<application>Inkscape</application>
-	<key>XK_KP_Substract</key>
+	<key>XK_KP_Subtract</key>
       </action>
     </gesture>
   </wish>

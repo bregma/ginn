@@ -16,7 +16,7 @@
  * Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Authors:
- * 	Mohamed-Ikbel Boulabiar
+ * 	Mohamed-Ikbel Boulabiar <boulabiar@gmail.com>
  * 	Henrik Rydberg <rydberg@bitmath.org>
  *
  */
@@ -28,7 +28,38 @@
 #include <string.h>
 #include <sys/select.h>
 #include <X11/Xlib.h>
+#include <X11/keysym.h>
 
+
+static void
+gesture_match(  GeisGestureType    gesture_type,
+                GeisGestureId      gesture_id,
+                GeisSize           attr_count,
+                GeisGestureAttr   *attrs)
+{
+  int i = 0;
+  //fprintf(stdout, "Gesture type %d removed\n", gesture_type);
+  //
+  switch (gesture_type) {
+    case  0:
+      break;
+
+    case  1: if (attrs[9].float_val > 20) injTest(XK_KP_Add);
+                else if (attrs[9].float_val < 20) injTest(XK_KP_Subtract);
+      break;
+
+    case  2:    printf(" -- %s %d %s %f -- \n\n\n", attrs[3].name, attrs[3].integer_val, attrs[9].name,  attrs[9].float_val);
+      break;
+
+    case 15:
+      break;
+
+    default: ;
+  }
+
+  //for (i = 0; i < attr_count; ++i)
+    //print_attr(&attrs[i]);
+}
 
 static Window getRootWindow()
 {
@@ -123,6 +154,7 @@ gesture_update(void              *cookie,
   fprintf(stdout, "Gesture type %d updated\n", gesture_type);
   for (i = 0; i < attr_count; ++i)
     print_attr(&attrs[i]);
+  gesture_match(gesture_type, gesture_id, attr_count, attrs);
 }
 
 static void

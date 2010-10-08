@@ -21,6 +21,15 @@
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h>
 
+void
+injTest(KeySym ks)
+{
+        Display* disp = XOpenDisplay(NULL);
+         XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks),  True, CurrentTime);
+         XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), False, CurrentTime);
+        XCloseDisplay(disp);
+}
+
 static void
 pressKey(KeySym ks, Display *disp)
 {
