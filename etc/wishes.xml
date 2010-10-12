@@ -1,11 +1,21 @@
 <ginn>
-  <wish name="wish1">
-    <gesture name="pinch" fingers="2">
+  <global>
+    <wish gesture="Pinch" fingers="2">
       <action name="action1">
-	<trigger prop="0" min="-5" max="1000"/>
-	<application>Inkscape</application>
-	<key>XK_KP_Subtract</key>
+        <trigger prop="radius delta" min="-5" max="1000"/>
+        <key>XK_KP_Subtract</key>
       </action>
-    </gesture>
-  </wish>
+    </wish>
+  </global>
+  <applications>
+    <application name="Inkscape">
+      <wish gesture="Pinch" fingers="3">
+        <action name="action2">
+          <trigger prop="radius delta" min="30" max="1000"/>
+          <key>XK_KP_Subtract</key>
+        </action>
+      </wish>
+    </application>
+  </applications>
 </ginn>
+
