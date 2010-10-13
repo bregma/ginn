@@ -51,6 +51,38 @@ static void print_node(const xmlNode *root, int depth)
 	}
 }
 
+
+static void parse_node(const xmlNode *root, int depth, struct att config_attr[])
+{
+	xmlNode *node;
+	for (node = root; node; node = node->next) {
+		do {
+			if (node->type != XML_ELEMENT_NODE)
+				continue;
+		     if (0==strcmp(node->name, "wish")) {
+		  	printf(" gesture %s fingers %s ",
+				(xmlGetProp(node, "gesture")),
+				(xmlGetProp(node, "fingers")));
+		  	config_attr[0].attrName = "gesture name";
+			switch (xmlGetProp(node, "gesture")[0]) {
+				case 'D': config_attr[0].val= 0; break; 
+				case 'P': config_attr[0].val= 1; break;  
+				case 'R': config_attr[0].val= 2; break;  
+				case 'T': config_attr[0].val=15; break;  
+			}
+			config_attr[1].attrName = "touches";
+		  	config_attr[1].val = atoi(xmlGetProp(node, "fingers"));
+		     }
+		} while (node->children && (node=node->children));
+	}
+}
+
+void ginn_config_store(const struct ginn_config *cfg, struct att config_attr[])
+{
+	const xmlNode *root = xmlDocGetRootElement(cfg->doc);
+	parse_node(root, 0, config_attr);
+}
+
 void ginn_config_print(const struct ginn_config *cfg)
 {
 	const xmlNode *root = xmlDocGetRootElement(cfg->doc);

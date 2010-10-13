@@ -206,6 +206,9 @@ int main(int argc, char* argv[])
   }
 
   ginn_config_print(&cfg);
+  ginn_config_store(&cfg, config_attr);
+
+	printf("\nDEBUG %s %d %s %d\n", config_attr[0].attrName, config_attr[0].val, config_attr[1].attrName, config_attr[1].val); 
 
   status = geis_init(&win_info, &instance);
   if (status != GEIS_STATUS_SUCCESS)

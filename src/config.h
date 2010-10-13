@@ -1,4 +1,5 @@
 #include <libxml/tree.h>
+#include <string.h>
 
 typedef struct ginn_config {
         xmlDocPtr doc;
@@ -7,6 +8,6 @@ typedef struct ginn_config {
 
 typedef struct att {
 	char * attrName ;
-	double val ;
+	int val ;
 } att;
 
