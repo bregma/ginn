@@ -194,16 +194,17 @@ int main(int argc, char* argv[])
   };
   GeisInstance instance;
   struct ginn_config cfg;
+  att config_attr[25] = { [0 ... 24] = {.attrName="", .val=0 } };
 
   if (argc < 2) {
 	  fprintf(stderr, "usage: %s <configxml>\n", argv[0]);
-	  return -1;
-  }
-
-  if (ginn_config_open(&cfg, argv[1])) {
+	  fprintf(stderr, "using default configuration file ... \n");
+	  ginn_config_open(&cfg, "../etc/wishes.xml"); 
+  } else  if ( ginn_config_open(&cfg, argv[1]) ) {
 	  fprintf(stderr, "Could not load Ginn whishes\n");
 	  return -1;
   }
+
   ginn_config_print(&cfg);
 
   status = geis_init(&win_info, &instance);
