@@ -52,9 +52,11 @@ static void print_node(const xmlNode *root, int depth)
 }
 
 
-static void parse_node(const xmlNode *root, int depth, struct att config_attr[])
+//static 
+void parse_node(const xmlNode *root, int depth, struct att config_attr[])
 {
 	xmlNode *node;
+	int position=2;
 	for (node = root; node; node = node->next) {
 		do {
 			if (node->type != XML_ELEMENT_NODE)
@@ -73,7 +75,13 @@ static void parse_node(const xmlNode *root, int depth, struct att config_attr[])
 			config_attr[1].attrName = "touches";
 		  	config_attr[1].val = atoi(xmlGetProp(node, "fingers"));
 		     }
-		} while (node->children && (node=node->children));
+		     while (0==strcmp(node->name, "trigger")) {
+			config_attr[position].attrName = xmlGetProp(node, "prop");
+		  	config_attr[position].val = atoi(xmlGetProp(node, "min"));
+			position++;
+			if (node->next) node = (node->next);	
+		     }	
+		} while (node->children && (node = node->children));
 	}
 }
 
