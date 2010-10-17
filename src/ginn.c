@@ -49,8 +49,8 @@ gesture_match(  GeisGestureType    gesture_type,
     case  0:
       break;
 	//Pinch/Zoom
-    case  1: if (attrs[9].float_val > 20) injTest(XK_KP_Add);
-             else if (attrs[9].float_val < -20) injTest(XK_KP_Subtract);
+    case  1: if (attrs[9].float_val > 20) injTest(XK_KP_Add, NULL);
+             else if (attrs[9].float_val < -20) injTest(XK_KP_Subtract, NULL);
       break;
 	//Rotate
     case  2:    printf(" -- %s %d %s %f -- \n\n\n", attrs[3].name, attrs[3].integer_val, attrs[9].name,  attrs[9].float_val);
