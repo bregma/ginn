@@ -32,6 +32,15 @@ injTest(KeySym ks, KeySym modifier)
         XCloseDisplay(disp);
 }
 
+void
+injButton(int btn, KeySym modifier)
+{
+        Display* disp = XOpenDisplay(NULL);
+        XTestFakeButtonEvent(disp, btn, True, CurrentTime);
+        XTestFakeButtonEvent(disp, btn, False, CurrentTime);
+        XCloseDisplay(disp);
+}
+
 static void
 pressKey(KeySym ks, Display *disp)
 {
