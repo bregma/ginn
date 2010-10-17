@@ -30,12 +30,16 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
+#define GINN_START	0
+#define GINN_UPDATE	1
+#define GINN_FINISH	2
 
 static void
 gesture_match(  GeisGestureType    gesture_type,
                 GeisGestureId      gesture_id,
                 GeisSize           attr_count,
-                GeisGestureAttr   *attrs)
+                GeisGestureAttr   *attrs,
+		int state)
 {
   int i = 0;
   //fprintf(stdout, "Gesture type %d removed\n", gesture_type);
@@ -155,7 +159,7 @@ gesture_update(void              *cookie,
   fprintf(stdout, "Gesture type %d updated\n", gesture_type);
   for (i = 0; i < attr_count; ++i)
     print_attr(&attrs[i]);
-  gesture_match(gesture_type, gesture_id, attr_count, attrs);
+  gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_UPDATE);
 }
 
 static void
@@ -169,6 +173,7 @@ gesture_finish(void              *cookie,
   fprintf(stdout, "Gesture type %d finished\n", gesture_type);
   for (i = 0; i < attr_count; ++i)
     print_attr(&attrs[i]);
+  gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_FINISH);
 }
 
 
