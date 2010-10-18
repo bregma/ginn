@@ -34,6 +34,8 @@
 #define GINN_UPDATE	1
 #define GINN_FINISH	2
 
+att config_attr[25] = { [0 ... 24] = {.attrName="", .val=0 } };
+
 static void
 gesture_match(  GeisGestureType    gesture_type,
                 GeisGestureId      gesture_id,
@@ -43,17 +45,27 @@ gesture_match(  GeisGestureType    gesture_type,
 {
   int i = 0;
   //fprintf(stdout, "Gesture type %d removed\n", gesture_type);
-  //
+  
   switch (gesture_type) {
 	//Drag
-    case  0:
+    case  0: if (gesture_type==config_attr[0].val) {
+		if (attrs[9].float_val > config_attr[2].val) 
+		  injTest(XStringToKeysym(config_attr[4].attrName), NULL);
+	     }
       break;
 	//Pinch/Zoom
-    case  1: if (attrs[9].float_val > 20) injTest(XK_KP_Add, NULL);
-             else if (attrs[9].float_val < -20) injTest(XK_KP_Subtract, NULL);
+    case  1: if (gesture_type==config_attr[0].val) {
+		if (attrs[9].float_val > config_attr[2].val) 
+		  injTest(XStringToKeysym(config_attr[4].attrName), NULL);
+		else if (attrs[9].float_val < -config_attr[2].val)  
+		  injTest(XK_KP_Subtract, NULL);
+	     }
       break;
 	//Rotate
-    case  2:    printf(" -- %s %d %s %f -- \n\n\n", attrs[3].name, attrs[3].integer_val, attrs[9].name,  attrs[9].float_val);
+    case  2:  if (gesture_type==config_attr[0].val) {
+		if (attrs[9].float_val > config_attr[2].val) 
+		  injTest(XStringToKeysym(config_attr[4].attrName), NULL);
+	     }
       break;
 	//Tap
     case 15:
@@ -200,7 +212,6 @@ int main(int argc, char* argv[])
   };
   GeisInstance instance;
   struct ginn_config cfg;
-  att config_attr[25] = { [0 ... 24] = {.attrName="", .val=0 } };
 
   if (argc < 2) {
 	  fprintf(stderr, "usage: %s <configxml>\n", argv[0]);
@@ -214,8 +225,9 @@ int main(int argc, char* argv[])
   ginn_config_print(&cfg);
   ginn_config_store(&cfg, config_attr);
 	int pos=0;
+	printf("\n");
 	while (strcmp(config_attr[pos].attrName,"")) {
-	   printf("DEBUG %s %d \n", config_attr[pos].attrName, config_attr[pos].val); 
+	   printf("DEBUG %d %s %d \n", pos, config_attr[pos].attrName, config_attr[pos].val); 
 	   pos++;
 	}
   status = geis_init(&win_info, &instance);

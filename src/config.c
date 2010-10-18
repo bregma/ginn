@@ -52,7 +52,6 @@ static void print_node(const xmlNode *root, int depth)
 }
 
 
-//static 
 void parse_node(const xmlNode *root, int depth, struct att config_attr[])
 {
 	xmlNode *node;
@@ -79,8 +78,11 @@ void parse_node(const xmlNode *root, int depth, struct att config_attr[])
 			config_attr[position].attrName = xmlGetProp(node, "prop");
 		  	config_attr[position].val = atoi(xmlGetProp(node, "min"));
 			position++;
-			if (node->next) node = (node->next);	
-		     }	
+			if (node->next) 
+				node = (node->next);	
+		     }
+		     if (0==strcmp(node->name, "key")) 
+			config_attr[position].attrName = xmlNodeGetContent(node);
 		} while (node->children && (node = node->children));
 	}
 }

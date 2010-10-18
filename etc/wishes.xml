@@ -2,9 +2,9 @@
   <global>
     <wish gesture="Pinch" fingers="2">
       <action name="action1">
-        <trigger prop="radius delta" min="-5" max="1000"/>
+        <trigger prop="radius delta" min="20" max="1000"/>
         <trigger prop="radial velocity" min="-1" max="1000"/>
-        <key>XK_KP_Subtract</key>
+        <key>KP_Add</key>
       </action>
     </wish>
   </global>
@@ -13,7 +13,7 @@
       <wish gesture="Pinch" fingers="3">
         <action name="action2">
           <trigger prop="radius delta" min="30" max="1000"/>
-          <key>XK_KP_Subtract</key>
+          <key>KP_Subtract</key>
         </action>
       </wish>
     </application>
