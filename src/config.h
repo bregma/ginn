@@ -9,5 +9,6 @@ typedef struct ginn_config {
 typedef struct att {
 	char * attrName ;
 	int val ;
+	int valMax;
 } att;
 

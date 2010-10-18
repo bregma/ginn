@@ -34,7 +34,12 @@
 #define GINN_UPDATE	1
 #define GINN_FINISH	2
 
-att config_attr[25] = { [0 ... 24] = {.attrName="", .val=0 } };
+att config_attr[25] = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } };
+
+static int
+inside (int x, int a, int b){
+  return ((x<=b) && (x>=a));
+}
 
 static void
 gesture_match(  GeisGestureType    gesture_type,
@@ -44,27 +49,40 @@ gesture_match(  GeisGestureType    gesture_type,
 		int state)
 {
   int i = 0;
-  //fprintf(stdout, "Gesture type %d removed\n", gesture_type);
+  int valid=1;
   
   switch (gesture_type) {
 	//Drag
-    case  0: if (gesture_type==config_attr[0].val) {
+    case  0: if (gesture_type==config_attr[1].val) {
 		if (attrs[9].float_val > config_attr[2].val) 
-		  injTest(XStringToKeysym(config_attr[4].attrName), NULL);
+		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
 	     }
       break;
 	//Pinch/Zoom
-    case  1: if (gesture_type==config_attr[0].val) {
-		if (attrs[9].float_val > config_attr[2].val) 
-		  injTest(XStringToKeysym(config_attr[4].attrName), NULL);
+    case  1: if (gesture_type==config_attr[1].val) {
+	/*	if (attrs[9].float_val > config_attr[2].val) 
+		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
 		else if (attrs[9].float_val < -config_attr[2].val)  
 		  injTest(XK_KP_Subtract, NULL);
-	     }
+	*/	
+	   int attrsI=9, cAttrI=3;
+	   do {
+		if (0==strcmp(attrs[attrsI].name, config_attr[cAttrI].attrName)){
+			printf("DEBUG -- comparing %s %s : ", attrs[attrsI].name, config_attr[cAttrI].attrName);
+			printf("%d %d %d \n", (int)attrs[attrsI].float_val, config_attr[cAttrI].val, config_attr[cAttrI].valMax);
+			printf("%i \n", inside((int)attrs[attrsI].float_val, config_attr[cAttrI].val, config_attr[cAttrI].valMax));
+			valid = valid && inside((int)attrs[attrsI].float_val, config_attr[cAttrI].val, config_attr[cAttrI].valMax);
+			attrsI++;  cAttrI++;
+		} else attrsI++;
+	   } while ( (0!=strcmp(config_attr[cAttrI+1].attrName,"")) && attrsI<18 && valid );
+		if (valid)
+		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
+ 	}
       break;
 	//Rotate
-    case  2:  if (gesture_type==config_attr[0].val) {
+    case  2:  if (gesture_type==config_attr[1].val) {
 		if (attrs[9].float_val > config_attr[2].val) 
-		  injTest(XStringToKeysym(config_attr[4].attrName), NULL);
+		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
 	     }
       break;
 	//Tap
@@ -227,7 +245,7 @@ int main(int argc, char* argv[])
 	int pos=0;
 	printf("\n");
 	while (strcmp(config_attr[pos].attrName,"")) {
-	   printf("DEBUG %d %s %d \n", pos, config_attr[pos].attrName, config_attr[pos].val); 
+	   printf("DEBUG %d %s %d %d \n", pos, config_attr[pos].attrName, config_attr[pos].val, config_attr[pos].valMax); 
 	   pos++;
 	}
   status = geis_init(&win_info, &instance);
