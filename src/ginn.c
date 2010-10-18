@@ -30,6 +30,10 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
+#define GINN_START	0
+#define GINN_UPDATE	1
+#define GINN_FINISH	2
+
 att config_attr[25] = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } };
 
 static int
@@ -41,7 +45,8 @@ static void
 gesture_match(  GeisGestureType    gesture_type,
                 GeisGestureId      gesture_id,
                 GeisSize           attr_count,
-                GeisGestureAttr   *attrs)
+                GeisGestureAttr   *attrs,
+		int state)
 {
   int i = 0;
   int valid=1;
@@ -50,15 +55,15 @@ gesture_match(  GeisGestureType    gesture_type,
 	//Drag
     case  0: if (gesture_type==config_attr[1].val) {
 		if (attrs[9].float_val > config_attr[2].val) 
-		  injTest(XStringToKeysym(config_attr[0].attrName));
+		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
 	     }
       break;
 	//Pinch/Zoom
     case  1: if (gesture_type==config_attr[1].val) {
 	/*	if (attrs[9].float_val > config_attr[2].val) 
-		  injTest(XStringToKeysym(config_attr[0].attrName));
+		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
 		else if (attrs[9].float_val < -config_attr[2].val)  
-		  injTest(XK_KP_Subtract);
+		  injTest(XK_KP_Subtract, NULL);
 	*/	
 	   int attrsI=9, cAttrI=3;
 	   do {
@@ -71,13 +76,13 @@ gesture_match(  GeisGestureType    gesture_type,
 		} else attrsI++;
 	   } while ( (0!=strcmp(config_attr[cAttrI+1].attrName,"")) && attrsI<18 && valid );
 		if (valid)
-		  injTest(XStringToKeysym(config_attr[0].attrName));
+		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
  	}
       break;
 	//Rotate
     case  2:  if (gesture_type==config_attr[1].val) {
 		if (attrs[9].float_val > config_attr[2].val) 
-		  injTest(XStringToKeysym(config_attr[0].attrName));
+		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
 	     }
       break;
 	//Tap
@@ -184,7 +189,7 @@ gesture_update(void              *cookie,
   fprintf(stdout, "Gesture type %d updated\n", gesture_type);
   for (i = 0; i < attr_count; ++i)
     print_attr(&attrs[i]);
-  gesture_match(gesture_type, gesture_id, attr_count, attrs);
+  gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_UPDATE);
 }
 
 static void
@@ -198,6 +203,7 @@ gesture_finish(void              *cookie,
   fprintf(stdout, "Gesture type %d finished\n", gesture_type);
   for (i = 0; i < attr_count; ++i)
     print_attr(&attrs[i]);
+  gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_FINISH);
 }
 
 
