@@ -55,7 +55,7 @@ static void print_node(const xmlNode *root, int depth)
 void parse_node(const xmlNode *root, int depth, struct att config_attr[])
 {
 	xmlNode *node;
-	int position=2;
+	int position=3;
 	for (node = root; node; node = node->next) {
 		do {
 			if (node->type != XML_ELEMENT_NODE)
@@ -64,25 +64,27 @@ void parse_node(const xmlNode *root, int depth, struct att config_attr[])
 		  	printf(" gesture %s fingers %s ",
 				(xmlGetProp(node, "gesture")),
 				(xmlGetProp(node, "fingers")));
-		  	config_attr[0].attrName = "gesture name";
+		  	config_attr[1].attrName = "gesture name";
 			switch (xmlGetProp(node, "gesture")[0]) {
-				case 'D': config_attr[0].val= 0; break; 
-				case 'P': config_attr[0].val= 1; break;  
-				case 'R': config_attr[0].val= 2; break;  
-				case 'T': config_attr[0].val=15; break;  
+				case 'D': config_attr[1].val=config_attr[1].valMax= 0; break; 
+				case 'P': config_attr[1].val=config_attr[1].valMax= 1; break;  
+				case 'R': config_attr[1].val=config_attr[1].valMax= 2; break;  
+				case 'T': config_attr[1].val=config_attr[1].valMax=15; break;  
 			}
-			config_attr[1].attrName = "touches";
-		  	config_attr[1].val = atoi(xmlGetProp(node, "fingers"));
+			config_attr[2].attrName = "touches";
+		  	config_attr[2].val      = atoi(xmlGetProp(node, "fingers"));
+		  	config_attr[2].valMax   = atoi(xmlGetProp(node, "fingers"));
 		     }
 		     while (0==strcmp(node->name, "trigger")) {
 			config_attr[position].attrName = xmlGetProp(node, "prop");
 		  	config_attr[position].val = atoi(xmlGetProp(node, "min"));
+		  	config_attr[position].valMax = atoi(xmlGetProp(node, "max"));
 			position++;
 			if (node->next) 
 				node = (node->next);	
 		     }
 		     if (0==strcmp(node->name, "key")) 
-			config_attr[position].attrName = xmlNodeGetContent(node);
+			config_attr[0].attrName = xmlNodeGetContent(node);
 		} while (node->children && (node = node->children));
 	}
 }
