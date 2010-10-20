@@ -12,3 +12,9 @@ typedef struct att {
 	int valMax;
 } att;
 
+typedef struct wish {
+	att config_attr[25];
+	char * key;
+	char * modifier;
+	struct wish* next;
+} wish;
