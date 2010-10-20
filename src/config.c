@@ -51,48 +51,49 @@ static void print_node(const xmlNode *root, int depth)
 	}
 }
 
-
-void parse_node(const xmlNode *root, int depth, struct att config_attr[])
+void parse_node(const xmlNode *root, int depth, struct wish* wp)
 {
-	xmlNode *node;
+	xmlNode *node, *wish;
 	int position=3;
 	for (node = root; node; node = node->next) {
 		do {
 			if (node->type != XML_ELEMENT_NODE)
 				continue;
 		     if (0==strcmp(node->name, "wish")) {
+			wish=node;
 		  	printf(" gesture %s fingers %s ",
 				(xmlGetProp(node, "gesture")),
 				(xmlGetProp(node, "fingers")));
-		  	config_attr[1].attrName = "gesture name";
+		  	wp->config_attr[1].attrName = "gesture name";
 			switch (xmlGetProp(node, "gesture")[0]) {
-				case 'D': config_attr[1].val=config_attr[1].valMax= 0; break; 
-				case 'P': config_attr[1].val=config_attr[1].valMax= 1; break;  
-				case 'R': config_attr[1].val=config_attr[1].valMax= 2; break;  
-				case 'T': config_attr[1].val=config_attr[1].valMax=15; break;  
+				case 'D': wp->config_attr[1].val=wp->config_attr[1].valMax= 0; break; 
+				case 'P': wp->config_attr[1].val=wp->config_attr[1].valMax= 1; break;  
+				case 'R': wp->config_attr[1].val=wp->config_attr[1].valMax= 2; break;  
+				case 'T': wp->config_attr[1].val=wp->config_attr[1].valMax=15; break;  
 			}
-			config_attr[2].attrName = "touches";
-		  	config_attr[2].val      = atoi(xmlGetProp(node, "fingers"));
-		  	config_attr[2].valMax   = atoi(xmlGetProp(node, "fingers"));
+			wp->config_attr[2].attrName = "touches";
+		  	wp->config_attr[2].val      = atoi(xmlGetProp(node, "fingers"));
+		  	wp->config_attr[2].valMax   = atoi(xmlGetProp(node, "fingers"));
 		     }
 		     while (0==strcmp(node->name, "trigger")) {
-			config_attr[position].attrName = xmlGetProp(node, "prop");
-		  	config_attr[position].val = atoi(xmlGetProp(node, "min"));
-		  	config_attr[position].valMax = atoi(xmlGetProp(node, "max"));
+			wp->config_attr[position].attrName = xmlGetProp(node, "prop");
+		  	wp->config_attr[position].val = atoi(xmlGetProp(node, "min"));
+		  	wp->config_attr[position].valMax = atoi(xmlGetProp(node, "max"));
 			position++;
 			if (node->next) 
 				node = (node->next);	
 		     }
 		     if (0==strcmp(node->name, "key")) 
-			config_attr[0].attrName = xmlNodeGetContent(node);
+			wp->config_attr[0].attrName = xmlNodeGetContent(node);
 		} while (node->children && (node = node->children));
 	}
 }
 
-void ginn_config_store(const struct ginn_config *cfg, struct att config_attr[])
+
+void ginn_config_store(const struct ginn_config *cfg, struct wish *w)
 {
 	const xmlNode *root = xmlDocGetRootElement(cfg->doc);
-	parse_node(root, 0, config_attr);
+	parse_node(root, 0, w);
 }
 
 void ginn_config_print(const struct ginn_config *cfg)

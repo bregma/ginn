@@ -36,9 +36,27 @@
 
 att config_attr[25] = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } };
 
+wish w1 = { 	.config_attr = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } },
+		.key ="",
+		.next=NULL };
+wish *wp;
+
 static int
 inside (int x, int a, int b){
   return ((x<=b) && (x>=a));
+}
+
+void
+init(struct wish * wp) {
+  int i;
+  wp->key="";
+  wp->modifier="";
+  wp->next=NULL;
+  for(i=0 ; i<24 ; i++ ) {
+	wp->config_attr[i].attrName="";
+	wp->config_attr[i].val=0;
+	wp->config_attr[i].valMax=0;
+  }
 }
 
 static void
@@ -50,39 +68,39 @@ gesture_match(  GeisGestureType    gesture_type,
 {
   int i = 0;
   int valid=1;
-  
+
   switch (gesture_type) {
 	//Drag
-    case  0: if (gesture_type==config_attr[1].val) {
-		if (attrs[9].float_val > config_attr[2].val) 
-		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
+    case  0: if (gesture_type==wp->config_attr[1].val) {
+		if (attrs[9].float_val > wp->config_attr[2].val) 
+		  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
 	     }
       break;
 	//Pinch/Zoom
-    case  1: if (gesture_type==config_attr[1].val) {
-	/*	if (attrs[9].float_val > config_attr[2].val) 
-		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
-		else if (attrs[9].float_val < -config_attr[2].val)  
+    case  1: if (gesture_type==wp->config_attr[1].val) {
+	/*	if (attrs[9].float_val > wp->config_attr[2].val) 
+		  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
+		else if (attrs[9].float_val < -wp->config_attr[2].val)  
 		  injTest(XK_KP_Subtract, NULL);
 	*/	
 	   int attrsI=9, cAttrI=3;
 	   do {
-		if (0==strcmp(attrs[attrsI].name, config_attr[cAttrI].attrName)){
-			printf("DEBUG -- comparing %s %s : ", attrs[attrsI].name, config_attr[cAttrI].attrName);
-			printf("%d %d %d \n", (int)attrs[attrsI].float_val, config_attr[cAttrI].val, config_attr[cAttrI].valMax);
-			printf("%i \n", inside((int)attrs[attrsI].float_val, config_attr[cAttrI].val, config_attr[cAttrI].valMax));
-			valid = valid && inside((int)attrs[attrsI].float_val, config_attr[cAttrI].val, config_attr[cAttrI].valMax);
+		if (0==strcmp(attrs[attrsI].name, wp->config_attr[cAttrI].attrName)){
+			printf("DEBUG -- comparing %s %s : ", attrs[attrsI].name, wp->config_attr[cAttrI].attrName);
+			printf("%d %d %d \n", (int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
+			printf("%i \n", inside((int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax));
+			valid = valid && inside((int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
 			attrsI++;  cAttrI++;
 		} else attrsI++;
-	   } while ( (0!=strcmp(config_attr[cAttrI+1].attrName,"")) && attrsI<18 && valid );
+	   } while ( (0!=strcmp(wp->config_attr[cAttrI+1].attrName,"")) && attrsI<18 && valid );
 		if (valid)
-		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
+		  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
  	}
       break;
 	//Rotate
-    case  2:  if (gesture_type==config_attr[1].val) {
-		if (attrs[9].float_val > config_attr[2].val) 
-		  injTest(XStringToKeysym(config_attr[0].attrName), NULL);
+    case  2:  if (gesture_type==wp->config_attr[1].val) {
+		if (attrs[9].float_val > wp->config_attr[2].val) 
+		  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
 	     }
       break;
 	//Tap
@@ -241,7 +259,11 @@ int main(int argc, char* argv[])
   }
 
   ginn_config_print(&cfg);
-  ginn_config_store(&cfg, config_attr);
+  wp = (struct wish *) malloc(sizeof(struct wish));
+  init(wp);
+  ginn_config_store(&cfg, wp);
+	//printf("\n \n === %s %d  \n", wp->config_attr[3].attrName, wp->config_attr[3].val);
+
 	int pos=0;
 	printf("\n");
 	while (strcmp(config_attr[pos].attrName,"")) {
@@ -300,6 +322,7 @@ int main(int argc, char* argv[])
   }
 
   geis_finish(instance);
+  free(wp);
   return 0;
 }
 
