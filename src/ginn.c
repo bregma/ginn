@@ -52,7 +52,7 @@ init(struct wish * wp) {
   wp->key="";
   wp->modifier="";
   wp->next=NULL;
-  for(i=0 ; i<24 ; i++ ) {
+  for(i=0 ; i<25 ; i++ ) {
 	wp->config_attr[i].attrName="";
 	wp->config_attr[i].val=0;
 	wp->config_attr[i].valMax=0;
@@ -263,6 +263,7 @@ int main(int argc, char* argv[])
   init(wp);
   ginn_config_store(&cfg, wp);
 	//printf("\n \n === %s %d  \n", wp->config_attr[3].attrName, wp->config_attr[3].val);
+	printf("\n \n =----== %s %d  \n", wp->next->next->config_attr[1].attrName, wp->next->config_attr[1].val);
 
 	int pos=0;
 	printf("\n");

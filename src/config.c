@@ -51,16 +51,17 @@ static void print_node(const xmlNode *root, int depth)
 	}
 }
 
-void parse_node(const xmlNode *root, int depth, struct wish* wp)
+void parse_node(const xmlNode *root, int depth, struct wish *wp)
 {
-	xmlNode *node, *wish;
+	xmlNode *node, *tnode;
+	struct wish *wpNext, *topwp;
 	int position=3;
+	topwp=wp;	
 	for (node = root; node; node = node->next) {
 		do {
 			if (node->type != XML_ELEMENT_NODE)
 				continue;
 		     if (0==strcmp(node->name, "wish")) {
-			wish=node;
 		  	printf(" gesture %s fingers %s ",
 				(xmlGetProp(node, "gesture")),
 				(xmlGetProp(node, "fingers")));
@@ -81,12 +82,22 @@ void parse_node(const xmlNode *root, int depth, struct wish* wp)
 		  	wp->config_attr[position].valMax = atoi(xmlGetProp(node, "max"));
 			position++;
 			if (node->next) 
-				node = (node->next);	
+				node = (node->next);
 		     }
-		     if (0==strcmp(node->name, "key")) 
+		     if (0==strcmp(node->name, "key")) {
 			wp->config_attr[0].attrName = xmlNodeGetContent(node);
+			if (node->parent->parent->next){
+				node = (node->parent->parent->next);
+				wpNext = (struct wish *) malloc(sizeof(struct wish));
+				init(wpNext);
+				wp = wp->next = wpNext;
+				position=3;
+			}
+		     }
 		} while (node->children && (node = node->children));
 	}
+
+	wp=topwp;
 }
 
 
