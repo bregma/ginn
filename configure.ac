@@ -29,5 +29,6 @@ PKG_CHECK_MODULES([XTST], [xtst >= 1.1.0])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
+                 etc/Makefile
                  ginn.pc])
 AC_OUTPUT
