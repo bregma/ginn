@@ -88,15 +88,14 @@ void parse_node(const xmlNode *root, int depth, struct wish *wp)
 			wp->config_attr[0].attrName = xmlNodeGetContent(node);
 			if (node->parent->parent->next){
 				node = (node->parent->parent->next);
+				position=3;
 				wpNext = (struct wish *) malloc(sizeof(struct wish));
 				init(wpNext);
 				wp = wp->next = wpNext;
-				position=3;
 			}
 		     }
 		} while (node->children && (node = node->children));
 	}
-
 	wp=topwp;
 }
 
