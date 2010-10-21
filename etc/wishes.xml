@@ -13,10 +13,28 @@
         <key>KP_Subtract</key>
       </action>
     </wish>
-    <wish gesture="Rotate" fingers="2">
+    <wish gesture="Drag" fingers="2">
       <action name="action3">
-        <trigger prop="angle delta" min="0" max="2"/>
-        <key>A</key>
+        <trigger prop="delta x" min="5" max="40"/>
+        <key>Right</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action4">
+        <trigger prop="delta x" min="-40" max="-5"/>
+        <key>Left</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action5">
+        <trigger prop="delta y" min="5" max="40"/>
+        <key>Up</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6">
+        <trigger prop="delta y" min="-40" max="-5"/>
+        <key>Down</key>
       </action>
     </wish>
   </global>
