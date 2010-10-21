@@ -70,15 +70,7 @@ gesture_match(  GeisGestureType    gesture_type,
   topw=wp;
   while (wp && 0!=strcmp(wp->config_attr[0].attrName,"")) {
     	int valid=1;
-	switch (gesture_type) {
-		//Drag
-	    case  0: if (gesture_type==wp->config_attr[1].val) {
-			if (attrs[9].float_val > wp->config_attr[2].val) 
-			  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
-		     }
-	      break;
-		//Pinch/Zoom
-	    case  1: if (gesture_type==wp->config_attr[1].val) {
+	if (gesture_type==wp->config_attr[1].val) {
 		/*	if (attrs[9].float_val > wp->config_attr[2].val) 
 			  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
 			else if (attrs[9].float_val < -wp->config_attr[2].val)  
@@ -96,23 +88,10 @@ gesture_match(  GeisGestureType    gesture_type,
 		   } while ( (0!=strcmp(wp->config_attr[cAttrI+1].attrName,"")) && attrsI<18 && valid );
 			if (valid)
 			  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
-		}
-	      break;
-		//Rotate
-	    case  2:  if (gesture_type==wp->config_attr[1].val) {
-			if (attrs[9].float_val > wp->config_attr[2].val) 
-			  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
-		     }
-	      break;
-		//Tap
-	    case 15:
-	      break;
-
-	    default: ;
-	  }
-	  wp=wp->next;
 	}
-	wp=topw;
+	  wp=wp->next;
+  }
+  wp=topw;
   //for (i = 0; i < attr_count; ++i)
     //print_attr(&attrs[i]);
 }
