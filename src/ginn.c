@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/select.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
@@ -216,6 +218,45 @@ GeisGestureFuncs gesture_funcs = {
 };
 
 
+/*
+ * Searches for a default config file.
+ *
+ * Returns a pointer to a config file name (which must be freed) or NULL
+ * if no default config file was found.
+ */
+static char *
+ginn_default_config()
+{
+  static const char default_file_name[] = "/wishes.xml";
+  static const char *search_paths[] =
+  {
+    "../etc",
+    GINN_CONFIG_DIR
+  };
+  static const int num_paths = sizeof(search_paths) / sizeof(const char *);
+  int i;
+
+  for (i=0; i < num_paths; ++i)
+  {
+    struct stat sbuf;
+    char *file_name = calloc(strlen(search_paths[i])
+                             + strlen(default_file_name)
+                             + 1,
+                             sizeof(char));
+    strcpy(file_name, search_paths[i]);
+    strcat(file_name, default_file_name);
+    int sres = stat(file_name, &sbuf);
+    if (sres == 0)
+    {
+      return file_name;
+    }
+    free(file_name);
+  }
+
+  return NULL;
+}
+
+
 int main(int argc, char* argv[])
 {
   GeisStatus status = GEIS_UNKNOWN_ERROR;
@@ -231,13 +272,32 @@ int main(int argc, char* argv[])
   GeisInstance instance;
   struct ginn_config cfg;
 
-  if (argc < 2) {
-	  fprintf(stderr, "usage: %s <configxml>\n", argv[0]);
-	  fprintf(stderr, "using default configuration file ... \n");
-	  ginn_config_open(&cfg, "../etc/wishes.xml"); 
-  } else  if ( ginn_config_open(&cfg, argv[1]) ) {
-	  fprintf(stderr, "Could not load Ginn whishes\n");
-	  return -1;
+  {
+    char * config_file_name = NULL;
+    if (argc < 2) {
+      fprintf(stderr, "usage: %s <configxml>\n", argv[0]);
+      config_file_name = ginn_default_config();
+      if (config_file_name)
+      {
+	fprintf(stderr, "using default configuration file %s ... \n",
+	        config_file_name);
+      }
+    }
+    else
+    {
+      config_file_name = strdup(argv[1]);
+    }
+    if (NULL == config_file_name)
+    {
+      fprintf(stderr, "Could not find Ginn wishes\n");
+      return -1;
+    }
+
+    if ( ginn_config_open(&cfg, config_file_name) ) {
+      fprintf(stderr, "Could not load Ginn wishes\n");
+      return -1;
+    }
+    free(config_file_name);
   }
 
   ginn_config_print(&cfg);
