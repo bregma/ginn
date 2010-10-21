@@ -87,9 +87,9 @@ gesture_match(  GeisGestureType    gesture_type,
 			} else attrsI++;
 		   } while ( (0!=strcmp(wp->config_attr[cAttrI+1].attrName,"")) && attrsI<18 && valid );
 			if (valid)
-			  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
+			  injTest(XStringToKeysym(wp->config_attr[0].attrName), (XStringToKeysym(wp->modifier)?XStringToKeysym(wp->modifier):NULL));
 	}
-	  wp=wp->next;
+	wp=wp->next;
   }
   wp=topw;
   //for (i = 0; i < attr_count; ++i)
@@ -245,6 +245,7 @@ int main(int argc, char* argv[])
   init(wp);
   ginn_config_store(&cfg, wp);
 	//printf("\n \n === %s %d  \n", wp->config_attr[3].attrName, wp->config_attr[3].val);
+	//printf("\n \n === %s \n", wp->next->next->modifier);
 	//printf("\n \n === %s %d  \n", wp->next->next->config_attr[1].attrName, wp->next->next->config_attr[1].val);
 
 	int pos=0;

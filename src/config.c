@@ -86,9 +86,12 @@ void parse_node(const xmlNode *root, int depth, struct wish *wp)
 		     }
 		     if (0==strcmp(node->name, "key")) {
 			wp->config_attr[0].attrName = xmlNodeGetContent(node);
+			if (xmlGetProp(node, "modifier"))
+				wp->modifier = xmlGetProp(node, "modifier"); 
 			if (node->parent->parent->next){
 				node = (node->parent->parent->next);
 				position=3;
+				//FIXME: There is always an extra allocation (i.e: 4 allocation for 3 wishes)
 				wpNext = (struct wish *) malloc(sizeof(struct wish));
 				init(wpNext);
 				wp = wp->next = wpNext;
