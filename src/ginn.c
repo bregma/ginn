@@ -272,6 +272,15 @@ int main(int argc, char* argv[])
   GeisInstance instance;
   struct ginn_config cfg;
 
+  const char * sub_gestures_list[]= {
+	GEIS_GESTURE_TYPE_DRAG2, GEIS_GESTURE_TYPE_DRAG3, 
+		GEIS_GESTURE_TYPE_DRAG4,GEIS_GESTURE_TYPE_DRAG5, 
+	GEIS_GESTURE_TYPE_PINCH2, GEIS_GESTURE_TYPE_PINCH3, 
+		GEIS_GESTURE_TYPE_PINCH4,GEIS_GESTURE_TYPE_PINCH5, 
+	GEIS_GESTURE_TYPE_ROTATE2, GEIS_GESTURE_TYPE_ROTATE3, 
+		GEIS_GESTURE_TYPE_ROTATE4,GEIS_GESTURE_TYPE_ROTATE5, 
+	GEIS_GESTURE_TYPE_TAP2, GEIS_GESTURE_TYPE_TAP3, 
+		GEIS_GESTURE_TYPE_TAP4,GEIS_GESTURE_TYPE_TAP5,  NULL };
   {
     char * config_file_name = NULL;
     if (argc < 2) {
@@ -338,7 +347,7 @@ int main(int argc, char* argv[])
 
   status = geis_subscribe(instance,
                           GEIS_ALL_INPUT_DEVICES,
-                          GEIS_ALL_GESTURES,
+                          sub_gestures_list,  //  GEIS_ALL_GESTURES,
                           &gesture_funcs,
                           NULL);
   if (status != GEIS_STATUS_SUCCESS)
