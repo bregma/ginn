@@ -55,7 +55,7 @@ void parse_node(const xmlNode *root, int depth, struct wish *wp)
 {
 	xmlNode *node, *tnode;
 	struct wish *wpNext, *topwp;
-	int position=3;
+	int position=2;
 	topwp=wp;	
 	for (node = root; node; node = node->next) {
 		do {
@@ -65,16 +65,16 @@ void parse_node(const xmlNode *root, int depth, struct wish *wp)
 		  	printf(" gesture %s fingers %s ",
 				(xmlGetProp(node, "gesture")),
 				(xmlGetProp(node, "fingers")));
-		  	wp->config_attr[1].attrName = "gesture name";
+		  	wp->config_attr[0].attrName = "gesture name";
 			switch (xmlGetProp(node, "gesture")[0]) {
-				case 'D': wp->config_attr[1].val=wp->config_attr[1].valMax= 0; break; 
-				case 'P': wp->config_attr[1].val=wp->config_attr[1].valMax= 1; break;  
-				case 'R': wp->config_attr[1].val=wp->config_attr[1].valMax= 2; break;  
-				case 'T': wp->config_attr[1].val=wp->config_attr[1].valMax=15; break;  
+				case 'D': wp->config_attr[0].val=wp->config_attr[0].valMax= 0; break; 
+				case 'P': wp->config_attr[0].val=wp->config_attr[0].valMax= 1; break;  
+				case 'R': wp->config_attr[0].val=wp->config_attr[0].valMax= 2; break;  
+				case 'T': wp->config_attr[0].val=wp->config_attr[0].valMax=15; break;  
 			}
-			wp->config_attr[2].attrName = "touches";
-		  	wp->config_attr[2].val      = atoi(xmlGetProp(node, "fingers"));
-		  	wp->config_attr[2].valMax   = atoi(xmlGetProp(node, "fingers"));
+			wp->config_attr[1].attrName = "touches";
+		  	wp->config_attr[1].val      = atoi(xmlGetProp(node, "fingers"));
+		  	wp->config_attr[1].valMax   = atoi(xmlGetProp(node, "fingers"));
 		     }
 		     while (0==strcmp(node->name, "trigger")) {
 			wp->config_attr[position].attrName = xmlGetProp(node, "prop");
@@ -85,12 +85,12 @@ void parse_node(const xmlNode *root, int depth, struct wish *wp)
 				node = (node->next);
 		     }
 		     if (0==strcmp(node->name, "key")) {
-			wp->config_attr[0].attrName = xmlNodeGetContent(node);
+			wp->key = xmlNodeGetContent(node);
 			if (xmlGetProp(node, "modifier"))
 				wp->modifier = xmlGetProp(node, "modifier"); 
 			if (node->parent->parent->next){
 				node = (node->parent->parent->next);
-				position=3;
+				position=2;
 				//FIXME: There is always an extra allocation (i.e: 4 allocation for 3 wishes)
 				wpNext = (struct wish *) malloc(sizeof(struct wish));
 				init(wpNext);

@@ -70,15 +70,15 @@ gesture_match(  GeisGestureType    gesture_type,
 {
   struct wish *topw;
   topw=wp;
-  while (wp && 0!=strcmp(wp->config_attr[0].attrName,"")) {
+  while (wp && 0!=strcmp(wp->key,"")) {
     	int valid=1;
-	if (gesture_type==wp->config_attr[1].val) {
+	if (gesture_type==wp->config_attr[0].val) {
 		/*	if (attrs[9].float_val > wp->config_attr[2].val) 
 			  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
 			else if (attrs[9].float_val < -wp->config_attr[2].val)  
 			  injTest(XK_KP_Subtract, NULL);
 		*/	
-		   int attrsI=9, cAttrI=3;
+		   int attrsI=9, cAttrI=2;
 		   do {
 			if (0==strcmp(attrs[attrsI].name, wp->config_attr[cAttrI].attrName)){
 				printf("DEBUG -- comparing %s %s : ", attrs[attrsI].name, wp->config_attr[cAttrI].attrName);
@@ -89,7 +89,7 @@ gesture_match(  GeisGestureType    gesture_type,
 			} else attrsI++;
 		   } while ( (0!=strcmp(wp->config_attr[cAttrI+1].attrName,"")) && attrsI<18 && valid );
 			if (valid)
-			  injTest(XStringToKeysym(wp->config_attr[0].attrName), (XStringToKeysym(wp->modifier)?XStringToKeysym(wp->modifier):NULL));
+			  injTest(XStringToKeysym(wp->key), (XStringToKeysym(wp->modifier)?XStringToKeysym(wp->modifier):NULL));
 	}
 	wp=wp->next;
   }
