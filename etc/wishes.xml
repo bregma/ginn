@@ -1,5 +1,11 @@
 <ginn>
   <global>
+    <wish gesture="Tap" fingers="4">
+      <action name="action1">
+        <trigger prop="tap time" min="20" max="400"/>
+        <key modifier="Super_L">E</key>
+      </action>
+    </wish>
     <wish gesture="Pinch" fingers="2">
       <action name="action1">
         <trigger prop="radius delta" min="20" max="200"/>
