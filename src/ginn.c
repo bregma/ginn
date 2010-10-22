@@ -73,7 +73,7 @@ gesture_match(  GeisGestureType    gesture_type,
   topw=wp;
   while (wp && 0!=strcmp(wp->key,"")) {
     	int valid=1;
-	if (gesture_type==wp->config_attr[0].val) {
+	if (gesture_type==wp->config_attr[0].val && attrs[8].integer_val==wp->config_attr[1].val ) {
 		/*	if (attrs[9].float_val > wp->config_attr[2].val) 
 			  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
 			else if (attrs[9].float_val < -wp->config_attr[2].val)  

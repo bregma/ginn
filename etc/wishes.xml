@@ -33,13 +33,13 @@
     </wish>
     <wish gesture="Drag" fingers="2">
       <action name="action5">
-        <trigger prop="delta y" min="6" max="42"/>
+        <trigger prop="delta y" min="40" max="80"/>
         <key>Up</key>
       </action>
     </wish>
     <wish gesture="Drag" fingers="2">
       <action name="action6">
-        <trigger prop="delta y" min="-40" max="-5"/>
+        <trigger prop="delta y" min="-80" max="-40"/>
         <key>Down</key>
       </action>
     </wish>
