@@ -22,13 +22,17 @@
 #include <X11/keysym.h>
 
 void
-injTest(KeySym ks, KeySym modifier)
+injKey(KeySym ks, char * modifiers[])
 {
+	int i;
         Display* disp = XOpenDisplay(NULL);
-	if (modifier != NULL) XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, modifier),  True, CurrentTime);
-         XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks),  True, CurrentTime);
-         XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), False, CurrentTime);
-	if (modifier != NULL) XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, modifier),  False, CurrentTime);
+	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
+		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  True, CurrentTime);
+        XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks),  True, CurrentTime);
+        XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), False, CurrentTime);
+	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
+		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  False, CurrentTime);
+
         XCloseDisplay(disp);
 }
 

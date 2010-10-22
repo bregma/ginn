@@ -86,8 +86,14 @@ void parse_node(const xmlNode *root, int depth, struct wish *wp)
 		     }
 		     if (0==strcmp(node->name, "key")) {
 			wp->key = xmlNodeGetContent(node);
-			if (xmlGetProp(node, "modifier"))
-				wp->modifier = xmlGetProp(node, "modifier"); 
+			if (xmlGetProp(node, "modifier1"))
+				wp->modifiers[0] = xmlGetProp(node, "modifier1"); 
+			if (xmlGetProp(node, "modifier2"))
+				wp->modifiers[1] = xmlGetProp(node, "modifier2"); 
+			if (xmlGetProp(node, "modifier3"))
+				wp->modifiers[2] = xmlGetProp(node, "modifier3"); 
+			if (xmlGetProp(node, "modifier4"))
+				wp->modifiers[3] = xmlGetProp(node, "modifier4"); 
 			if (node->parent->parent->next){
 				node = (node->parent->parent->next);
 				position=2;

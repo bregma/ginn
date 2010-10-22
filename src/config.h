@@ -15,6 +15,6 @@ typedef struct att {
 typedef struct wish {
 	att config_attr[25];
 	char * key;
-	char * modifier;
+	char * modifiers[4];
 	struct wish* next;
 } wish;

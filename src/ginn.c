@@ -52,8 +52,9 @@ void
 init(struct wish * wp) {
   int i;
   wp->key="";
-  wp->modifier="";
   wp->next=NULL;
+  for(i=0 ; i<4 ; i++)
+  	wp->modifiers[i]="";
   for(i=0 ; i<25 ; i++ ) {
 	wp->config_attr[i].attrName="";
 	wp->config_attr[i].val=0;
@@ -89,7 +90,7 @@ gesture_match(  GeisGestureType    gesture_type,
 			} else attrsI++;
 		   } while ( (0!=strcmp(wp->config_attr[cAttrI+1].attrName,"")) && attrsI<18 && valid );
 			if (valid)
-			  injTest(XStringToKeysym(wp->key), (XStringToKeysym(wp->modifier)?XStringToKeysym(wp->modifier):NULL));
+			  injKey(XStringToKeysym(wp->key), wp->modifiers);
 	}
 	wp=wp->next;
   }
@@ -205,7 +206,7 @@ gesture_finish(void              *cookie,
   fprintf(stdout, "Gesture type %d finished\n", gesture_type);
   for (i = 0; i < attr_count; ++i)
     print_attr(&attrs[i]);
-  gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_FINISH);
+  //gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_FINISH);
 }
 
 
