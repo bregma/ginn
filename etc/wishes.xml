@@ -3,7 +3,7 @@
     <wish gesture="Tap" fingers="4">
       <action name="action1">
         <trigger prop="tap time" min="20" max="400"/>
-        <key modifier="Super_L">E</key>
+        <key modifier1="Super_L">E</key>
       </action>
     </wish>
     <wish gesture="Pinch" fingers="2">
@@ -19,16 +19,16 @@
         <key>KP_Subtract</key>
       </action>
     </wish>
-    <wish gesture="Drag" fingers="2">
+    <wish gesture="Drag" fingers="4">
       <action name="action3">
-        <trigger prop="delta x" min="5" max="40"/>
-        <key modifier="Control_L">Right</key>
+        <trigger prop="delta x" min="40" max="60"/>
+        <key modifier1="Control_L" modifier2="Alt_L">Right</key>
       </action>
     </wish>
-    <wish gesture="Drag" fingers="2">
+    <wish gesture="Drag" fingers="4">
       <action name="action4">
-        <trigger prop="delta x" min="-40" max="-5"/>
-        <key modifier="Control_L">Left</key>
+        <trigger prop="delta x" min="-60" max="-40"/>
+        <key modifier1="Control_L" modifier2="Alt_L">Left</key>
       </action>
     </wish>
     <wish gesture="Drag" fingers="2">
