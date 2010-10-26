@@ -88,7 +88,7 @@ gesture_match(  GeisGestureType    gesture_type,
 				valid = valid && inside((int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
 				attrsI++;  cAttrI++;
 			} else attrsI++;
-		   } while ( (0!=strcmp(wp->config_attr[cAttrI+1].attrName,"")) && attrsI<18 && valid );
+		   } while ( (0!=strcmp(wp->config_attr[cAttrI].attrName,"")) && attrsI<18 && valid );
 			if (valid)
 			  injKey(XStringToKeysym(wp->key), wp->modifiers);
 	}
