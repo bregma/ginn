@@ -32,10 +32,6 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
-#define GINN_START	0
-#define GINN_UPDATE	1
-#define GINN_FINISH	2
-
 att config_attr[25] = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } };
 
 wish w1 = { 	.config_attr = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } },
@@ -62,6 +58,14 @@ init(struct wish * wp) {
   }
 }
 
+static void clear_accum_attrs(att *attrs){
+	int i = 0;
+	while (strcmp(attrs[i].attrName, "") != 0){
+		if (attrs[i].accumulate) attrs[i].accumVal = 0;
+		i++;
+	}
+}
+
 static void
 gesture_match(  GeisGestureType    gesture_type,
                 GeisGestureId      gesture_id,
@@ -85,13 +89,20 @@ gesture_match(  GeisGestureType    gesture_type,
 				printf("DEBUG -- comparing %s %s : ", attrs[attrsI].name, wp->config_attr[cAttrI].attrName);
 				printf("%d %d %d \n", (int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
 				printf("%i \n", inside((int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax));
-				valid = valid && inside((int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
+				if (wp->config_attr[cAttrI].accumulate){
+					wp->config_attr[cAttrI].accumVal += (int)attrs[attrsI].float_val;	
+					valid = valid && inside(wp->config_attr[cAttrI].accumVal, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
+				}
+				else valid = valid && inside((int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
 				attrsI++;  cAttrI++;
 			} else attrsI++;
-		   } while ( (0!=strcmp(wp->config_attr[cAttrI].attrName,"")) && attrsI<18 && valid );
-			if (valid)
+		   } while ( (0!=strcmp(wp->config_attr[cAttrI].attrName,"")) && attrsI<18 );
+		   if (valid && wp->when == state){
 			  injKey(XStringToKeysym(wp->key), wp->modifiers);
+			  clear_accum_attrs(wp->config_attr);
+		   }
 	}
+	if (state == GINN_FINISH) clear_accum_attrs(wp->config_attr);
 	wp=wp->next;
   }
   wp=topw;
@@ -206,7 +217,7 @@ gesture_finish(void              *cookie,
   fprintf(stdout, "Gesture type %d finished\n", gesture_type);
   for (i = 0; i < attr_count; ++i)
     print_attr(&attrs[i]);
-  //gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_FINISH);
+  gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_FINISH);
 }
 
 
