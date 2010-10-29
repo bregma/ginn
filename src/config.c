@@ -51,6 +51,23 @@ static void print_node(const xmlNode *root, int depth)
 	}
 }
 
+static int ginn_str2state(const char *str){
+	if (str == NULL) return -1;
+	if (strcmp(str, "start") == 0) return GINN_START;
+	if (strcmp(str, "update") == 0) return GINN_UPDATE;
+	if (strcmp(str, "finish") == 0) return GINN_FINISH;
+	fprintf(stderr, "ERROR: Undefined state: %s\n", str);
+	return -2;
+}
+
+static int ginn_str2bool(const char *str){
+	if (str == NULL) return -1;
+	if (strcmp(str, "true") == 0) return 1;
+	if (strcmp(str, "false") == 0) return 0;
+	fprintf(stderr, "ERROR: Ivalid value for boolean attribute: %s\n", str);
+	return -2;
+}
+
 void parse_node(const xmlNode *root, int depth, struct wish *wp)
 {
 	xmlNode *node, *tnode;
@@ -76,10 +93,18 @@ void parse_node(const xmlNode *root, int depth, struct wish *wp)
 		  	wp->config_attr[1].val      = atoi(xmlGetProp(node, "fingers"));
 		  	wp->config_attr[1].valMax   = atoi(xmlGetProp(node, "fingers"));
 		     }
+		     if (0==strcmp(node->name, "action")) {
+			     wp->when = ginn_str2state(xmlGetProp(node, "when"));
+			     if (wp->when < 0)
+				     fprintf(stderr, "ERROR: you must provide property 'when' to the action: %s\n", xmlGetProp(node, "name"));
+		     }
 		     while (0==strcmp(node->name, "trigger")) {
 			wp->config_attr[position].attrName = xmlGetProp(node, "prop");
 		  	wp->config_attr[position].val = atoi(xmlGetProp(node, "min"));
 		  	wp->config_attr[position].valMax = atoi(xmlGetProp(node, "max"));
+		  	int acc = ginn_str2bool(xmlGetProp(node, "accumulate"));
+			wp->config_attr[position].accumulate = acc == -1 ? GINN_DEFAULT_ACCUMULATE : acc;
+			wp->config_attr[position].accumVal = 0;
 			position++;
 			if (node->next) 
 				node = (node->next);

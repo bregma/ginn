@@ -1,53 +1,102 @@
 <ginn>
   <global>
-    <wish gesture="Tap" fingers="4">
-      <action name="action1">
-        <trigger prop="tap time" min="20" max="400"/>
-        <key modifier1="Super_L">E</key>
-      </action>
-    </wish>
+<!-- Application control -->
     <wish gesture="Pinch" fingers="2">
-      <action name="action1">
+      <action name="action1" when="update">
         <trigger prop="radius delta" min="20" max="200"/>
         <trigger prop="radial velocity" min="-1" max="1000"/>
         <key>KP_Add</key>
       </action>
     </wish>
     <wish gesture="Pinch" fingers="2">
-      <action name="action2">
+      <action name="action2" when="update">
         <trigger prop="radius delta" min="-200" max="-20"/>
         <key>KP_Subtract</key>
       </action>
     </wish>
-    <wish gesture="Drag" fingers="4">
-      <action name="action3">
-        <trigger prop="delta x" min="40" max="60"/>
-        <key modifier1="Control_L" modifier2="Alt_L">Right</key>
-      </action>
-    </wish>
-    <wish gesture="Drag" fingers="4">
-      <action name="action4">
-        <trigger prop="delta x" min="-60" max="-40"/>
-        <key modifier1="Control_L" modifier2="Alt_L">Left</key>
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta y" min="20" max="80"/>
+        <key>Down</key>
       </action>
     </wish>
     <wish gesture="Drag" fingers="2">
-      <action name="action5">
-        <trigger prop="delta y" min="40" max="80"/>
+      <action name="action6" when="update">
+        <trigger prop="delta y" min="-80" max="-20"/>
         <key>Up</key>
       </action>
     </wish>
+
+    <!-- These rules are for Inkscape, don't work well with Evince -->
     <wish gesture="Drag" fingers="2">
-      <action name="action6">
-        <trigger prop="delta y" min="-80" max="-40"/>
-        <key>Down</key>
+      <action name="action5" when="update">
+        <trigger prop="delta x" min="20" max="80"/>
+        <key modifier1="Control_L">Left</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta x" min="-80" max="-20"/>
+        <key modifier1="Control_L">Right</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta y" min="20" max="80"/>
+        <key modifier1="Control_L">Up</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta y" min="-80" max="-20"/>
+        <key modifier1="Control_L">Down</key>
+      </action>
+    </wish>
+
+<!-- Windows control -->
+    <wish gesture="Pinch" fingers="3">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="-200" max="-20"/>
+        <key modifier1="Alt_L">F10</key>
+      </action>
+    </wish>
+    <wish gesture="Pinch" fingers="3">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="20" max="200"/>
+        <key modifier1="Alt_L">F10</key>
+      </action>
+    </wish>
+
+<!-- System wide - control desktop  -->
+    <wish gesture="Tap" fingers="4">
+      <action name="action1" when="update">
+        <trigger prop="tap time" min="20" max="400"/>
+        <key modifier1="Super_L">E</key>
+      </action>
+    </wish>
+    <wish gesture="Pinch" fingers="4">
+      <action name="action4" when="update">
+        <trigger prop="radius delta" min="-80" max="-50"/>
+        <key modifier1="Super_L">W</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="4">
+      <action name="action3" when="finish">
+        <trigger prop="delta x" min="40" max="600"/>
+        <key modifier1="Control_L" modifier2="Alt_L">Left</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="4">
+      <action name="action4" when="finish">
+        <trigger prop="delta x" min="-600" max="-40"/>
+        <key modifier1="Control_L" modifier2="Alt_L">Right</key>
       </action>
     </wish>
   </global>
   <applications>
     <application name="Inkscape">
       <wish gesture="Pinch" fingers="3">
-        <action name="action2">
+        <action name="action2" when="update">
           <trigger prop="radius delta" min="30" max="1000"/>
           <key>KP_Subtract</key>
         </action>
