@@ -1,0 +1,15 @@
+
+
+Fix gestures parameters comparison:
+	float for float, int for int, etc
+	Start the comparison from the begining (remove the 18...)
+
+Add support for injecting Mouse buttons
+
+Add support for DBus
+
+Add support for libbamf:
+	Be able to inject gestures inside selected apps.
+
+Fix X crashes :
+	Too many Open/Close XDisplay may be the cause of problems !
