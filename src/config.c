@@ -19,6 +19,20 @@
 #include "config.h"
 #include <libxml/parser.h>
 
+void
+debugOut(struct wish * wp) {
+  int i;
+  printf("\n key : %s ", wp->key);
+  for(i=0 ; i<4 ; i++)
+        printf("\t mod%d : %s ", i, wp->modifiers[i]);
+  for(i=0 ; i<4 ; i++ ) {
+        printf("\n attrName : %s ", wp->config_attr[i].attrName);
+        printf("\t val : %d ", wp->config_attr[i].val);
+        printf("\t valMax : %d", wp->config_attr[i].valMax);
+   }
+  printf("\n pMe : %x  pNext : %x ", wp, wp->next);
+  printf("\n===================================================");
+}
 
 int ginn_config_open(struct ginn_config *cfg, const char *path)
 {
@@ -112,31 +126,28 @@ void store_1config(xmlNode *node, struct wish *wp, int *position)
 
 void parse_node(const xmlNode *root, int depth, struct wish *wp)
 {
-	xmlNode *node, *tnode;
-	struct wish *wpNext, *topwp;
+	xmlNode *node;
+	struct wish *wpNext;
 	int position=2;
-	topwp=wp;
-		
 	for (node = root; node; node = node->next) {
-		do {
-			if (node->type != XML_ELEMENT_NODE)
-				continue;
+		if (node->type != XML_ELEMENT_NODE)
+			continue;
+		if ( (0==strcmp(node->name, "wish")) && (0==strcmp(wp->config_attr[0].attrName, "gesture name")) ) {
+			printf("== %d ==\n", wp->config_attr[2].val);
+			wpNext = (struct wish *) malloc(sizeof(struct wish));
+			init(wpNext);
+			if (!(wp->next)) wp->next = wpNext;
+			wp=wp->next;
+			position=2;
 			store_1config(node, wp, &position);
-
-		     if (0==strcmp(node->name, "key")) {
-			if (node->parent->parent->next){
-				node = (node->parent->parent->next);
-				position=2;
-				wpNext = (struct wish *) malloc(sizeof(struct wish));
-				init(wpNext);
-				wp = wp->next = wpNext;
-			}
-		     }
-		} while (node->children && (node = node->children));
-		//printf("\nIKBEL Apps %s", root->children->next->next->next->name);
+			parse_node(node->children, depth + 1, wp);
+		} else {
+			store_1config(node, wp, &position);
+			parse_node(node->children, depth + 1, wp);
+		}
 	}
-	wp=topwp;
 }
+
 
 void ginn_config_store(const struct ginn_config *cfg, struct wish *w)
 {
