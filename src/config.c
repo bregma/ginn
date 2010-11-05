@@ -127,24 +127,20 @@ void store_1config(xmlNode *node, struct wish *wp, int *position)
 void parse_node(const xmlNode *root, int depth, struct wish *wp)
 {
 	xmlNode *node;
-	struct wish *wpNext;
 	int position=2;
 	for (node = root; node; node = node->next) {
 		if (node->type != XML_ELEMENT_NODE)
 			continue;
 		if ( (0==strcmp(node->name, "wish")) && (0==strcmp(wp->config_attr[0].attrName, "gesture name")) ) {
-			printf("== %d ==\n", wp->config_attr[2].val);
-			wpNext = (struct wish *) malloc(sizeof(struct wish));
-			init(wpNext);
-			if (!(wp->next)) wp->next = wpNext;
+			if (!(wp->next)) { 
+				wp->next = (struct wish *) malloc(sizeof(struct wish));
+				init(wp->next);
+			}
 			wp=wp->next;
 			position=2;
-			store_1config(node, wp, &position);
-			parse_node(node->children, depth + 1, wp);
-		} else {
-			store_1config(node, wp, &position);
-			parse_node(node->children, depth + 1, wp);
 		}
+		store_1config(node, wp, &position);
+		parse_node(node->children, depth + 1, wp);
 	}
 }
 
