@@ -56,13 +56,13 @@
 <!-- Windows control -->
     <wish gesture="Pinch" fingers="3">
       <action name="action1" when="update">
-        <trigger prop="radius delta" min="-200" max="-20"/>
+        <trigger prop="radius delta" min="-200" max="-40"/>
         <key modifier1="Alt_L">F10</key>
       </action>
     </wish>
     <wish gesture="Pinch" fingers="3">
       <action name="action1" when="update">
-        <trigger prop="radius delta" min="20" max="200"/>
+        <trigger prop="radius delta" min="40" max="200"/>
         <key modifier1="Alt_L">F10</key>
       </action>
     </wish>
@@ -95,12 +95,44 @@
   </global>
   <applications>
     <application name="Inkscape">
-      <wish gesture="Pinch" fingers="3">
-        <action name="action2" when="update">
-          <trigger prop="radius delta" min="30" max="1000"/>
-          <key>KP_Subtract</key>
-        </action>
-      </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta x" min="20" max="80"/>
+        <key modifier1="Control_L">Left</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta x" min="-80" max="-20"/>
+        <key modifier1="Control_L">Right</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta y" min="20" max="80"/>
+        <key modifier1="Control_L">Up</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta y" min="-80" max="-20"/>
+        <key modifier1="Control_L">Down</key>
+      </action>
+    </wish>
+    </application>
+    <application name="Evince">
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta y" min="20" max="80"/>
+        <key>Up</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta y" min="-80" max="-20"/>
+        <key>Down</key>
+      </action>
+    </wish>
     </application>
   </applications>
 </ginn>
