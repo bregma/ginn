@@ -13,7 +13,7 @@ typedef struct ginn_config {
 } cfg;
 
 typedef struct att {
-	char * attrName ;
+	char *attrName ;
 	int val ;
 	int valMax;
 	int accumulate;
@@ -22,8 +22,14 @@ typedef struct att {
 
 typedef struct wish {
 	att config_attr[25];
-	char * key;
-	char * modifiers[4];
+	char *key;
+	char *modifiers[4];
 	struct wish* next;
 	int when;
 } wish;
+
+typedef struct apps {
+	char *appName;
+	struct wish *wp;
+	struct apps *next;
+} apps;

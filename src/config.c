@@ -124,31 +124,41 @@ void store_1config(xmlNode *node, struct wish *wp, int *position)
      }
 }
 
-void parse_node(const xmlNode *root, int depth, struct wish *wp)
+void parse_node(const xmlNode *root, int depth, struct wish *wp, struct apps *ap)
 {
 	xmlNode *node;
 	int position=2;
 	for (node = root; node; node = node->next) {
 		if (node->type != XML_ELEMENT_NODE)
 			continue;
+
+		if ( (0==strcmp(node->name, "application")) ) 
+			if (0==strcmp(ap->appName, "")) {
+				ap->appName=xmlGetProp(node, "name");
+				wp = ap->wp = (struct wish *) malloc(sizeof(struct wish));
+				initw(wp);
+			} else {
+				ap = ap->next = (struct apps *) malloc(sizeof(struct apps));
+				inita(ap);
+			}
 		if ( (0==strcmp(node->name, "wish")) && (0==strcmp(wp->config_attr[0].attrName, "gesture name")) ) {
 			if (!(wp->next)) { 
 				wp->next = (struct wish *) malloc(sizeof(struct wish));
-				init(wp->next);
+				initw(wp->next);
 			}
-			wp=wp->next;
+			wp = wp->next;
 			position=2;
 		}
 		store_1config(node, wp, &position);
-		parse_node(node->children, depth + 1, wp);
+		parse_node(node->children, depth + 1, wp, ap);
 	}
 }
 
 
-void ginn_config_store(const struct ginn_config *cfg, struct wish *w)
+void ginn_config_store(const struct ginn_config *cfg, struct wish *w, struct apps *a)
 {
 	const xmlNode *root = xmlDocGetRootElement(cfg->doc);
-	parse_node(root, 0, w);
+	parse_node(root, 0, w, a);
 }
 
 void ginn_config_print(const struct ginn_config *cfg)

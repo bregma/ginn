@@ -38,6 +38,7 @@ wish w1 = { 	.config_attr = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } },
 		.key ="",
 		.next=NULL };
 wish *wp;
+apps *ap;
 
 static int
 inside (int x, int a, int b){
@@ -45,7 +46,7 @@ inside (int x, int a, int b){
 }
 
 void
-init(struct wish * wp) {
+initw(struct wish *wp) {
   int i;
   wp->key="";
   wp->next=NULL;
@@ -56,6 +57,13 @@ init(struct wish * wp) {
 	wp->config_attr[i].val=0;
 	wp->config_attr[i].valMax=0;
   }
+}
+
+void
+inita(struct apps *ap) {
+  ap->next=NULL;
+  ap->wp  =NULL;
+  ap->appName="";
 }
 
 static void clear_accum_attrs(att *attrs){
@@ -322,9 +330,9 @@ int main(int argc, char* argv[])
   }
 
   ginn_config_print(&cfg);
-  wp = (struct wish *) malloc(sizeof(struct wish));
-  init(wp);
-  ginn_config_store(&cfg, wp);
+  ap = (struct apps *) malloc(sizeof(struct apps)); inita(ap);
+  wp = (struct wish *) malloc(sizeof(struct wish)); initw(wp);
+  ginn_config_store(&cfg, wp, ap);
 	//printf("\n \n === %s %d  \n", wp->config_attr[3].attrName, wp->config_attr[3].val);
 	//printf("\n \n === %s \n", wp->next->next->modifier);
 	//printf("\n \n === %s %d  \n", wp->next->next->config_attr[1].attrName, wp->next->next->config_attr[1].val);
