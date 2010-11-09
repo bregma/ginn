@@ -26,6 +26,7 @@ injKey(KeySym ks, char * modifiers[])
 {
 	int i;
         Display* disp = XOpenDisplay(NULL);
+
 	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
 		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  True, CurrentTime);
         XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks),  True, CurrentTime);
@@ -37,11 +38,18 @@ injKey(KeySym ks, char * modifiers[])
 }
 
 void
-injButton(int btn, KeySym modifier)
+injButton(int btn, char * modifiers[])
 {
+	int i;
         Display* disp = XOpenDisplay(NULL);
+
+	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
+		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  True, CurrentTime);
         XTestFakeButtonEvent(disp, btn, True, CurrentTime);
         XTestFakeButtonEvent(disp, btn, False, CurrentTime);
+	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
+		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  False, CurrentTime);
+
         XCloseDisplay(disp);
 }
 
