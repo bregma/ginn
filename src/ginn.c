@@ -18,6 +18,7 @@
  * Authors:
  * 	Mohamed-Ikbel Boulabiar <boulabiar@gmail.com>
  * 	Henrik Rydberg <rydberg@bitmath.org>
+ *	Stephen M. Webb <stephen.webb@canonical.com>
  *
  */
 #include "config.h"
@@ -48,6 +49,7 @@ inside (int x, int a, int b){
 void
 initw(struct wish *wp) {
   int i;
+  wp->button=0;
   wp->key="";
   wp->next=NULL;
   for(i=0 ; i<4 ; i++)
@@ -86,11 +88,6 @@ gesture_match(  GeisGestureType    gesture_type,
   while (wp && 0!=strcmp(wp->key,"")) {
     	int valid=1;
 	if (gesture_type==wp->config_attr[0].val && attrs[8].integer_val==wp->config_attr[1].val ) {
-		/*	if (attrs[9].float_val > wp->config_attr[2].val) 
-			  injTest(XStringToKeysym(wp->config_attr[0].attrName), NULL);
-			else if (attrs[9].float_val < -wp->config_attr[2].val)  
-			  injTest(XK_KP_Subtract, NULL);
-		*/	
 		   int attrsI=9, cAttrI=2;
 		   do {
 			if (0==strcmp(attrs[attrsI].name, wp->config_attr[cAttrI].attrName)){
@@ -106,8 +103,11 @@ gesture_match(  GeisGestureType    gesture_type,
 			} else attrsI++;
 		   } while ( (0!=strcmp(wp->config_attr[cAttrI].attrName,"")) && attrsI<18 );
 		   if (valid && wp->when == state){
+			if (0!=wp->button)
+			  injButton(wp->button, wp->modifiers);	
+			else
 			  injKey(XStringToKeysym(wp->key), wp->modifiers);
-			  clear_accum_attrs(wp->config_attr);
+			clear_accum_attrs(wp->config_attr);
 		   }
 	}
 	if (state == GINN_FINISH) clear_accum_attrs(wp->config_attr);
