@@ -23,6 +23,7 @@ void
 debugOut(struct wish * wp) {
   int i;
   printf("\n key : %s ", wp->key);
+  printf("\n button : %d ", wp->button);
   for(i=0 ; i<4 ; i++)
         printf("\t mod%d : %s ", i, wp->modifiers[i]);
   for(i=0 ; i<4 ; i++ ) {
@@ -111,8 +112,7 @@ void store_1config(xmlNode *node, struct wish *wp, int *position)
 	wp->config_attr[*position].accumVal = 0;
 	(*position)++;
      }
-     if (0==strcmp(node->name, "key")) {
-	wp->key = xmlNodeGetContent(node);
+     if (0==strcmp(node->name, "key") || 0==strcmp(node->name, "button")) {
 	if (xmlGetProp(node, "modifier1"))
 		wp->modifiers[0] = xmlGetProp(node, "modifier1"); 
 	if (xmlGetProp(node, "modifier2"))
@@ -122,6 +122,12 @@ void store_1config(xmlNode *node, struct wish *wp, int *position)
 	if (xmlGetProp(node, "modifier4"))
 		wp->modifiers[3] = xmlGetProp(node, "modifier4");
      }
+     if (0==strcmp(node->name, "key")) 
+	wp->key = xmlNodeGetContent(node);
+     if (0==strcmp(node->name, "button")) 
+	wp->button = atoi(xmlNodeGetContent(node));
+     if (0==strcmp(node->name, "button")) 
+     printf("Button : %d ", wp->button);
 }
 
 void parse_node(const xmlNode *root, int depth, struct wish *wp, struct apps *ap)
@@ -140,6 +146,8 @@ void parse_node(const xmlNode *root, int depth, struct wish *wp, struct apps *ap
 			} else {
 				ap = ap->next = (struct apps *) malloc(sizeof(struct apps));
 				inita(ap);
+				wp = ap->wp = (struct wish *) malloc(sizeof(struct wish));
+				initw(wp);
 			}
 		if ( (0==strcmp(node->name, "wish")) && (0==strcmp(wp->config_attr[0].attrName, "gesture name")) ) {
 			if (!(wp->next)) { 

@@ -23,6 +23,7 @@ typedef struct att {
 typedef struct wish {
 	att config_attr[25];
 	char *key;
+	int   button;
 	char *modifiers[4];
 	struct wish* next;
 	int when;
