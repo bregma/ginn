@@ -63,20 +63,3 @@ injButton(int btn, char * modifiers[])
 	XFlush(disp);
 }
 
-static void
-pressKey(KeySym ks, Display *disp)
-{
-  XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), True, CurrentTime);
-}
-
-static void
-releasekey(KeySym ks, Display *disp)
-{
-  XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), False, CurrentTime);
-}
-
-static void
-injectSymbols()
-{
-}
-
