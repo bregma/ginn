@@ -21,11 +21,22 @@
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h>
 
+static Display* disp = NULL;
+
+void openDisplay()
+{
+	disp = XOpenDisplay(NULL);
+}
+
+void closeDisplay()
+{
+	XCloseDisplay(disp);
+}
+
 void
 injKey(KeySym ks, char * modifiers[])
 {
 	int i;
-        Display* disp = XOpenDisplay(NULL);
 
 	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
 		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  True, CurrentTime);
@@ -34,14 +45,13 @@ injKey(KeySym ks, char * modifiers[])
 	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
 		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  False, CurrentTime);
 
-        XCloseDisplay(disp);
+	XFlush(disp);
 }
 
 void
 injButton(int btn, char * modifiers[])
 {
 	int i;
-        Display* disp = XOpenDisplay(NULL);
 
 	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
 		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  True, CurrentTime);
@@ -50,7 +60,7 @@ injButton(int btn, char * modifiers[])
 	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
 		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  False, CurrentTime);
 
-        XCloseDisplay(disp);
+	XFlush(disp);
 }
 
 static void
@@ -68,7 +78,5 @@ releasekey(KeySym ks, Display *disp)
 static void
 injectSymbols()
 {
- Display* disp = XOpenDisplay(NULL);
- XCloseDisplay(disp);
 }
 

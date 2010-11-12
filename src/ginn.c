@@ -375,6 +375,8 @@ int main(int argc, char* argv[])
     fprintf(stderr, "error subscribing to gestures\n");
     return 1;
   }
+  
+  openDisplay();
 
   while(1)
   {
@@ -395,6 +397,7 @@ int main(int argc, char* argv[])
   }
 
   geis_finish(instance);
+  closeDisplay();
   free(wp);
   return 0;
 }
