@@ -1,7 +1,7 @@
 # Initialize Autoconf
 AC_PREREQ([2.60])
 AC_INIT([Ginn],
-        [1.0.0],
+        [0.1.0],
         [],
         [ginn])
 AC_CONFIG_SRCDIR([Makefile.am])
@@ -26,6 +26,7 @@ PKG_CHECK_MODULES([GEIS], [libutouch-geis >= 1.0.10])
 PKG_CHECK_MODULES([X11],  [x11 >= 1.3.3])
 PKG_CHECK_MODULES([XML2], [libxml-2.0 >= 2.7.7])
 PKG_CHECK_MODULES([XTST], [xtst >= 1.1.0])
+PKG_CHECK_MODULES([BAMF], [libbamf >= 0.2.53])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile

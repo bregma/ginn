@@ -108,6 +108,7 @@ gesture_match(  GeisGestureType    gesture_type,
 			else
 			  injKey(XStringToKeysym(wp->key), wp->modifiers);
 			clear_accum_attrs(wp->config_attr);
+			getCurrentAppDesk();
 		   }
 	}
 	if (state == GINN_FINISH) clear_accum_attrs(wp->config_attr);
