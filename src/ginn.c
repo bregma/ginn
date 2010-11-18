@@ -38,7 +38,8 @@ att config_attr[25] = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } };
 wish w1 = { 	.config_attr = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } },
 		.key ="",
 		.next=NULL };
-wish *wp;
+
+wish *wp, *wpEnd;
 apps *ap;
 
 static int
@@ -77,6 +78,20 @@ static void clear_accum_attrs(att *attrs){
 }
 
 static void
+update_wishes()
+{
+  char *activeApp;
+  activeApp = getCurrentApp();
+  //printf("%s\n",getCurrentApp());
+  while ( (0!=strcmp(activeApp,ap->appName)) && ap->next)
+	ap=ap->next;
+  if (0!=strcmp(activeApp,ap->appName))
+    wpEnd->next = ap->wp;
+  else 
+    wpEnd->next = NULL;
+}
+
+static void
 gesture_match(  GeisGestureType    gesture_type,
                 GeisGestureId      gesture_id,
                 GeisSize           attr_count,
@@ -85,6 +100,7 @@ gesture_match(  GeisGestureType    gesture_type,
 {
   struct wish *topw;
   topw=wp;
+  update_wishes();
   while (wp && 0!=strcmp(wp->key,"")) {
     	int valid=1;
 	if (gesture_type==wp->config_attr[0].val && attrs[8].integer_val==wp->config_attr[1].val ) {
@@ -96,7 +112,7 @@ gesture_match(  GeisGestureType    gesture_type,
 				printf("%i \n", inside((int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax));
 				if (wp->config_attr[cAttrI].accumulate){
 					wp->config_attr[cAttrI].accumVal += (int)attrs[attrsI].float_val;	
-					valid = valid && inside(wp->config_attr[cAttrI].accumVal, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
+					valid= valid && inside(wp->config_attr[cAttrI].accumVal, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
 				}
 				else valid = valid && inside((int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
 				attrsI++;  cAttrI++;
@@ -108,15 +124,12 @@ gesture_match(  GeisGestureType    gesture_type,
 			else
 			  injKey(XStringToKeysym(wp->key), wp->modifiers);
 			clear_accum_attrs(wp->config_attr);
-			getCurrentAppDesk();
 		   }
 	}
 	if (state == GINN_FINISH) clear_accum_attrs(wp->config_attr);
 	wp=wp->next;
   }
   wp=topw;
-  //for (i = 0; i < attr_count; ++i)
-    //print_attr(&attrs[i]);
 }
 
 static Window getRootWindow()
@@ -334,6 +347,9 @@ int main(int argc, char* argv[])
   ap = (struct apps *) malloc(sizeof(struct apps)); inita(ap);
   wp = (struct wish *) malloc(sizeof(struct wish)); initw(wp);
   ginn_config_store(&cfg, wp, ap);
+  wpEnd=wp;
+  while (wpEnd->next)
+	wpEnd=wpEnd->next;
 	//printf("\n \n === %s %d  \n", wp->config_attr[3].attrName, wp->config_attr[3].val);
 	//printf("\n \n === %s \n", wp->next->next->modifier);
 	//printf("\n \n === %s %d  \n", wp->next->next->config_attr[1].attrName, wp->next->next->config_attr[1].val);

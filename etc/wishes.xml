@@ -27,32 +27,6 @@
       </action>
     </wish>
 
-    <!-- These rules are for Inkscape, don't work well with Evince -->
-    <wish gesture="Drag" fingers="2">
-      <action name="action5" when="update">
-        <trigger prop="delta x" min="20" max="80"/>
-        <key modifier1="Control_L">Left</key>
-      </action>
-    </wish>
-    <wish gesture="Drag" fingers="2">
-      <action name="action6" when="update">
-        <trigger prop="delta x" min="-80" max="-20"/>
-        <key modifier1="Control_L">Right</key>
-      </action>
-    </wish>
-    <wish gesture="Drag" fingers="2">
-      <action name="action5" when="update">
-        <trigger prop="delta y" min="20" max="80"/>
-        <key modifier1="Control_L">Up</key>
-      </action>
-    </wish>
-    <wish gesture="Drag" fingers="2">
-      <action name="action6" when="update">
-        <trigger prop="delta y" min="-80" max="-20"/>
-        <key modifier1="Control_L">Down</key>
-      </action>
-    </wish>
-
 <!-- Windows control -->
     <wish gesture="Pinch" fingers="3">
       <action name="action1" when="update">
@@ -94,7 +68,7 @@
     </wish>
   </global>
   <applications>
-    <application name="Inkscape">
+    <application name="inkscape">
     <wish gesture="Drag" fingers="2">
       <action name="action5" when="update">
         <trigger prop="delta x" min="20" max="80"/>
@@ -120,7 +94,7 @@
       </action>
     </wish>
     </application>
-    <application name="Evince">
+    <application name="evince">
     <wish gesture="Drag" fingers="2">
       <action name="action5" when="update">
         <trigger prop="delta y" min="20" max="80"/>
@@ -133,6 +107,8 @@
         <key>Down</key>
       </action>
     </wish>
+    </application>
+    <application name="gnome-terminal">
     </application>
   </applications>
 </ginn>
