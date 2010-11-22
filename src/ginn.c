@@ -81,12 +81,19 @@ static void
 update_wishes()
 {
   char *activeApp;
+  int diff=0;
   activeApp = getCurrentApp();
-  //printf("%s\n",getCurrentApp());
-  while ( (0!=strcmp(activeApp,ap->appName)) && ap->next)
+  printf(" --ActiveApp %s\n",activeApp);
+  if (activeApp)
+	diff = strcmp(activeApp,ap->appName);
+
+  while ( diff && ap->next) {
 	ap=ap->next;
-  if (0!=strcmp(activeApp,ap->appName))
-    wpEnd->next = ap->wp;
+	diff = strcmp(activeApp,ap->appName);
+  }
+
+  if (!diff)
+     wpEnd->next = ap->wp;
   else 
     wpEnd->next = NULL;
 }
@@ -350,16 +357,14 @@ int main(int argc, char* argv[])
   wpEnd=wp;
   while (wpEnd->next)
 	wpEnd=wpEnd->next;
-	//printf("\n \n === %s %d  \n", wp->config_attr[3].attrName, wp->config_attr[3].val);
-	//printf("\n \n === %s \n", wp->next->next->modifier);
-	//printf("\n \n === %s %d  \n", wp->next->next->config_attr[1].attrName, wp->next->next->config_attr[1].val);
 
-	int pos=0;
-	printf("\n");
-	while (strcmp(config_attr[pos].attrName,"")) {
-	   printf("DEBUG %d %s %d %d \n", pos, config_attr[pos].attrName, config_attr[pos].val, config_attr[pos].valMax); 
-	   pos++;
-	}
+  int pos=0;
+  printf("\n");
+  while (strcmp(config_attr[pos].attrName,"")) {
+    printf("DEBUG %d %s %d %d \n", pos, config_attr[pos].attrName, config_attr[pos].val, config_attr[pos].valMax); 
+    pos++;
+  }
+
   status = geis_init(&win_info, &instance);
   if (status != GEIS_STATUS_SUCCESS)
   {

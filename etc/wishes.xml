@@ -1,19 +1,6 @@
 <ginn>
   <global>
 <!-- Application control -->
-    <wish gesture="Pinch" fingers="2">
-      <action name="action1" when="update">
-        <trigger prop="radius delta" min="20" max="200"/>
-        <trigger prop="radial velocity" min="-1" max="1000"/>
-        <key>KP_Add</key>
-      </action>
-    </wish>
-    <wish gesture="Pinch" fingers="2">
-      <action name="action2" when="update">
-        <trigger prop="radius delta" min="-200" max="-20"/>
-        <key>KP_Subtract</key>
-      </action>
-    </wish>
     <wish gesture="Drag" fingers="2">
       <action name="action5" when="update">
         <trigger prop="delta y" min="20" max="80"/>
@@ -67,8 +54,22 @@
       </action>
     </wish>
   </global>
+
+<!-- Applications specific gestures  -->
   <applications>
     <application name="inkscape">
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="-200" max="-40"/>
+        <key>KP_Subtract</key>
+      </action>
+    </wish>
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="40" max="200"/>
+        <key>KP_Add</key>
+      </action>
+    </wish>
     <wish gesture="Drag" fingers="2">
       <action name="action5" when="update">
         <trigger prop="delta x" min="20" max="80"/>
