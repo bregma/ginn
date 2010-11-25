@@ -81,7 +81,9 @@ static void
 update_wishes()
 {
   char *activeApp;
+  apps* tmpAp = ap;
   int diff=0;
+
   activeApp = getCurrentApp();
   printf(" --ActiveApp %s\n",activeApp);
   if (activeApp)
@@ -96,6 +98,8 @@ update_wishes()
      wpEnd->next = ap->wp;
   else 
     wpEnd->next = NULL;
+
+  ap = tmpAp;
 }
 
 static void

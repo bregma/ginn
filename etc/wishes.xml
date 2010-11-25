@@ -108,6 +108,18 @@
         <key>Down</key>
       </action>
     </wish>
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="-200" max="-40"/>
+        <key>KP_Subtract</key>
+      </action>
+    </wish>
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="40" max="200"/>
+        <key>KP_Add</key>
+      </action>
+    </wish>
     </application>
   </applications>
 </ginn>
