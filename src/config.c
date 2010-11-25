@@ -138,17 +138,15 @@ void parse_node(const xmlNode *root, int depth, struct wish *wp, struct apps *ap
 		if (node->type != XML_ELEMENT_NODE)
 			continue;
 
-		if ( (0==strcmp(node->name, "application")) ) 
-			if (0==strcmp(ap->appName, "")) {
-				ap->appName=xmlGetProp(node, "name");
-				wp = ap->wp = (struct wish *) malloc(sizeof(struct wish));
-				initw(wp);
-			} else {
+		if ( (0==strcmp(node->name, "application")) ) {
+			if (0!=strcmp(ap->appName, "")) {
 				ap = ap->next = (struct apps *) malloc(sizeof(struct apps));
 				inita(ap);
-				wp = ap->wp = (struct wish *) malloc(sizeof(struct wish));
-				initw(wp);
 			}
+			ap->appName=xmlGetProp(node, "name");
+			wp = ap->wp = (struct wish *) malloc(sizeof(struct wish));
+			initw(wp);
+		}
 		if ( (0==strcmp(node->name, "wish")) && (0==strcmp(wp->config_attr[0].attrName, "gesture name")) ) {
 			if (!(wp->next)) { 
 				wp->next = (struct wish *) malloc(sizeof(struct wish));
