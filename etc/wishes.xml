@@ -121,6 +121,34 @@
       </action>
     </wish>
     </application>
+    <application name="okular">
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="-200" max="-40"/>
+        <key modifier1="Control_L">KP_Subtract</key>
+      </action>
+    </wish>
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="40" max="200"/>
+        <key modifier1="Control_L">KP_Add</key>
+      </action>
+    </wish>
+    </application>
+    <application name="openoffice.org-writer">
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="40" max="200"/>
+        <button modifier1="Control_L">4</button>
+      </action>
+    </wish>
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="-200" max="-40"/>
+        <button modifier1="Control_L">5</button>
+      </action>
+    </wish>
+    </application>
   </applications>
 </ginn>
 

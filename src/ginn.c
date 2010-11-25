@@ -84,13 +84,13 @@ update_wishes()
   apps* tmpAp = ap;
   int diff=0;
 
-  activeApp = getCurrentApp();
+  activeApp = (char*)getCurrentApp();
   printf(" --ActiveApp %s\n",activeApp);
   if (activeApp)
 	diff = strcmp(activeApp,ap->appName);
 
-  while ( diff && ap->next) {
-	ap=ap->next;
+  while ( diff && ap->next ) {
+	ap = ap->next;
 	diff = strcmp(activeApp,ap->appName);
   }
 
@@ -112,9 +112,9 @@ gesture_match(  GeisGestureType    gesture_type,
   struct wish *topw;
   topw=wp;
   update_wishes();
-  while (wp && 0!=strcmp(wp->key,"")) {
+  while (wp && ( 0!=strcmp(wp->key,"") || wp->button )) {
     	int valid=1;
-	if (gesture_type==wp->config_attr[0].val && attrs[8].integer_val==wp->config_attr[1].val ) {
+	if (gesture_type==wp->config_attr[0].val && attrs[8].integer_val==wp->config_attr[1].val) {
 		   int attrsI=9, cAttrI=2;
 		   do {
 			if (0==strcmp(attrs[attrsI].name, wp->config_attr[cAttrI].attrName)){
@@ -132,7 +132,7 @@ gesture_match(  GeisGestureType    gesture_type,
 		   if (valid && wp->when == state){
 			if (0!=wp->button)
 			  injButton(wp->button, wp->modifiers);	
-			else
+			else 
 			  injKey(XStringToKeysym(wp->key), wp->modifiers);
 			clear_accum_attrs(wp->config_attr);
 		   }
@@ -249,7 +249,7 @@ gesture_finish(void              *cookie,
   int i = 0;
   fprintf(stdout, "Gesture type %d finished\n", gesture_type);
   for (i = 0; i < attr_count; ++i)
-    print_attr(&attrs[i]);
+    ;//print_attr(&attrs[i]);
   gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_FINISH);
 }
 
