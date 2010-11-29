@@ -99,13 +99,13 @@
     <wish gesture="Drag" fingers="2">
       <action name="action5" when="update">
         <trigger prop="delta y" min="20" max="80"/>
-        <key>Up</key>
+        <key>Page Up</key>
       </action>
     </wish>
     <wish gesture="Drag" fingers="2">
       <action name="action6" when="update">
         <trigger prop="delta y" min="-80" max="-20"/>
-        <key>Down</key>
+        <key>Page Down</key>
       </action>
     </wish>
     <wish gesture="Pinch" fingers="2">
@@ -118,6 +118,18 @@
       <action name="action1" when="update">
         <trigger prop="radius delta" min="40" max="200"/>
         <key>KP_Add</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta x" min="20" max="80"/>
+        <key>Left</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta x" min="-80" max="-20"/>
+        <key>Right</key>
       </action>
     </wish>
     </application>
@@ -146,6 +158,82 @@
       <action name="action1" when="update">
         <trigger prop="radius delta" min="-200" max="-40"/>
         <button modifier1="Control_L">5</button>
+      </action>
+    </wish>
+    </application>
+    <application name="eog">
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="-200" max="-40"/>
+        <key>KP_Subtract</key>
+      </action>
+    </wish>
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="40" max="200"/>
+        <key>KP_Add</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta y" min="20" max="80"/>
+        <key>Page Up</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta y" min="-80" max="-20"/>
+        <key>Page Down</key>
+      </action>
+    </wish>
+    <wish gesture="Rotate" fingers="2">
+	<action name="rotatecw" when="update">
+	<key modifier1="Control_L">R</key>     
+        </action>
+    </wish>
+    <wish gesture="Rotate" fingers="2">
+	<action name="rotateccw" when="update">
+	<key modifier1="Control_L" modifier2="Shift_L">R</key>     
+        </action>
+    </wish>
+    </application>
+    <application name="fennec">
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="-200" max="-40"/>
+        <key modifier1="Control_L">Down</key>
+      </action>
+    </wish>
+    <wish gesture="Pinch" fingers="2">
+      <action name="action1" when="update">
+        <trigger prop="radius delta" min="40" max="200"/>
+        <key modifier1="Control_L">Up</key>
+      </action>
+    </wish>
+    </application>
+    <application name="firefox">
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta y" min="20" max="80"/>
+        <key>Page Up</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta y" min="-80" max="-20"/>
+        <key>Page Down</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta x" min="20" max="80"/>
+        <key>Left</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta x" min="-80" max="-20"/>
+        <key>Right</key>
       </action>
     </wish>
     </application>
