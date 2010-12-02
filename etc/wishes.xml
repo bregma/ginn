@@ -133,6 +133,18 @@
         <key>Right</key>
       </action>
     </wish>
+    <wish gesture="Rotate" fingers="2">
+      <action name="rotatecw" when="finish">
+        <trigger prop="angle delta" min="0.08" max="1.5"/>
+	<key modifier1="Control_L">Right</key>     
+      </action>
+    </wish>
+    <wish gesture="Rotate" fingers="2">
+      <action name="rotateccw" when="finish">
+        <trigger prop="angle delta" min="-1.5" max="-0.08"/>
+	<key modifier1="Control_L">Left</key>     
+      </action>
+    </wish>
     </application>
 
     <application name="okular">
@@ -191,12 +203,14 @@
       </action>
     </wish>
     <wish gesture="Rotate" fingers="2">
-      <action name="rotatecw" when="update">
+      <action name="rotatecw" when="finish">
+        <trigger prop="angle delta" min="0.08" max="1.5"/>
 	<key modifier1="Control_L">R</key>     
       </action>
     </wish>
     <wish gesture="Rotate" fingers="2">
-      <action name="rotateccw" when="update">
+      <action name="rotateccw" when="finish">
+        <trigger prop="angle delta" min="-1.5" max="-0.08"/>
 	<key modifier1="Control_L" modifier2="Shift_L">R</key>     
       </action>
     </wish>

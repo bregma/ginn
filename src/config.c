@@ -28,8 +28,8 @@ debugOut(struct wish * wp) {
         printf("\t mod%d : %s ", i, wp->modifiers[i]);
   for(i=0 ; i<4 ; i++ ) {
         printf("\n attrName : %s ", wp->config_attr[i].attrName);
-        printf("\t val : %d ", wp->config_attr[i].val);
-        printf("\t valMax : %d", wp->config_attr[i].valMax);
+        printf("\t val : %.2f ", wp->config_attr[i].val);
+        printf("\t valMax : %.2f", wp->config_attr[i].valMax);
    }
   printf("\n pMe : %x  pNext : %x ", wp, wp->next);
   printf("\n===================================================");
@@ -79,7 +79,7 @@ static int ginn_str2bool(const char *str){
 	if (str == NULL) return -1;
 	if (strcmp(str, "true") == 0) return 1;
 	if (strcmp(str, "false") == 0) return 0;
-	fprintf(stderr, "ERROR: Ivalid value for boolean attribute: %s\n", str);
+	fprintf(stderr, "ERROR: Invalid value for boolean attribute: %s\n", str);
 	return -2;
 }
 
@@ -105,8 +105,8 @@ void store_1config(xmlNode *node, struct wish *wp, int *position)
      }
      if (0==strcmp(node->name, "trigger")) {
 	wp->config_attr[*position].attrName = xmlGetProp(node, "prop");
-	wp->config_attr[*position].val = atoi(xmlGetProp(node, "min"));
-	wp->config_attr[*position].valMax = atoi(xmlGetProp(node, "max"));
+	wp->config_attr[*position].val      = atof(xmlGetProp(node, "min"));
+	wp->config_attr[*position].valMax   = atof(xmlGetProp(node, "max"));
 	int acc = ginn_str2bool(xmlGetProp(node, "accumulate"));
 	wp->config_attr[*position].accumulate = acc == -1 ? GINN_DEFAULT_ACCUMULATE : acc;
 	wp->config_attr[*position].accumVal = 0;

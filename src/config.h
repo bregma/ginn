@@ -14,10 +14,10 @@ typedef struct ginn_config {
 
 typedef struct att {
 	char *attrName ;
-	int val ;
-	int valMax;
+	float val ;
+	float valMax;
 	int accumulate;
-	int accumVal;
+	float accumVal;
 } att;
 
 typedef struct wish {

@@ -43,7 +43,7 @@ wish *wp, *wpEnd;
 apps *ap;
 
 static int
-inside (int x, int a, int b){
+inside (float x, float a, float b){
   return ((x<=b) && (x>=a));
 }
 
@@ -119,13 +119,13 @@ gesture_match(  GeisGestureType    gesture_type,
 		   do {
 			if (0==strcmp(attrs[attrsI].name, wp->config_attr[cAttrI].attrName)){
 				printf("DEBUG -- comparing %s %s : ", attrs[attrsI].name, wp->config_attr[cAttrI].attrName);
-				printf("%d %d %d \n", (int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
-				printf("%i \n", inside((int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax));
+				printf("%.2f %.2f %.2f \n", attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
+				printf("%i \n", inside(attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax));
 				if (wp->config_attr[cAttrI].accumulate){
-					wp->config_attr[cAttrI].accumVal += (int)attrs[attrsI].float_val;	
+					wp->config_attr[cAttrI].accumVal += attrs[attrsI].float_val;	
 					valid= valid && inside(wp->config_attr[cAttrI].accumVal, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
 				}
-				else valid = valid && inside((int)attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
+				else valid = valid && inside(attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
 				attrsI++;  cAttrI++;
 			} else attrsI++;
 		   } while ( (0!=strcmp(wp->config_attr[cAttrI].attrName,"")) && attrsI<18 );
@@ -365,7 +365,7 @@ int main(int argc, char* argv[])
   int pos=0;
   printf("\n");
   while (strcmp(config_attr[pos].attrName,"")) {
-    printf("DEBUG %d %s %d %d \n", pos, config_attr[pos].attrName, config_attr[pos].val, config_attr[pos].valMax); 
+    printf("DEBUG %d %s %.2f %.2f \n", pos, config_attr[pos].attrName, config_attr[pos].val, config_attr[pos].valMax); 
     pos++;
   }
 

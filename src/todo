@@ -3,8 +3,7 @@ Fix X crashes :
 	Too many Open/Close XDisplay may be the cause of problems !
 
 Fix gestures parameters comparison:
-	float for float, int for int, etc
-	Start the comparison from the begining (remove the 18...)
+	Limit the number of supported parameters (now is 18)
 
 Add support for DBus
 
