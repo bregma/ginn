@@ -12,3 +12,6 @@ ChangeLog:
 	bzr log > ChangeLog
 
 dist-hook: ChangeLog INSTALL
+
+DISTCLEANFILES = ChangeLog
+
