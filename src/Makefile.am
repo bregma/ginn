@@ -1,7 +1,7 @@
 bin_PROGRAMS = ginn
 man1_MANS = ginn.1
 
-ginn_SOURCES = ginn.c config.c xt.c bamf.c
+ginn_SOURCES = ginn.c config.h config.c xt.c bamf.c
 ginn_CFLAGS = \
 	-DGINN_CONFIG_DIR=\"$(pkgdatadir)\" \
 	$(GEIS_CFLAGS) $(XTST_CFLAGS) $(X11_CFLAGS) $(XML2_CFLAGS) $(BAMF_CFLAGS)
@@ -11,4 +11,6 @@ EXTRA_DIST = ginn.pod
 
 %.1: %.pod
 	pod2man -c '' -d '' -r '' $< > $@
+
+DISTCLEANFILES = $(man1_MANS)
 

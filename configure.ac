@@ -1,7 +1,7 @@
 # Initialize Autoconf
 AC_PREREQ([2.60])
 AC_INIT([Ginn],
-        [0.2.2],
+        [0.2.3],
         [],
         [ginn])
 AC_CONFIG_SRCDIR([Makefile.am])
