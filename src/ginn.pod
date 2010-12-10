@@ -1,0 +1,30 @@
+=encoding utf8
+
+=head1 NAME
+
+ginn - Gesture to Keypress / Mouse Button injector
+
+=head1 SYNOPSIS
+
+ginn <specific configuration file>
+
+=head1 DESCRIPTION
+
+B<ginn> is a program to test support gestures in legacy applications without the
+need to rewrite them.  This support is made by injecting keypresses or mouse
+buttons after matching rules from wishes.xml file.
+
+You can define the matching rules by expressing I<wishes>. Each wish contains
+the name of the gesture, number of fingers, the matching rules which can be
+obtained by looking inside attributes file or using geistest file.
+The keypress to inject is defined by I<key> tag, and the mouse button by
+I<button>, you can add also up to 4 modifiers keys like I<Control_L>.
+
+=head1 AUTHOR
+
+Mohamed Ikbel Boulabiar <boulabiar@gmail.com>
+
+=head1 COPYRIGHT
+
+Copyright 2010 by Canonical, Ltd.
+
