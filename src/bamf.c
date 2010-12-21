@@ -23,9 +23,7 @@ char *
 getName(char * deskfile)
 {
   char *temp;
-  if (!deskfile)
-    return '\0';
-  temp = strrchr(deskfile, '/');
+  temp = strdup(strrchr(deskfile, '/'));
   return strndup(temp+1, strlen(temp)-9);
 }
 
@@ -33,12 +31,18 @@ char *
 getCurrentApp()
 {
   g_type_init();
-  char *deskfile;
+  char *deskfile, *appName; 
+  char* temp;
   BamfWindow * win = NULL;
 
   BamfApplication * app = bamf_matcher_get_active_application(bamf_matcher_get_default());
-  deskfile = getName((char*)bamf_application_get_desktop_file(app));
+  appName = (char*)bamf_view_get_name(BAMF_VIEW(app));
+  temp = strdup(bamf_application_get_desktop_file(app));
 
-  return deskfile;
+  if (strchr(appName,' '))
+    return getName((char*)temp);
+  else 
+    return appName;
+
 }
 

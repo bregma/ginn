@@ -147,7 +147,7 @@
     </wish>
     </application>
 
-    <application name="okular">
+    <application name="Okular">
     <wish gesture="Pinch" fingers="2">
       <action name="action1" when="update">
         <trigger prop="radius delta" min="-200" max="-40"/>
