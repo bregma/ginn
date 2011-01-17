@@ -20,6 +20,16 @@ obtained by looking inside attributes file or using geistest file.
 The keypress to inject is defined by I<key> tag, and the mouse button by
 I<button>, you can add also up to 4 modifiers keys like I<Control_L>.
 
+=head1 FILES
+
+I</etc/ginn/wishes.xml>
+
+Customized ginn wishes file.
+
+I</usr/share/ginn/wishes.xml>
+
+Basic ginn wishes file.
+
 =head1 AUTHOR
 
 Mohamed Ikbel Boulabiar <boulabiar@gmail.com>

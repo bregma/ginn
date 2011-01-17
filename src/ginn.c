@@ -275,7 +275,10 @@ ginn_default_config()
   static const char default_file_name[] = "/wishes.xml";
   static const char *search_paths[] =
   {
+    "etc",
     "../etc",
+    ".",
+    "/etc/ginn",
     GINN_CONFIG_DIR
   };
   static const int num_paths = sizeof(search_paths) / sizeof(const char *);
@@ -293,6 +296,7 @@ ginn_default_config()
     int sres = stat(file_name, &sbuf);
     if (sres == 0)
     {
+      fprintf(stdout, "Using wishes file %s\n", file_name);
       return file_name;
     }
     free(file_name);
