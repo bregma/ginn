@@ -130,10 +130,16 @@ gesture_match(  GeisGestureType    gesture_type,
 			} else attrsI++;
 		   } while ( (0!=strcmp(wp->config_attr[cAttrI].attrName,"")) && attrsI<18 );
 		   if (valid && wp->when == state){
-			if (0!=wp->button)
-			  injButton(wp->button, wp->modifiers);	
-			if (0 != strcmp(wp->key, ""))
-			  injKey(XStringToKeysym(wp->key), wp->modifiers);
+			if ((0!=wp->button) && (0 != strcmp(wp->key, "")))
+			{	injMixBtnKey(XStringToKeysym(wp->key), wp->button, wp->modifiers);
+				printf("MIX -- MIX");
+}
+			else {
+				if (0!=wp->button)
+					injButton(wp->button, wp->modifiers);	
+				if (0 != strcmp(wp->key, ""))
+					injKey(XStringToKeysym(wp->key), wp->modifiers);
+			}
 			clear_accum_attrs(wp->config_attr);
 		   }
 	}

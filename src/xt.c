@@ -63,3 +63,20 @@ injButton(int btn, char * modifiers[])
 	XFlush(disp);
 }
 
+void
+injMixBtnKey(KeySym ks, int btn, char * modifiers[])
+{
+	int i;
+
+	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
+		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  True, CurrentTime);
+        XTestFakeButtonEvent(disp, btn, True, CurrentTime);
+        XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks),  True, CurrentTime);
+        XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), False, CurrentTime);
+        XTestFakeButtonEvent(disp, btn, False, CurrentTime);
+	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
+		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  False, CurrentTime);
+
+	XFlush(disp);
+}
+
