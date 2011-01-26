@@ -132,7 +132,7 @@ gesture_match(  GeisGestureType    gesture_type,
 		   if (valid && wp->when == state){
 			if (0!=wp->button)
 			  injButton(wp->button, wp->modifiers);	
-			else 
+			if (0 != strcmp(wp->key, ""))
 			  injKey(XStringToKeysym(wp->key), wp->modifiers);
 			clear_accum_attrs(wp->config_attr);
 		   }
