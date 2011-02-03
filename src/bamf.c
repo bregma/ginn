@@ -33,15 +33,19 @@ getCurrentApp()
   g_type_init();
   char *deskfile, *appName; 
   char* temp;
-  BamfWindow * win = NULL;
 
   BamfApplication * app = bamf_matcher_get_active_application(bamf_matcher_get_default());
-  appName = (char*)bamf_view_get_name(BAMF_VIEW(app));
-  temp = strdup(bamf_application_get_desktop_file(app));
+  if (app) {
+    appName = (char*)bamf_view_get_name(BAMF_VIEW(app));
+    temp = bamf_application_get_desktop_file(app);
 
   if (strchr(appName,' ') && temp)
     return getName((char*)temp);
   else 
     return appName;
+  }
+  else
+    return "";
+
 }
 
