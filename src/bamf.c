@@ -39,10 +39,9 @@ getCurrentApp()
   appName = (char*)bamf_view_get_name(BAMF_VIEW(app));
   temp = strdup(bamf_application_get_desktop_file(app));
 
-  if (strchr(appName,' '))
+  if (strchr(appName,' ') && temp)
     return getName((char*)temp);
   else 
     return appName;
-
 }
 
