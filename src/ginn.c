@@ -284,7 +284,7 @@ ginn_default_config()
     "etc",
     "../etc",
     ".",
-    "/etc/ginn",
+    "$HOME/.ginn",
     GINN_CONFIG_DIR
   };
   static const int num_paths = sizeof(search_paths) / sizeof(const char *);
@@ -293,11 +293,35 @@ ginn_default_config()
   for (i=0; i < num_paths; ++i)
   {
     struct stat sbuf;
-    char *file_name = calloc(strlen(search_paths[i])
-                             + strlen(default_file_name)
-                             + 1,
-                             sizeof(char));
-    strcpy(file_name, search_paths[i]);
+    char *file_name = NULL;
+
+    if (strstr(search_paths[i], "$HOME"))
+    {
+      char *home_dir = getenv("HOME");
+      if (!home_dir)
+      {
+	continue;
+      }
+      else
+      {
+	char *cdr = index(search_paths[i], '/');
+	size_t file_name_length = strlen(home_dir)
+	                        + strlen(cdr)
+	                        + strlen(default_file_name)
+	                        + 1;
+	file_name = calloc(file_name_length, sizeof(char));
+	strcpy(file_name, home_dir);
+	strcat(file_name, cdr);
+      }
+    }
+    else
+    {
+      size_t file_name_length = strlen(search_paths[i])
+                              + strlen(default_file_name)
+                              + 1;
+      file_name = calloc(file_name_length, sizeof(char));
+      strcpy(file_name, search_paths[i]);
+    }
     strcat(file_name, default_file_name);
     int sres = stat(file_name, &sbuf);
     if (sres == 0)
