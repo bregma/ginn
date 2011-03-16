@@ -4,13 +4,13 @@
     <wish gesture="Drag" fingers="2">
       <action name="action5" when="update">
         <trigger prop="delta y" min="20" max="80"/>
-        <key>Down</key>
+        <button>4</button>
       </action>
     </wish>
     <wish gesture="Drag" fingers="2">
       <action name="action6" when="update">
         <trigger prop="delta y" min="-80" max="-20"/>
-        <key>Up</key>
+        <button>5</button>
       </action>
     </wish>
 
