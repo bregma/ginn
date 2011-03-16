@@ -253,6 +253,9 @@ gesture_start(void *cookie,
     fprintf(stdout, "Gesture type %d started\n", gesture_type);
     for (i = 0; i < attr_count; ++i)
         print_attr(&attrs[i]);
+
+    // In GEIS v1, we know that the focus coords are in attrs 5 and 6
+    movePointer((int)attrs[5].float_val, (int)attrs[6].float_val);
 }
 
 static void

@@ -33,6 +33,11 @@ void closeDisplay()
     XCloseDisplay(disp);
 }
 
+void movePointer(int x, int y)
+{
+    XTestFakeMotionEvent(disp, 0, x, y, CurrentTime);
+}
+
 void injKey(KeySym ks, char *modifiers[])
 {
     int i;
