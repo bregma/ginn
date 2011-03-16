@@ -28,31 +28,31 @@
 #define GINN_DEFAULT_ACCUMULATE		1
 
 typedef struct ginn_config {
-        xmlDocPtr doc;
-	xmlNodePtr root;
+    xmlDocPtr doc;
+    xmlNodePtr root;
 } cfg;
 
 typedef struct att {
-	char *attrName ;
-	float val ;
-	float valMax;
-	int accumulate;
-	float accumVal;
+    char *attrName;
+    float val;
+    float valMax;
+    int accumulate;
+    float accumVal;
 } att;
 
 typedef struct wish {
-	att config_attr[25];
-	char *key;
-	int   button;
-	char *modifiers[4];
-	struct wish* next;
-	int when;
+    att config_attr[25];
+    char *key;
+    int button;
+    char *modifiers[4];
+    struct wish *next;
+    int when;
 } wish;
 
 typedef struct apps {
-	char *appName;
-	struct wish *wp;
-	struct apps *next;
+    char *appName;
+    struct wish *wp;
+    struct apps *next;
 } apps;
 
-#endif /* GINN_CONFIG_H */
+#endif                          /* GINN_CONFIG_H */

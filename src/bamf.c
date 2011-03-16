@@ -19,33 +19,30 @@
 #include <libbamf/bamf-matcher.h>
 #include <string.h>
 
-char *
-getName(char * deskfile)
+char *getName(char *deskfile)
 {
-  char *temp;
-  temp = strdup(strrchr(deskfile, '/'));
-  return strndup(temp+1, strlen(temp)-9);
+    char *temp;
+    temp = strdup(strrchr(deskfile, '/'));
+    return strndup(temp + 1, strlen(temp) - 9);
 }
 
-char *
-getCurrentApp()
+char *getCurrentApp()
 {
-  g_type_init();
-  char *deskfile, *appName; 
-  char* temp;
+    g_type_init();
+    char *deskfile, *appName;
+    char *temp;
 
-  BamfApplication * app = bamf_matcher_get_active_application(bamf_matcher_get_default());
-  if (app) {
-    appName = (char*)bamf_view_get_name(BAMF_VIEW(app));
-    temp = bamf_application_get_desktop_file(app);
+    BamfApplication *app =
+        bamf_matcher_get_active_application(bamf_matcher_get_default());
+    if (app) {
+        appName = (char *) bamf_view_get_name(BAMF_VIEW(app));
+        temp = bamf_application_get_desktop_file(app);
 
-  if (strchr(appName,' ') && temp)
-    return getName((char*)temp);
-  else 
-    return appName;
-  }
-  else
-    return "";
+        if (strchr(appName, ' ') && temp)
+            return getName((char *) temp);
+        else
+            return appName;
+    } else
+        return "";
 
 }
-

@@ -33,241 +33,265 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
-att config_attr[25] = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } };
+att config_attr[25] = {[0 ... 24] = {.attrName = "",.val = 0,.valMax = 0}
+};
 
-wish w1 = { 	.config_attr = { [0 ... 24] = {.attrName="", .val=0, .valMax=0 } },
-		.key ="",
-		.next=NULL };
+wish w1 = {.config_attr = {[0 ... 24] =
+                           {.attrName = "",.val = 0,.valMax = 0}
+                           }
+,
+.key = "",
+.next = NULL
+};
 
 wish *wp, *wpEnd;
 apps *ap;
 
-static int
-inside (float x, float a, float b){
-  return ((x<=b) && (x>=a));
+static int inside(float x, float a, float b)
+{
+    return ((x <= b) && (x >= a));
 }
 
-void
-initw(struct wish *wp) {
-  int i;
-  wp->button=0;
-  wp->key="";
-  wp->next=NULL;
-  for(i=0 ; i<4 ; i++)
-  	wp->modifiers[i]="";
-  for(i=0 ; i<25 ; i++ ) {
-	wp->config_attr[i].attrName="";
-	wp->config_attr[i].val=0;
-	wp->config_attr[i].valMax=0;
-  }
+void initw(struct wish *wp)
+{
+    int i;
+    wp->button = 0;
+    wp->key = "";
+    wp->next = NULL;
+    for (i = 0; i < 4; i++)
+        wp->modifiers[i] = "";
+    for (i = 0; i < 25; i++) {
+        wp->config_attr[i].attrName = "";
+        wp->config_attr[i].val = 0;
+        wp->config_attr[i].valMax = 0;
+    }
 }
 
-void
-inita(struct apps *ap) {
-  ap->next=NULL;
-  ap->wp  =NULL;
-  ap->appName="";
+void inita(struct apps *ap)
+{
+    ap->next = NULL;
+    ap->wp = NULL;
+    ap->appName = "";
 }
 
-static void clear_accum_attrs(att *attrs){
-	int i = 0;
-	while (strcmp(attrs[i].attrName, "") != 0){
-		if (attrs[i].accumulate) attrs[i].accumVal = 0;
-		i++;
-	}
+static void clear_accum_attrs(att * attrs)
+{
+    int i = 0;
+    while (strcmp(attrs[i].attrName, "") != 0) {
+        if (attrs[i].accumulate)
+            attrs[i].accumVal = 0;
+        i++;
+    }
+}
+
+static void update_wishes()
+{
+    char *activeApp;
+    apps *tmpAp = ap;
+    int diff = 0;
+
+    activeApp = (char *) getCurrentApp();
+    printf(" --ActiveApp %s\n", activeApp);
+    if (activeApp)
+        diff = strcmp(activeApp, ap->appName);
+
+    while (diff && ap->next) {
+        ap = ap->next;
+        diff = strcmp(activeApp, ap->appName);
+    }
+
+    if (!diff)
+        wpEnd->next = ap->wp;
+    else
+        wpEnd->next = NULL;
+
+    ap = tmpAp;
 }
 
 static void
-update_wishes()
+gesture_match(GeisGestureType gesture_type,
+              GeisGestureId gesture_id,
+              GeisSize attr_count, GeisGestureAttr * attrs, int state)
 {
-  char *activeApp;
-  apps* tmpAp = ap;
-  int diff=0;
-
-  activeApp = (char*)getCurrentApp();
-  printf(" --ActiveApp %s\n",activeApp);
-  if (activeApp)
-	diff = strcmp(activeApp,ap->appName);
-
-  while ( diff && ap->next ) {
-	ap = ap->next;
-	diff = strcmp(activeApp,ap->appName);
-  }
-
-  if (!diff)
-     wpEnd->next = ap->wp;
-  else 
-    wpEnd->next = NULL;
-
-  ap = tmpAp;
-}
-
-static void
-gesture_match(  GeisGestureType    gesture_type,
-                GeisGestureId      gesture_id,
-                GeisSize           attr_count,
-                GeisGestureAttr   *attrs,
-		int state)
-{
-  struct wish *topw;
-  topw=wp;
-  update_wishes();
-  while (wp && ( 0!=strcmp(wp->key,"") || wp->button )) {
-    	int valid=1;
-	if (gesture_type==wp->config_attr[0].val && attrs[8].integer_val==wp->config_attr[1].val) {
-		   int attrsI=9, cAttrI=2;
-		   do {
-			if (0==strcmp(attrs[attrsI].name, wp->config_attr[cAttrI].attrName)){
-				printf("DEBUG -- comparing %s %s : ", attrs[attrsI].name, wp->config_attr[cAttrI].attrName);
-				printf("%.2f %.2f %.2f \n", attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
-				printf("%i \n", inside(attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax));
-				if (wp->config_attr[cAttrI].accumulate){
-					wp->config_attr[cAttrI].accumVal += attrs[attrsI].float_val;	
-					valid= valid && inside(wp->config_attr[cAttrI].accumVal, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
-				}
-				else valid = valid && inside(attrs[attrsI].float_val, wp->config_attr[cAttrI].val, wp->config_attr[cAttrI].valMax);
-				attrsI++;  cAttrI++;
-			} else attrsI++;
-		   } while ( (0!=strcmp(wp->config_attr[cAttrI].attrName,"")) && attrsI<18 );
-		   if (valid && wp->when == state){
-			if ((0!=wp->button) && (0 != strcmp(wp->key, "")))
-			{	injMixBtnKey(XStringToKeysym(wp->key), wp->button, wp->modifiers);
-				printf("MIX -- MIX");
-}
-			else {
-				if (0!=wp->button)
-					injButton(wp->button, wp->modifiers);	
-				if (0 != strcmp(wp->key, ""))
-					injKey(XStringToKeysym(wp->key), wp->modifiers);
-			}
-			clear_accum_attrs(wp->config_attr);
-		   }
-	}
-	if (state == GINN_FINISH) clear_accum_attrs(wp->config_attr);
-	wp=wp->next;
-  }
-  wp=topw;
+    struct wish *topw;
+    topw = wp;
+    update_wishes();
+    while (wp && (0 != strcmp(wp->key, "") || wp->button)) {
+        int valid = 1;
+        if (gesture_type == wp->config_attr[0].val
+            && attrs[8].integer_val == wp->config_attr[1].val) {
+            int attrsI = 9, cAttrI = 2;
+            do {
+                if (0 ==
+                    strcmp(attrs[attrsI].name,
+                           wp->config_attr[cAttrI].attrName)) {
+                    printf("DEBUG -- comparing %s %s : ",
+                           attrs[attrsI].name,
+                           wp->config_attr[cAttrI].attrName);
+                    printf("%.2f %.2f %.2f \n",
+                           attrs[attrsI].float_val,
+                           wp->config_attr[cAttrI].val,
+                           wp->config_attr[cAttrI].valMax);
+                    printf("%i \n",
+                           inside(attrs[attrsI].float_val,
+                                  wp->config_attr[cAttrI].val,
+                                  wp->config_attr[cAttrI].valMax));
+                    if (wp->config_attr[cAttrI].accumulate) {
+                        wp->config_attr[cAttrI].accumVal +=
+                            attrs[attrsI].float_val;
+                        valid = valid
+                            && inside(wp->config_attr
+                                      [cAttrI].accumVal,
+                                      wp->config_attr
+                                      [cAttrI].val,
+                                      wp->config_attr[cAttrI].valMax);
+                    } else
+                        valid = valid
+                            && inside(attrs[attrsI].float_val,
+                                      wp->config_attr
+                                      [cAttrI].val,
+                                      wp->config_attr[cAttrI].valMax);
+                    attrsI++;
+                    cAttrI++;
+                } else
+                    attrsI++;
+            } while ((0 != strcmp(wp->config_attr[cAttrI].attrName, ""))
+                     && attrsI < 18);
+            if (valid && wp->when == state) {
+                if ((0 != wp->button)
+                    && (0 != strcmp(wp->key, ""))) {
+                    injMixBtnKey(XStringToKeysym(wp->key),
+                                 wp->button, wp->modifiers);
+                    printf("MIX -- MIX");
+                } else {
+                    if (0 != wp->button)
+                        injButton(wp->button, wp->modifiers);
+                    if (0 != strcmp(wp->key, ""))
+                        injKey(XStringToKeysym(wp->key), wp->modifiers);
+                }
+                clear_accum_attrs(wp->config_attr);
+            }
+        }
+        if (state == GINN_FINISH)
+            clear_accum_attrs(wp->config_attr);
+        wp = wp->next;
+    }
+    wp = topw;
 }
 
 static Window getRootWindow()
 {
-  Display *display = NULL;
-  Window window = 0;
-  
-  display = XOpenDisplay(NULL);
-  if (!display)
-  {
-    fprintf(stderr, "error opening X11 display.\n");
-    exit(1);
-  }
+    Display *display = NULL;
+    Window window = 0;
 
-  window = DefaultRootWindow(display);
+    display = XOpenDisplay(NULL);
+    if (!display) {
+        fprintf(stderr, "error opening X11 display.\n");
+        exit(1);
+    }
 
-  XCloseDisplay(display);
+    window = DefaultRootWindow(display);
 
-  return window;
+    XCloseDisplay(display);
+
+    return window;
 }
 
-static void
-print_attr(GeisGestureAttr *attr)
+static void print_attr(GeisGestureAttr * attr)
 {
-  fprintf(stdout, "\tattr %s=", attr->name);
-  switch (attr->type)
-  {
+    fprintf(stdout, "\tattr %s=", attr->name);
+    switch (attr->type) {
     case GEIS_ATTR_TYPE_BOOLEAN:
-      fprintf(stdout, "%s\n", attr->boolean_val ? "true" : "false");
-      break;
+        fprintf(stdout, "%s\n", attr->boolean_val ? "true" : "false");
+        break;
     case GEIS_ATTR_TYPE_FLOAT:
-      fprintf(stdout, "%f\n", attr->float_val);
-      break;
+        fprintf(stdout, "%f\n", attr->float_val);
+        break;
     case GEIS_ATTR_TYPE_INTEGER:
-      fprintf(stdout, "%d\n", attr->integer_val);
-      break;
+        fprintf(stdout, "%d\n", attr->integer_val);
+        break;
     case GEIS_ATTR_TYPE_STRING:
-      fprintf(stdout, "\"%s\"\n", attr->string_val);
-      break;
+        fprintf(stdout, "\"%s\"\n", attr->string_val);
+        break;
     default:
-      fprintf(stdout, "<unknown>\n");
-      break;
-  }
+        fprintf(stdout, "<unknown>\n");
+        break;
+    }
 }
 
 static void
-gesture_added(void            *cookie,
-	      GeisGestureType  gesture_type,
-	      GeisGestureId    gesture_id,
-	      GeisSize         attr_count,
-	      GeisGestureAttr *attrs)
+gesture_added(void *cookie,
+              GeisGestureType gesture_type,
+              GeisGestureId gesture_id,
+              GeisSize attr_count, GeisGestureAttr * attrs)
 {
-  int i = 0;
-  fprintf(stdout, "Gesture type %d added\n", gesture_type);
-  for (i = 0; i < attr_count; ++i)
-    print_attr(&attrs[i]);
+    int i = 0;
+    fprintf(stdout, "Gesture type %d added\n", gesture_type);
+    for (i = 0; i < attr_count; ++i)
+        print_attr(&attrs[i]);
 }
 
 static void
-gesture_removed(void              *cookie,
-		GeisGestureType    gesture_type,
-		GeisGestureId      gesture_id,
-	        GeisSize           attr_count,
-	        GeisGestureAttr   *attrs)
+gesture_removed(void *cookie,
+                GeisGestureType gesture_type,
+                GeisGestureId gesture_id,
+                GeisSize attr_count, GeisGestureAttr * attrs)
 {
-  int i = 0;
-  fprintf(stdout, "Gesture type %d removed\n", gesture_type);
-  for (i = 0; i < attr_count; ++i)
-    print_attr(&attrs[i]);
+    int i = 0;
+    fprintf(stdout, "Gesture type %d removed\n", gesture_type);
+    for (i = 0; i < attr_count; ++i)
+        print_attr(&attrs[i]);
 }
 
 static void
-gesture_start(void              *cookie,
-              GeisGestureType    gesture_type,
-              GeisGestureId      gesture_id,
-	      GeisSize           attr_count,
-	      GeisGestureAttr   *attrs)
+gesture_start(void *cookie,
+              GeisGestureType gesture_type,
+              GeisGestureId gesture_id,
+              GeisSize attr_count, GeisGestureAttr * attrs)
 {
-  int i = 0;
-  fprintf(stdout, "Gesture type %d started\n", gesture_type);
-  for (i = 0; i < attr_count; ++i)
-    print_attr(&attrs[i]);
+    int i = 0;
+    fprintf(stdout, "Gesture type %d started\n", gesture_type);
+    for (i = 0; i < attr_count; ++i)
+        print_attr(&attrs[i]);
+
+    // In GEIS v1, we know that the focus coords are in attrs 5 and 6
+    movePointer((int)attrs[5].float_val, (int)attrs[6].float_val);
 }
 
 static void
-gesture_update(void              *cookie,
-               GeisGestureType    gesture_type,
-               GeisGestureId      gesture_id,
-	       GeisSize           attr_count,
-	       GeisGestureAttr   *attrs)
+gesture_update(void *cookie,
+               GeisGestureType gesture_type,
+               GeisGestureId gesture_id,
+               GeisSize attr_count, GeisGestureAttr * attrs)
 {
-  int i = 0;
-  fprintf(stdout, "Gesture type %d updated\n", gesture_type);
-  for (i = 0; i < attr_count; ++i)
-    print_attr(&attrs[i]);
-  gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_UPDATE);
+    int i = 0;
+    fprintf(stdout, "Gesture type %d updated\n", gesture_type);
+    for (i = 0; i < attr_count; ++i)
+        print_attr(&attrs[i]);
+    gesture_match(gesture_type, gesture_id, attr_count, attrs,
+                  GINN_UPDATE);
 }
 
 static void
-gesture_finish(void              *cookie,
-               GeisGestureType    gesture_type,
-               GeisGestureId      gesture_id,
-	       GeisSize           attr_count,
-	       GeisGestureAttr   *attrs)
+gesture_finish(void *cookie,
+               GeisGestureType gesture_type,
+               GeisGestureId gesture_id,
+               GeisSize attr_count, GeisGestureAttr * attrs)
 {
-  int i = 0;
-  fprintf(stdout, "Gesture type %d finished\n", gesture_type);
-  for (i = 0; i < attr_count; ++i)
-    ;//print_attr(&attrs[i]);
-  gesture_match(gesture_type, gesture_id, attr_count, attrs, GINN_FINISH);
+    int i = 0;
+    fprintf(stdout, "Gesture type %d finished\n", gesture_type);
+    for (i = 0; i < attr_count; ++i);   //print_attr(&attrs[i]);
+    gesture_match(gesture_type, gesture_id, attr_count, attrs,
+                  GINN_FINISH);
 }
-
 
 GeisGestureFuncs gesture_funcs = {
-  gesture_added,
-  gesture_removed,
-  gesture_start,
-  gesture_update,
-  gesture_finish
+    gesture_added,
+    gesture_removed,
+    gesture_start,
+    gesture_update,
+    gesture_finish
 };
-
 
 /*
  * Searches for a default config file.
@@ -275,190 +299,173 @@ GeisGestureFuncs gesture_funcs = {
  * Returns a pointer to a config file name (which must be freed) or NULL
  * if no default config file was found.
  */
-static char *
-ginn_default_config()
+static char *ginn_default_config()
 {
-  static const char default_file_name[] = "/wishes.xml";
-  static const char *search_paths[] =
-  {
-    "etc",
-    "../etc",
-    ".",
-    "$HOME/.ginn",
-    GINN_CONFIG_DIR
-  };
-  static const int num_paths = sizeof(search_paths) / sizeof(const char *);
-  int i;
+    static const char default_file_name[] = "/wishes.xml";
+    static const char *search_paths[] = {
+        "etc",
+        "../etc",
+        ".",
+        "$HOME/.ginn",
+        GINN_CONFIG_DIR
+    };
+    static const int num_paths =
+        sizeof(search_paths) / sizeof(const char *);
+    int i;
 
-  for (i=0; i < num_paths; ++i)
-  {
-    struct stat sbuf;
-    char *file_name = NULL;
+    for (i = 0; i < num_paths; ++i) {
+        struct stat sbuf;
+        char *file_name = NULL;
 
-    if (strstr(search_paths[i], "$HOME"))
-    {
-      char *home_dir = getenv("HOME");
-      if (!home_dir)
-      {
-	continue;
-      }
-      else
-      {
-	char *cdr = index(search_paths[i], '/');
-	size_t file_name_length = strlen(home_dir)
-	                        + strlen(cdr)
-	                        + strlen(default_file_name)
-	                        + 1;
-	file_name = calloc(file_name_length, sizeof(char));
-	strcpy(file_name, home_dir);
-	strcat(file_name, cdr);
-      }
+        if (strstr(search_paths[i], "$HOME")) {
+            char *home_dir = getenv("HOME");
+            if (!home_dir) {
+                continue;
+            } else {
+                char *cdr = index(search_paths[i], '/');
+                size_t file_name_length = strlen(home_dir)
+                    + strlen(cdr)
+                    + strlen(default_file_name)
+                    + 1;
+                file_name = calloc(file_name_length, sizeof(char));
+                strcpy(file_name, home_dir);
+                strcat(file_name, cdr);
+            }
+        } else {
+            size_t file_name_length = strlen(search_paths[i])
+                + strlen(default_file_name)
+                + 1;
+            file_name = calloc(file_name_length, sizeof(char));
+            strcpy(file_name, search_paths[i]);
+        }
+        strcat(file_name, default_file_name);
+        int sres = stat(file_name, &sbuf);
+        if (sres == 0) {
+            fprintf(stdout, "Using wishes file %s\n", file_name);
+            return file_name;
+        }
+        free(file_name);
     }
-    else
-    {
-      size_t file_name_length = strlen(search_paths[i])
-                              + strlen(default_file_name)
-                              + 1;
-      file_name = calloc(file_name_length, sizeof(char));
-      strcpy(file_name, search_paths[i]);
-    }
-    strcat(file_name, default_file_name);
-    int sres = stat(file_name, &sbuf);
-    if (sres == 0)
-    {
-      fprintf(stdout, "Using wishes file %s\n", file_name);
-      return file_name;
-    }
-    free(file_name);
-  }
 
-  return NULL;
+    return NULL;
 }
 
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-  GeisStatus status = GEIS_UNKNOWN_ERROR;
-  GeisXcbWinInfo xcb_win_info = {
-    .display_name  = NULL,
-    .screenp       = NULL,
-    .window_id     = getRootWindow()
-  };
-  GeisWinInfo win_info = {
-    GEIS_XCB_FULL_WINDOW,
-    &xcb_win_info
-  };
-  GeisInstance instance;
-  struct ginn_config cfg;
+    GeisStatus status = GEIS_UNKNOWN_ERROR;
+    GeisXcbWinInfo xcb_win_info = {
+        .display_name = NULL,
+        .screenp = NULL,
+        .window_id = getRootWindow()
+    };
+    GeisWinInfo win_info = {
+        GEIS_XCB_FULL_WINDOW,
+        &xcb_win_info
+    };
+    GeisInstance instance;
+    struct ginn_config cfg;
 
-  const char * sub_gestures_list[]= {
-	GEIS_GESTURE_TYPE_DRAG2, GEIS_GESTURE_TYPE_DRAG3, 
-		GEIS_GESTURE_TYPE_DRAG4,GEIS_GESTURE_TYPE_DRAG5, 
-	GEIS_GESTURE_TYPE_PINCH2, GEIS_GESTURE_TYPE_PINCH3, 
-		GEIS_GESTURE_TYPE_PINCH4,GEIS_GESTURE_TYPE_PINCH5, 
-	GEIS_GESTURE_TYPE_ROTATE2, GEIS_GESTURE_TYPE_ROTATE3, 
-		GEIS_GESTURE_TYPE_ROTATE4,GEIS_GESTURE_TYPE_ROTATE5, 
-	GEIS_GESTURE_TYPE_TAP2, GEIS_GESTURE_TYPE_TAP3, 
-		GEIS_GESTURE_TYPE_TAP4,GEIS_GESTURE_TYPE_TAP5,  NULL };
-  {
-    char * config_file_name = NULL;
-    if (argc < 2) {
-      fprintf(stderr, "usage: %s <configxml>\n", argv[0]);
-      config_file_name = ginn_default_config();
-      if (config_file_name)
-      {
-	fprintf(stderr, "using default configuration file %s ... \n",
-	        config_file_name);
-      }
-    }
-    else
+    const char *sub_gestures_list[] = {
+        GEIS_GESTURE_TYPE_DRAG2, GEIS_GESTURE_TYPE_DRAG3,
+        GEIS_GESTURE_TYPE_DRAG4, GEIS_GESTURE_TYPE_DRAG5,
+        GEIS_GESTURE_TYPE_PINCH2, GEIS_GESTURE_TYPE_PINCH3,
+        GEIS_GESTURE_TYPE_PINCH4, GEIS_GESTURE_TYPE_PINCH5,
+        GEIS_GESTURE_TYPE_ROTATE2, GEIS_GESTURE_TYPE_ROTATE3,
+        GEIS_GESTURE_TYPE_ROTATE4, GEIS_GESTURE_TYPE_ROTATE5,
+        GEIS_GESTURE_TYPE_TAP2, GEIS_GESTURE_TYPE_TAP3,
+        GEIS_GESTURE_TYPE_TAP4, GEIS_GESTURE_TYPE_TAP5, NULL
+    };
     {
-      config_file_name = strdup(argv[1]);
-    }
-    if (NULL == config_file_name)
-    {
-      fprintf(stderr, "Could not find Ginn wishes\n");
-      return -1;
-    }
+        char *config_file_name = NULL;
+        if (argc < 2) {
+            fprintf(stderr, "usage: %s <configxml>\n", argv[0]);
+            config_file_name = ginn_default_config();
+            if (config_file_name) {
+                fprintf(stderr,
+                        "using default configuration file %s ... \n",
+                        config_file_name);
+            }
+        } else {
+            config_file_name = strdup(argv[1]);
+        }
+        if (NULL == config_file_name) {
+            fprintf(stderr, "Could not find Ginn wishes\n");
+            return -1;
+        }
 
-    if ( ginn_config_open(&cfg, config_file_name) ) {
-      fprintf(stderr, "Could not load Ginn wishes\n");
-      return -1;
-    }
-    free(config_file_name);
-  }
-
-  ginn_config_print(&cfg);
-  ap = (struct apps *) malloc(sizeof(struct apps)); inita(ap);
-  wp = (struct wish *) malloc(sizeof(struct wish)); initw(wp);
-  ginn_config_store(&cfg, wp, ap);
-  wpEnd=wp;
-  while (wpEnd->next)
-	wpEnd=wpEnd->next;
-
-  int pos=0;
-  printf("\n");
-  while (strcmp(config_attr[pos].attrName,"")) {
-    printf("DEBUG %d %s %.2f %.2f \n", pos, config_attr[pos].attrName, config_attr[pos].val, config_attr[pos].valMax); 
-    pos++;
-  }
-
-  status = geis_init(&win_info, &instance);
-  if (status != GEIS_STATUS_SUCCESS)
-  {
-    fprintf(stderr, "error in geis_init\n");
-    return 1;
-  }
-
-  status = geis_configuration_supported(instance, GEIS_CONFIG_UNIX_FD);
-  if (status != GEIS_STATUS_SUCCESS)
-  {
-    fprintf(stderr, "GEIS does not support Unix fd\n");
-    return 1;
-  }
-
-  int fd = -1;
-  status = geis_configuration_get_value(instance, GEIS_CONFIG_UNIX_FD, &fd);
-  if (status != GEIS_STATUS_SUCCESS)
-  {
-    fprintf(stderr, "error retrieving GEIS fd\n");
-    return 1;
-  }
-
-  status = geis_subscribe(instance,
-                          GEIS_ALL_INPUT_DEVICES,
-                          sub_gestures_list,  //  GEIS_ALL_GESTURES,
-                          &gesture_funcs,
-                          NULL);
-  if (status != GEIS_STATUS_SUCCESS)
-  {
-    fprintf(stderr, "error subscribing to gestures\n");
-    return 1;
-  }
-  
-  openDisplay();
-
-  while(1)
-  {
-    fd_set read_fds;
-    FD_ZERO(&read_fds);
-    FD_SET(fd, &read_fds);
-    int sstat = select(fd+1, &read_fds, NULL, NULL, NULL);
-    if (sstat < 0)
-    {
-      fprintf(stderr, "error %d in select(): %s\n", errno, strerror(errno));
-      break;
+        if (ginn_config_open(&cfg, config_file_name)) {
+            fprintf(stderr, "Could not load Ginn wishes\n");
+            return -1;
+        }
+        free(config_file_name);
     }
 
-    if (FD_ISSET(fd, &read_fds))
-    {
-      geis_event_dispatch(instance);
-    }
-  }
+    ginn_config_print(&cfg);
+    ap = (struct apps *) malloc(sizeof(struct apps));
+    inita(ap);
+    wp = (struct wish *) malloc(sizeof(struct wish));
+    initw(wp);
+    ginn_config_store(&cfg, wp, ap);
+    wpEnd = wp;
+    while (wpEnd->next)
+        wpEnd = wpEnd->next;
 
-  geis_finish(instance);
-  closeDisplay();
-  free(wp);
-  return 0;
+    int pos = 0;
+    printf("\n");
+    while (strcmp(config_attr[pos].attrName, "")) {
+        printf("DEBUG %d %s %.2f %.2f \n", pos,
+               config_attr[pos].attrName, config_attr[pos].val,
+               config_attr[pos].valMax);
+        pos++;
+    }
+
+    status = geis_init(&win_info, &instance);
+    if (status != GEIS_STATUS_SUCCESS) {
+        fprintf(stderr, "error in geis_init\n");
+        return 1;
+    }
+
+    status = geis_configuration_supported(instance, GEIS_CONFIG_UNIX_FD);
+    if (status != GEIS_STATUS_SUCCESS) {
+        fprintf(stderr, "GEIS does not support Unix fd\n");
+        return 1;
+    }
+
+    int fd = -1;
+    status =
+        geis_configuration_get_value(instance, GEIS_CONFIG_UNIX_FD, &fd);
+    if (status != GEIS_STATUS_SUCCESS) {
+        fprintf(stderr, "error retrieving GEIS fd\n");
+        return 1;
+    }
+
+    status = geis_subscribe(instance, GEIS_ALL_INPUT_DEVICES, sub_gestures_list,        //  GEIS_ALL_GESTURES,
+                            &gesture_funcs, NULL);
+    if (status != GEIS_STATUS_SUCCESS) {
+        fprintf(stderr, "error subscribing to gestures\n");
+        return 1;
+    }
+
+    openDisplay();
+
+    while (1) {
+        fd_set read_fds;
+        FD_ZERO(&read_fds);
+        FD_SET(fd, &read_fds);
+        int sstat = select(fd + 1, &read_fds, NULL, NULL, NULL);
+        if (sstat < 0) {
+            fprintf(stderr, "error %d in select(): %s\n", errno,
+                    strerror(errno));
+            break;
+        }
+
+        if (FD_ISSET(fd, &read_fds)) {
+            geis_event_dispatch(instance);
+        }
+    }
+
+    geis_finish(instance);
+    closeDisplay();
+    free(wp);
+    return 0;
 }
-
