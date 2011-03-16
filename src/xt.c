@@ -21,61 +21,83 @@
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h>
 
-static Display* disp = NULL;
+static Display *disp = NULL;
 
 void openDisplay()
 {
-	disp = XOpenDisplay(NULL);
+    disp = XOpenDisplay(NULL);
 }
 
 void closeDisplay()
 {
-	XCloseDisplay(disp);
+    XCloseDisplay(disp);
 }
 
-void
-injKey(KeySym ks, char * modifiers[])
+void injKey(KeySym ks, char *modifiers[])
 {
-	int i;
+    int i;
 
-	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
-		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  True, CurrentTime);
-        XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks),  True, CurrentTime);
-        XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), False, CurrentTime);
-	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
-		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  False, CurrentTime);
+    for (i = 0; i < 4 && 0 != strcmp(modifiers[i], ""); i++)
+        XTestFakeKeyEvent(disp,
+                          XKeysymToKeycode(disp,
+                                           XStringToKeysym(modifiers
+                                                           [i])), True,
+                          CurrentTime);
+    XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), True, CurrentTime);
+    XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), False,
+                      CurrentTime);
+    for (i = 0; i < 4 && 0 != strcmp(modifiers[i], ""); i++)
+        XTestFakeKeyEvent(disp,
+                          XKeysymToKeycode(disp,
+                                           XStringToKeysym(modifiers
+                                                           [i])), False,
+                          CurrentTime);
 
-	XFlush(disp);
+    XFlush(disp);
 }
 
-void
-injButton(int btn, char * modifiers[])
+void injButton(int btn, char *modifiers[])
 {
-	int i;
+    int i;
 
-	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
-		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  True, CurrentTime);
-        XTestFakeButtonEvent(disp, btn, True, CurrentTime);
-        XTestFakeButtonEvent(disp, btn, False, CurrentTime);
-	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
-		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  False, CurrentTime);
+    for (i = 0; i < 4 && 0 != strcmp(modifiers[i], ""); i++)
+        XTestFakeKeyEvent(disp,
+                          XKeysymToKeycode(disp,
+                                           XStringToKeysym(modifiers
+                                                           [i])), True,
+                          CurrentTime);
+    XTestFakeButtonEvent(disp, btn, True, CurrentTime);
+    XTestFakeButtonEvent(disp, btn, False, CurrentTime);
+    for (i = 0; i < 4 && 0 != strcmp(modifiers[i], ""); i++)
+        XTestFakeKeyEvent(disp,
+                          XKeysymToKeycode(disp,
+                                           XStringToKeysym(modifiers
+                                                           [i])), False,
+                          CurrentTime);
 
-	XFlush(disp);
+    XFlush(disp);
 }
 
-void
-injMixBtnKey(KeySym ks, int btn, char * modifiers[])
+void injMixBtnKey(KeySym ks, int btn, char *modifiers[])
 {
-	int i;
+    int i;
 
-        XTestFakeButtonEvent(disp, btn, True, CurrentTime);
-	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
-		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  True, CurrentTime);
-        XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks),  True, CurrentTime);
-        XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), False, CurrentTime);
-	for (i=0 ; i<4 && 0!=strcmp(modifiers[i],"") ; i++)
-		XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, XStringToKeysym(modifiers[i])),  False, CurrentTime);
-        XTestFakeButtonEvent(disp, btn, False, CurrentTime);
-	XFlush(disp);
+    XTestFakeButtonEvent(disp, btn, True, CurrentTime);
+    for (i = 0; i < 4 && 0 != strcmp(modifiers[i], ""); i++)
+        XTestFakeKeyEvent(disp,
+                          XKeysymToKeycode(disp,
+                                           XStringToKeysym(modifiers
+                                                           [i])), True,
+                          CurrentTime);
+    XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), True, CurrentTime);
+    XTestFakeKeyEvent(disp, XKeysymToKeycode(disp, ks), False,
+                      CurrentTime);
+    for (i = 0; i < 4 && 0 != strcmp(modifiers[i], ""); i++)
+        XTestFakeKeyEvent(disp,
+                          XKeysymToKeycode(disp,
+                                           XStringToKeysym(modifiers
+                                                           [i])), False,
+                          CurrentTime);
+    XTestFakeButtonEvent(disp, btn, False, CurrentTime);
+    XFlush(disp);
 }
-
