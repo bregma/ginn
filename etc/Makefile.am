@@ -7,7 +7,7 @@ xdgconfdir = ${sysconfdir}/xdg/autostart
 dist_pkgdata_DATA = wishes.xml
 
 # install as a conffile
-pkgconf_DATA = wishes.xml
+dist_pkgconf_DATA = wishes.xml
 
-xdgconf_DATA = ginn.desktop
+dist_xdgconf_DATA = ginn.desktop
 
