@@ -365,16 +365,6 @@ int main(int argc, char *argv[])
     GeisInstance instance;
     struct ginn_config cfg;
 
-    const char *sub_gestures_list[] = {
-        GEIS_GESTURE_TYPE_DRAG2, GEIS_GESTURE_TYPE_DRAG3,
-        GEIS_GESTURE_TYPE_DRAG4, GEIS_GESTURE_TYPE_DRAG5,
-        GEIS_GESTURE_TYPE_PINCH2, GEIS_GESTURE_TYPE_PINCH3,
-        GEIS_GESTURE_TYPE_PINCH4, GEIS_GESTURE_TYPE_PINCH5,
-        GEIS_GESTURE_TYPE_ROTATE2, GEIS_GESTURE_TYPE_ROTATE3,
-        GEIS_GESTURE_TYPE_ROTATE4, GEIS_GESTURE_TYPE_ROTATE5,
-        GEIS_GESTURE_TYPE_TAP2, GEIS_GESTURE_TYPE_TAP3,
-        GEIS_GESTURE_TYPE_TAP4, GEIS_GESTURE_TYPE_TAP5, NULL
-    };
     {
         char *config_file_name = NULL;
         if (argc < 2) {
@@ -418,6 +408,125 @@ int main(int argc, char *argv[])
                config_attr[pos].valMax);
         pos++;
     }
+    
+    /**
+	 * Edits made by joshfee Aug 7 2011
+	 * 
+	 * Check the loaded wishes to see which gestures are used
+	 * and add these gestures to a NULL terminated list "sub_gestures_list"
+	 * 
+	 * This list is used to subscribe only the necessary gestures
+	 * to GEIS. This will avoid issues with 2 finger scrolls and other gestues
+	 * being dropped when not accounted for in the wishes file.
+	 * 
+	**/
+
+	// Sub gesture list created here
+	apps * appPtr = ap;
+	wish * wishPtr;
+	char * sub_gestures_list[17] = {NULL};
+	
+	/// Loop through each wish inside ap
+	/// After all of the wishes in ap are accounted for
+	/// add global wishes
+	
+	int finished = 0;
+	while(finished != 1)
+	{
+		/// Check if we are finished with the application wishes
+		if(appPtr == NULL)
+		{
+			wishPtr = wp;
+			finished = 1;
+		}else{
+			wishPtr = appPtr->wp;
+		}
+		/// Loop through each wish
+		while(wishPtr)
+		{
+			int i;
+			for(i = 0; i < 25; i ++)
+			{
+				
+				char *sub_gesture = malloc(sizeof(char[16]));
+				
+				/// Check for Drag gesture
+				if(strcmp(wishPtr->config_attr[i].attrName, "delta x") == 0 ||
+					strcmp(wishPtr->config_attr[i].attrName, "delta y") == 0 ||
+					strcmp(wishPtr->config_attr[i].attrName, "velocity x") == 0 ||
+					strcmp(wishPtr->config_attr[i].attrName, "velocity y") == 0
+					)			
+				{
+					sprintf(sub_gesture, "Drag,touch=%i", (int)wishPtr->config_attr[1].val);
+				}
+				
+				/// Check for Rotate gesture
+				else if(strcmp(wishPtr->config_attr[i].attrName, "angle delta") == 0 ||
+					strcmp(wishPtr->config_attr[i].attrName, "angular velocity") == 0 ||
+					strcmp(wishPtr->config_attr[i].attrName, "angle") == 0
+					)			
+				{
+					sprintf(sub_gesture, "Rotate,touch=%i", (int)wishPtr->config_attr[1].val);
+				}
+				
+				/// Check for Pinch gesture
+				else if(strcmp(wishPtr->config_attr[i].attrName, "radius delta") == 0 ||
+					strcmp(wishPtr->config_attr[i].attrName, "radial velocity") == 0 ||
+					strcmp(wishPtr->config_attr[i].attrName, "radius") == 0
+					)			
+				{
+					sprintf(sub_gesture, "Pinch,touch=%i", (int)wishPtr->config_attr[1].val);\
+				}
+				
+				/// Check for Tap gesture
+				else if(strcmp(wishPtr->config_attr[i].attrName, "tap time") == 0)			
+				{
+					sprintf(sub_gesture, "Tap,touch=%i", (int)wishPtr->config_attr[1].val);\
+				}else
+				{
+					free(sub_gesture);
+					continue;
+				}
+				
+				/// Check the current gesture list
+				/// Only add if the gesture is not already in the list
+				/// Store in index of the first NULL found
+				int pos = 0;
+				while(pos < 17)
+				{
+					if(sub_gestures_list[pos] == NULL)
+					{
+						sub_gestures_list[pos] = sub_gesture;
+						break;
+					}else if(strcmp(sub_gestures_list[pos], sub_gesture) == 0)
+					{
+						break;
+					}
+					pos ++;
+				}
+				
+				
+			}
+			/// Iterate to the next wish
+			wishPtr = wishPtr->next;
+		}
+		
+		/// If there are more applications, iterate to the next
+		
+		if(finished != 1)
+		{
+			appPtr = appPtr->next;
+		}
+	}
+	
+	pos = 0;
+	while(pos < 17)
+	{
+		fprintf(stdout, "%s\n", sub_gestures_list[pos]);
+		pos ++;
+	}
+	
+	/// End joshfee's edits    
 
     status = geis_init(&win_info, &instance);
     if (status != GEIS_STATUS_SUCCESS) {
