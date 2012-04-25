@@ -9,5 +9,6 @@ dist_pkgdata_DATA = wishes.xml
 # install as a conffile
 dist_pkgconf_DATA = wishes.xml
 
-dist_xdgconf_DATA = ginn.desktop
+# FIXME: don't run ginn at session startup, it can interfere with Unity gestures
+#dist_xdgconf_DATA = ginn.desktop
 
