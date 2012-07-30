@@ -52,7 +52,7 @@ gesture is received or I<finish> to inject when the gesture is finished.
 The choice should be written inside the I<when> in the action line.
         <action name="action1" when="update">
 
-The uTouch gesture stack provide gesture updates which can be very small to
+The Open Input Framework gesture stack provide gesture updates which can be very small to
 reach the desired interval specified in the trigger.
 To provide more flexibility a gesture accumulation is performed by default to
 the successive property values' updates for a desired gesture until it reaches
