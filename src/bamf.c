@@ -28,14 +28,13 @@ char *getName(char *deskfile)
 
 char *getCurrentApp()
 {
-    g_type_init();
     char *deskfile, *appName;
     char *temp;
 
     BamfApplication *app =
         bamf_matcher_get_active_application(bamf_matcher_get_default());
     if (app) {
-        appName = (char *) bamf_view_get_name(BAMF_VIEW(app));
+        appName = (char *) bamf_view_get_name((BamfView*)app);
         temp = bamf_application_get_desktop_file(app);
 
         if (strchr(appName, ' ') && temp && strlen(temp) > 1)
