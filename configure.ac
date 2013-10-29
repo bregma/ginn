@@ -1,27 +1,21 @@
 # Initialize Autoconf
 AC_PREREQ([2.60])
 AC_INIT([Ginn],
-        [0.2.6],
+        [1.0.0],
         [],
         [ginn])
-AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config-aux])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Initialize Automake
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
-AM_MAINTAINER_MODE
-
-LIB_VERSION=1:0:0
-AC_SUBST([LIB_VERSION])
-
-# Initialize libtool
-AC_PROG_LIBTOOL
+AM_SILENT_RULES([yes])
 
 # Checks for programs.
-AC_PROG_CC
-AC_PROG_INSTALL
+AC_PROG_CC_C_O
 
+# Checks for external dependencies.
 PKG_CHECK_MODULES([GEIS], [libgeis >= 1.0.10])
 PKG_CHECK_MODULES([X11],  [x11 >= 1.3.3])
 PKG_CHECK_MODULES([XML2], [libxml-2.0 >= 2.7.7])
