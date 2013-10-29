@@ -26,5 +26,6 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  etc/Makefile
                  test/Makefile
+                 doc/Makefile
                  ginn.pc])
 AC_OUTPUT
