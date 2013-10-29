@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh -e
 
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
@@ -8,4 +8,4 @@ cd $srcdir
 
 autoreconf -v --install || exit 1
 cd $ORIGDIR || exit $?
-
+test -n "$NOCONFIGURE" || "$srcdir/configure" "$@"
