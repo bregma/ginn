@@ -25,5 +25,6 @@ PKG_CHECK_MODULES([BAMF], [libbamf3 >= 0.2.53])
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  etc/Makefile
+                 test/Makefile
                  ginn.pc])
 AC_OUTPUT
