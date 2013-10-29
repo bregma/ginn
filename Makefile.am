@@ -7,13 +7,9 @@ pkgconfig_DATA = ginn.pc
 
 INCLUDES = $(top_srcdir)/include/
 
-.PHONY: ChangeLog INSTALL
-INSTALL:
-	$(INSTALL_CMD)
-ChangeLog:
-	bzr log > ChangeLog
-
-dist-hook: ChangeLog INSTALL
-
-DISTCLEANFILES = ChangeLog
+dist-hook:
+	@test -d "$(top_srcdir)/.bzr" && \
+	  $(top_srcdir)/config-aux/missing --run \
+	    bzr log --gnu-changelog -n 1 $(top_srcdir) > ChangeLog \
+	    || true
 
