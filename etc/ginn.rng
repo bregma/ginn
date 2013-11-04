@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<rng:grammar 
+  xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+  <rng:start>
+    <rng:element name="ginn">
+      <rng:optional>
+        <rng:ref name="global_wishes"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="application_wishes"/>
+      </rng:optional>
+    </rng:element>
+  </rng:start>
+
+  <rng:define name="global_wishes">
+    <rng:element name="global">
+      <rng:zeroOrMore>
+        <rng:ref name="wish"/>
+      </rng:zeroOrMore>
+    </rng:element>
+  </rng:define>
+
+  <rng:define name="application_wishes">
+    <rng:element name="applications">
+      <rng:zeroOrMore>
+      <rng:element name="application">
+        <rng:attribute name="name">
+          <rng:text/>
+        </rng:attribute>
+        <rng:zeroOrMore>
+          <rng:ref name="wish"/>
+        </rng:zeroOrMore>
+      </rng:element>
+      </rng:zeroOrMore>
+    </rng:element>
+  </rng:define>
+
+  <rng:define name="wish">
+    <rng:element name="wish">
+      <rng:attribute name="gesture">
+        <rng:choice>
+        <rng:value>Drag</rng:value>
+        <rng:value>Flick</rng:value>
+        <rng:value>Pinch</rng:value>
+        <rng:value>Rotate</rng:value>
+        <rng:value>Tap</rng:value>
+        <rng:value>Touch</rng:value>
+        </rng:choice>
+      </rng:attribute>
+      <rng:attribute name="fingers">
+        <rng:data type="decimal"/>
+      </rng:attribute>
+      <rng:ref name="action"/>
+    </rng:element>
+  </rng:define>
+
+  <rng:define name="action">
+    <rng:element name="action">
+      <rng:attribute name="name">
+      </rng:attribute>
+      <rng:attribute name="when">
+      </rng:attribute>
+      <rng:ref name="trigger"/>
+      <rng:interleave>
+        <rng:optional>
+          <rng:ref name="button"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="key"/>
+        </rng:optional>
+      </rng:interleave>
+    </rng:element>
+  </rng:define>
+
+  <rng:define name="trigger">
+    <rng:element name="trigger">
+      <rng:attribute name="prop">
+        <rng:choice>
+          <rng:value>angle</rng:value>
+          <rng:value>angle delta</rng:value>
+          <rng:value>angular velocity</rng:value>
+          <rng:value>boundingbox x1</rng:value>
+          <rng:value>boundingbox y1</rng:value>
+          <rng:value>boundingbox x2</rng:value>
+          <rng:value>boundingbox y2</rng:value>
+          <rng:value>child window id</rng:value>
+          <rng:value>centroid x</rng:value>
+          <rng:value>centroid y</rng:value>
+          <rng:value>delta x</rng:value>
+          <rng:value>delta y</rng:value>
+          <rng:value>device id</rng:value>
+          <rng:value>event window id</rng:value>
+          <rng:value>focus x</rng:value>
+          <rng:value>focus y</rng:value>
+          <rng:value>gesture name</rng:value>
+          <rng:value>position x</rng:value>
+          <rng:value>position y</rng:value>
+          <rng:value>radial velocity</rng:value>
+          <rng:value>radius delta</rng:value>
+          <rng:value>radius</rng:value>
+          <rng:value>root window id</rng:value>
+          <rng:value>tap time</rng:value>
+          <rng:value>timestamp</rng:value>
+          <rng:value>touches</rng:value>
+          <rng:value>velocity x</rng:value>
+          <rng:value>velocity y</rng:value>
+        </rng:choice>
+      </rng:attribute>
+      <rng:optional>
+        <rng:attribute name="min">
+          <rng:data type="decimal"/>
+        </rng:attribute>
+      </rng:optional>
+      <rng:optional>
+        <rng:attribute name="max">
+          <rng:data type="decimal"/>
+        </rng:attribute>
+      </rng:optional>
+    </rng:element>
+  </rng:define>
+
+  <rng:define name="button">
+    <rng:element name="button">
+      <rng:optional>
+        <rng:attribute name="modifier1">
+          <rng:ref name="modifier_keys"/>
+        </rng:attribute>
+        <rng:optional>
+          <rng:attribute name="modifier2">
+            <rng:ref name="modifier_keys"/>
+          </rng:attribute>
+        </rng:optional>
+      </rng:optional>
+      <rng:data type="integer"/>
+    </rng:element>
+  </rng:define>
+
+  <rng:define name="key">
+    <rng:element name="key">
+      <rng:optional>
+        <rng:attribute name="modifier1">
+          <rng:ref name="modifier_keys"/>
+        </rng:attribute>
+        <rng:optional>
+          <rng:attribute name="modifier2">
+            <rng:ref name="modifier_keys"/>
+          </rng:attribute>
+        </rng:optional>
+      </rng:optional>
+      <rng:text/>
+    </rng:element>
+  </rng:define>
+
+  <rng:define name="modifier_keys">
+    <rng:choice>
+      <rng:value>Shift_L</rng:value>
+      <rng:value>Shift_R</rng:value>
+      <rng:value>Control_L</rng:value>
+      <rng:value>Control_R</rng:value>
+      <rng:value>Meta_L</rng:value>
+      <rng:value>Meta_R</rng:value>
+      <rng:value>Alt_L</rng:value>
+      <rng:value>Alt_R</rng:value>
+      <rng:value>Super_L</rng:value>
+      <rng:value>Super_R</rng:value>
+      <rng:value>Hyper_L</rng:value>
+      <rng:value>Hyper_R</rng:value>
+    </rng:choice>
+  </rng:define>
+</rng:grammar>
