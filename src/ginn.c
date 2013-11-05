@@ -374,14 +374,6 @@ int main(int argc, char *argv[])
       }
     }
 
-    if (optind < argc) {
-      int i;
-      fprintf(stderr, "non-option argv elements: ");
-      for (i = optind; i < argc; ++i)
-        fprintf(stderr, "%d %s ", argc - i, argv[i]);
-      fprintf(stderr, "\n");
-    }
-
     GeisStatus status = GEIS_UNKNOWN_ERROR;
     GeisXcbWinInfo xcb_win_info = {
         .display_name = NULL,
