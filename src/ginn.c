@@ -23,6 +23,7 @@
  */
 #include "config.h"
 #include <geis/geis.h>
+#include <getopt.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -352,6 +353,35 @@ static char *ginn_default_config()
 
 int main(int argc, char *argv[])
 {
+    char* wishes_schema_file_name = NULL;
+    while (1) {
+      int option_index = 0;
+      static struct option long_options[] = {
+        { "validate", required_argument, 0, 'r' },
+        { 0,                          0, 0,  0  }
+      };
+
+      int c = getopt_long(argc, argv, "r:", long_options, &option_index);
+      if (c == -1)
+        break;
+
+      switch (c) {
+        case 'r':
+          wishes_schema_file_name = strdup(optarg);
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (optind < argc) {
+      int i;
+      fprintf(stderr, "non-option argv elements: ");
+      for (i = optind; i < argc; ++i)
+        fprintf(stderr, "%d %s ", argc - i, argv[i]);
+      fprintf(stderr, "\n");
+    }
+
     GeisStatus status = GEIS_UNKNOWN_ERROR;
     GeisXcbWinInfo xcb_win_info = {
         .display_name = NULL,
@@ -367,7 +397,7 @@ int main(int argc, char *argv[])
 
     {
         char *config_file_name = NULL;
-        if (argc < 2) {
+        if (argc - optind < 1) {
             fprintf(stderr, "usage: %s <configxml>\n", argv[0]);
             config_file_name = ginn_default_config();
             if (config_file_name) {
@@ -376,14 +406,14 @@ int main(int argc, char *argv[])
                         config_file_name);
             }
         } else {
-            config_file_name = strdup(argv[1]);
+            config_file_name = strdup(argv[optind]);
         }
         if (NULL == config_file_name) {
             fprintf(stderr, "Could not find Ginn wishes\n");
             return -1;
         }
 
-        if (ginn_config_open(&cfg, config_file_name)) {
+        if (ginn_config_open(&cfg, config_file_name, wishes_schema_file_name)) {
             fprintf(stderr, "Could not load Ginn wishes\n");
             return -1;
         }

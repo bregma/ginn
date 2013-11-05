@@ -18,6 +18,7 @@
 
 #include "config.h"
 #include <libxml/parser.h>
+#include <libxml/xmlreader.h>
 
 void debugOut(struct wish *wp)
 {
@@ -31,18 +32,41 @@ void debugOut(struct wish *wp)
         printf("\t val : %.2f ", wp->config_attr[i].val);
         printf("\t valMax : %.2f", wp->config_attr[i].valMax);
     }
-    printf("\n pMe : %x  pNext : %x ", wp, wp->next);
+    printf("\n pMe : %p  pNext : %p ", wp, wp->next);
     printf("\n===================================================");
 }
 
-int ginn_config_open(struct ginn_config *cfg, const char *path)
+int ginn_config_open(struct ginn_config *cfg, const char *path, const char *schema)
 {
     memset(cfg, 0, sizeof(*cfg));
-    cfg->doc = xmlReadFile(path, NULL, 0);
+    cfg->doc = xmlParseFile(path);
     if (cfg->doc == NULL) {
         fprintf(stderr, "Failed to parse %s\n", path);
         return -1;
     }
+
+    if (schema) {
+      xmlRelaxNGParserCtxtPtr relaxng_ctxt = xmlRelaxNGNewParserCtxt(schema);
+      if (relaxng_ctxt == NULL) {
+        fprintf(stderr, "error reading '%s'\n", schema);
+      } else {
+        xmlRelaxNGPtr relaxng_schema = xmlRelaxNGParse(relaxng_ctxt);
+        if (relaxng_schema == NULL)
+        {
+          fprintf(stderr, "error parsing '%s'\n", schema);
+        } else {
+          xmlRelaxNGValidCtxtPtr relaxng_vctxt = xmlRelaxNGNewValidCtxt(relaxng_schema);
+          int result = xmlRelaxNGValidateDoc(relaxng_vctxt, cfg->doc);
+          if (result) {
+            fprintf(stderr, "validation returned %d\n", result);
+          }
+          xmlRelaxNGFreeValidCtxt(relaxng_vctxt);
+          xmlRelaxNGFree(relaxng_schema);
+        }
+        xmlRelaxNGFreeParserCtxt(relaxng_ctxt);
+      }
+    }
+
     return 0;
 }
 
@@ -53,7 +77,7 @@ void ginn_config_close(struct ginn_config *cfg)
 
 static void print_node(const xmlNode * root, int depth)
 {
-    xmlNode *node;
+    const xmlNode *node;
     for (node = root; node; node = node->next) {
         int i;
         if (node->type != XML_ELEMENT_NODE)
@@ -155,7 +179,7 @@ void
 parse_node(const xmlNode * root, int depth, struct wish *wp,
            struct apps *ap)
 {
-    xmlNode *node;
+    const xmlNode *node;
     int position = 2;
     for (node = root; node; node = node->next) {
         if (node->type != XML_ELEMENT_NODE)
