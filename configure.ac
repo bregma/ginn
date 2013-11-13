@@ -32,7 +32,7 @@ AC_ARG_ENABLE([tests],
 AS_IF([test "x$enable_tests" = "xyes"],[CHECK_GTEST])
 AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
 
-AC_SUBST(AM_CXXFLAGS, "-Wall -Wextra -pedantic -std=c++11 -Weffc++")
+AC_SUBST(AM_CXXFLAGS, "-Wall -Wextra -pedantic -std=c++11")
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
