@@ -14,6 +14,7 @@ AM_SILENT_RULES([yes])
 
 # Checks for programs.
 AC_PROG_CC_C_O
+AC_PROG_CXX
 
 # Checks for external dependencies.
 PKG_CHECK_MODULES([GEIS], [libgeis >= 1.0.10])
@@ -21,6 +22,8 @@ PKG_CHECK_MODULES([X11],  [x11 >= 1.3.3])
 PKG_CHECK_MODULES([XML2], [libxml-2.0 >= 2.7.7])
 PKG_CHECK_MODULES([XTST], [xtst >= 1.1.0])
 PKG_CHECK_MODULES([BAMF], [libbamf3 >= 0.2.53])
+
+AC_SUBST(AM_CXXFLAGS, "-Wall -Wextra -pedantic -std=c++11 -Weffc++")
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
