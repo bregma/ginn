@@ -24,6 +24,14 @@ PKG_CHECK_MODULES([XML2], [libxml-2.0 >= 2.7.7])
 PKG_CHECK_MODULES([XTST], [xtst >= 1.1.0])
 PKG_CHECK_MODULES([BAMF], [libbamf3 >= 0.2.53])
 
+AC_ARG_ENABLE([tests],
+              [AC_HELP_STRING([--enable-tests=@<:@no/yes@:>@],
+                              [Enable unit tests @<:@default=yes@:>@])],
+              [],
+              [enable_tests=yes])
+AS_IF([test "x$enable_tests" = "xyes"],[CHECK_GTEST])
+AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
+
 AC_SUBST(AM_CXXFLAGS, "-Wall -Wextra -pedantic -std=c++11 -Weffc++")
 
 AC_CONFIG_FILES([Makefile
