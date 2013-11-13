@@ -1,6 +1,6 @@
 /**
- * @file ginn/main.cpp
- * @brief Ginn program entry point.
+ * @file ginn/configuration.cpp
+ * @brief Definitions of the Ginn Configuration module.
  */
 
 /*
@@ -20,26 +20,14 @@
  */
 #include "ginn/configuration.h"
 
-#include <iostream>
-#include <stdexcept>
-
-
-int
-main(int argc, char* argv[])
+namespace Ginn
 {
-  try
-  {
-    Ginn::Configuration configuration(argc, argv);
-  }
-  catch (std::exception& ex)
-  {
-    std::cerr << "exception caught: " << ex.what() << "\n";
-    return 1;
-  }
-  catch (...)
-  {
-    std::cerr << "unknown exception caught\n";
-    return 1;
-  }
-  return 0;
+
+Configuration::
+Configuration(int, char*[])
+{
 }
+
+} // namespace Ginn
+
+

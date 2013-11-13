@@ -15,6 +15,7 @@ AM_SILENT_RULES([yes])
 # Checks for programs.
 AC_PROG_CC_C_O
 AC_PROG_CXX
+AC_PROG_RANLIB
 
 # Checks for external dependencies.
 PKG_CHECK_MODULES([GEIS], [libgeis >= 1.0.10])

@@ -1,6 +1,6 @@
 /**
- * @file ginn/main.cpp
- * @brief Ginn program entry point.
+ * @file ginn/configuration.h
+ * @brief Declarations of the Ginn Confiuration module.
  */
 
 /*
@@ -18,28 +18,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "ginn/configuration.h"
+#ifndef GINN_APPLICATION_H_
+#define GINN_APPLICATION_H_
 
-#include <iostream>
-#include <stdexcept>
-
-
-int
-main(int argc, char* argv[])
+namespace Ginn
 {
-  try
-  {
-    Ginn::Configuration configuration(argc, argv);
-  }
-  catch (std::exception& ex)
-  {
-    std::cerr << "exception caught: " << ex.what() << "\n";
-    return 1;
-  }
-  catch (...)
-  {
-    std::cerr << "unknown exception caught\n";
-    return 1;
-  }
-  return 0;
-}
+
+/**
+ * Consolidated configuration values.
+ */
+class Configuration
+{
+public:
+  Configuration(int argc, char* argv[]);
+};
+
+} // namespace Ginn
+
+#endif // GINN_APPLICATION_H_
+

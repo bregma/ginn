@@ -14,6 +14,19 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 bin_PROGRAMS = ginn
+noinst_LIBRARIES = libginn.a
+
+libginn_a_SOURCES = \
+	configuration.h  configuration.cpp
+
+libginn_a_CPPFLAGS = \
+	-I$(top_srcdir)
 
 ginn_SOURCES = main.cpp
+
+ginn_CPPFLAGS = \
+	-I$(top_srcdir)
+
+ginn_LDADD = \
+	libginn.a
 
