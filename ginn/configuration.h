@@ -21,8 +21,17 @@
 #ifndef GINN_APPLICATION_H_
 #define GINN_APPLICATION_H_
 
+#include <memory>
+#include <string>
+#include <vector>
+
+
 namespace Ginn
 {
+
+/** A collection of file names. */
+typedef std::vector<std::string> FileNameList;
+
 
 /**
  * Consolidated configuration values.
@@ -31,6 +40,25 @@ class Configuration
 {
 public:
   Configuration(int argc, char* argv[]);
+
+  ~Configuration();
+
+  /** Indicates the program should be verbose about what its doing.  */
+  bool
+  is_verbose_mode() const;
+
+  /** Gets a list of names of files containing wish definitions. */
+  FileNameList const&
+  wish_file_names() const;
+
+  /** Gets the name of the wish schema file (empty if no validation) */
+  std::string const&
+  wish_schema_file_name() const;
+
+private:
+  struct Impl;
+
+  std::unique_ptr<Impl> impl_;
 };
 
 } // namespace Ginn

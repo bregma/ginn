@@ -20,7 +20,10 @@ libginn_a_SOURCES = \
 	configuration.h  configuration.cpp
 
 libginn_a_CPPFLAGS = \
-	-I$(top_srcdir)
+	-I$(top_builddir) \
+	-I$(top_srcdir) \
+	-DSYSCONFDIR=\"$(sysconfdir)\" \
+	-DPKGDATADIR=\"$(pkgdatadir)\"
 
 ginn_SOURCES = main.cpp
 
