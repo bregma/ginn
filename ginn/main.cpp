@@ -25,6 +25,29 @@
 #include <stdexcept>
 
 
+static void
+dump_configuration(Ginn::Configuration const& config)
+{
+  std::cout << PACKAGE_STRING << "\n";
+  std::cout << "Copyright 2013 Canonical Ltd.\n\n";
+
+  std::cout << "Loading wishes from the following files:\n";
+  for (auto const& wish_file_name: config.wish_file_names())
+  {
+    std::cout << "    " << wish_file_name << "\n";
+  }
+  if (config.wish_schema_file_name().empty())
+  {
+    std::cout << "wish validation is disabled.\n";
+  }
+  else
+  {
+    std::cout << "wish validation schema: " << config.wish_schema_file_name()
+              << "\n";
+  }
+}
+
+
 int
 main(int argc, char* argv[])
 {
@@ -33,23 +56,7 @@ main(int argc, char* argv[])
     Ginn::Configuration configuration(argc, argv);
     if (configuration.is_verbose_mode())
     {
-      std::cout << PACKAGE_STRING << "\n";
-      std::cout << "Copyright 2013 Canonical Ltd.\n\n";
-
-      std::cout << "Loading wishes from the following files:\n";
-      for (auto const& wish_file_name: configuration.wish_file_names())
-      {
-        std::cout << "    " << wish_file_name << "\n";
-      }
-      if (configuration.wish_schema_file_name().empty())
-      {
-        std::cout << "wish validation is disabled.\n";
-      }
-      else
-      {
-        std::cout << "wish validation schema: "
-                  << configuration.wish_schema_file_name() << "\n";
-      }
+      dump_configuration(configuration);
     }
 
     if (configuration.wish_file_names().empty())
