@@ -295,6 +295,13 @@ is_verbose_mode() const
 }
 
 
+WishFileFormat Configuration::
+wish_file_format() const
+{
+  return WishFileFormat::XML;
+}
+
+
 FileNameList const& Configuration::
 wish_file_names() const
 {

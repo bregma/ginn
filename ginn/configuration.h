@@ -32,6 +32,12 @@ namespace Ginn
 /** A collection of file names. */
 typedef std::vector<std::string> FileNameList;
 
+/** Types of wish file formats supported. @todo support more than one format. */
+enum class WishFileFormat
+{
+  XML,
+};
+
 
 /**
  * Consolidated configuration values.
@@ -46,6 +52,10 @@ public:
   /** Indicates the program should be verbose about what its doing.  */
   bool
   is_verbose_mode() const;
+
+  /** Gets the wish file format to use. */
+  WishFileFormat
+  wish_file_format() const;
 
   /** Gets a list of names of files containing wish definitions. */
   FileNameList const&
