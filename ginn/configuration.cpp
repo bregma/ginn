@@ -40,7 +40,7 @@ typedef std::vector<std::string> ConfigPath;
  * one of these paths if it's not specified on the command line or in an
  * environment variable (or it's an error).
  */
-ConfigPath
+static ConfigPath
 config_search_path()
 {
   std::vector<std::string> directory_list;
@@ -152,7 +152,7 @@ find_wish_source_files(std::string const& arg_wish_file_name,
 /**
  * Creates an ordered list of wish definition schema files.
  */
-std::string
+static std::string
 find_wish_schema_file(std::string const& arg_wish_schema_file_name,
                       ConfigPath const&  path)
 {
