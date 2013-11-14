@@ -18,11 +18,12 @@ AC_PROG_CXX
 AC_PROG_RANLIB
 
 # Checks for external dependencies.
-PKG_CHECK_MODULES([GEIS], [libgeis >= 1.0.10])
-PKG_CHECK_MODULES([X11],  [x11 >= 1.3.3])
-PKG_CHECK_MODULES([XML2], [libxml-2.0 >= 2.7.7])
-PKG_CHECK_MODULES([XTST], [xtst >= 1.1.0])
-PKG_CHECK_MODULES([BAMF], [libbamf3 >= 0.2.53])
+PKG_CHECK_MODULES([GLIB2_0], [glib-2.0])
+PKG_CHECK_MODULES([GEIS],    [libgeis >= 1.0.10])
+PKG_CHECK_MODULES([X11],     [x11 >= 1.3.3])
+PKG_CHECK_MODULES([XML2],    [libxml-2.0 >= 2.7.7])
+PKG_CHECK_MODULES([XTST],    [xtst >= 1.1.0])
+PKG_CHECK_MODULES([BAMF],    [libbamf3 >= 0.2.53])
 
 AC_ARG_ENABLE([tests],
               [AC_HELP_STRING([--enable-tests=@<:@no/yes@:>@],

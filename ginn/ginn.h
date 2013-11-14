@@ -1,6 +1,6 @@
 /**
- * @file ginn/main.cpp
- * @brief Ginn program entry point.
+ * @file ginn/ginn.h
+ * @brief Declarations of the Ginn module.
  */
 
 /*
@@ -18,30 +18,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "config.h"
+#ifndef GINN_GINN_H_
+#define GINN_GINN_H_
 
-#include "ginn/ginn.h"
-#include <iostream>
-#include <stdexcept>
+#include <memory>
 
 
-int
-main(int argc, char* argv[])
+namespace Ginn
 {
-  try
-  {
-    Ginn::Ginn ginn(argc, argv);
-    ginn.run();
-  }
-  catch (std::exception& ex)
-  {
-    std::cerr << "exception caught: " << ex.what() << "\n";
-    return 1;
-  }
-  catch (...)
-  {
-    std::cerr << "unknown exception caught\n";
-    return 1;
-  }
-  return 0;
-}
+
+/**
+ * The Ginn module encapsulates everything necessary for the daemon to grant
+ * wishes to the lucky uncpator.
+ */
+class Ginn
+{
+public:
+  /** Lets the Ginn out of te bottle. */
+  Ginn(int argc, char* argv[]);
+
+  /** Puts the Ginn back in the bottle. */
+  ~Ginn();
+
+  /** Lets the Ginn go wild. */
+  void
+  run();
+
+private:
+  struct Impl;
+
+  std::unique_ptr<Impl> impl_;
+};
+
+} // namespace Ginn
+
+#endif // GINN_GINN_H_
+

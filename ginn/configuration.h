@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_APPLICATION_H_
-#define GINN_APPLICATION_H_
+#ifndef GINN_CONFIGURATION_H_
+#define GINN_CONFIGURATION_H_
 
 #include <memory>
 #include <string>
@@ -73,5 +73,5 @@ private:
 
 } // namespace Ginn
 
-#endif // GINN_APPLICATION_H_
+#endif // GINN_CONFIGURATION_H_
 

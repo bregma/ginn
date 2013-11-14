@@ -25,11 +25,15 @@ libginn_a_CPPFLAGS = \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-DPKGDATADIR=\"$(pkgdatadir)\"
 
-ginn_SOURCES = main.cpp
+ginn_SOURCES = \
+	ginn.h ginn.cpp \
+	main.cpp
 
 ginn_CPPFLAGS = \
-	-I$(top_srcdir)
+	-I$(top_srcdir) \
+	$(GLIB2_0_CFLAGS)
 
 ginn_LDADD = \
-	libginn.a
+	libginn.a \
+	$(GLIB2_0_LIBS)
 
