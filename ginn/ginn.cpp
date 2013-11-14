@@ -22,10 +22,13 @@
 #include "ginn/ginn.h"
 
 #include "ginn/configuration.h"
+#include "ginn/wish.h"
+#include "ginn/wishloader.h"
 #include <glib.h>
 #include <glib-unix.h>
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 
 
 /** C++ wrapper for GMainLoop */
@@ -61,7 +64,7 @@ dump_configuration(Ginn::Configuration const& config)
   {
     std::cout << "    " << wish_file_name << "\n";
   }
-  if (config.wish_schema_file_name().empty())
+  if (config.wish_schema_file_name() == Ginn::Configuration::WISH_NO_VALIDATE)
   {
     std::cout << "wish validation is disabled.\n";
   }
@@ -81,8 +84,10 @@ struct Ginn::Impl
 {
   Impl(int argc, char* argv[]);
 
-  Configuration  config_;
-  main_loop_t    main_loop_;
+  Configuration   config_;
+  main_loop_t     main_loop_;
+  WishLoader::Ptr wish_loader_;
+  Wish::Table     wish_table_;
 };
 
 
@@ -90,6 +95,8 @@ Ginn::Impl::
 Impl(int argc, char* argv[])
 : config_(argc, argv)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
+, wish_loader_(WishLoader::wish_loader_factory(config_.wish_file_format(),
+                                               config_.wish_schema_file_name()))
 { 
 }
 
@@ -106,6 +113,10 @@ Ginn(int argc, char* argv[])
 
   g_unix_signal_add(SIGTERM, quit_cb, impl_->main_loop_.get());
   g_unix_signal_add(SIGINT, quit_cb, impl_->main_loop_.get());
+
+  impl_->wish_table_ = std::move(impl_->wish_loader_->get_wishes(impl_->config_.wish_file_names()));
+  if (impl_->config_.is_verbose_mode())
+    std::cout << impl_->wish_table_.size() << " wishes loaded\n";
 }
 
 

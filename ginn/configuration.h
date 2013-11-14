@@ -61,6 +61,9 @@ public:
   FileNameList const&
   wish_file_names() const;
 
+  /** Special schema file name indicating 'do not validate'. */
+  static const std::string WISH_NO_VALIDATE;
+
   /** Gets the name of the wish schema file (empty if no validation) */
   std::string const&
   wish_schema_file_name() const;

@@ -17,13 +17,18 @@ bin_PROGRAMS = ginn
 noinst_LIBRARIES = libginn.a
 
 libginn_a_SOURCES = \
-	configuration.h  configuration.cpp
+	configuration.h  configuration.cpp \
+	wish.h           wish.cpp \
+	wishbuilder.h    wishbuilder.cpp \
+	wishloader.h     wishloader.cpp \
+	xmkwishloader.h  xmlwishloader.cpp
 
 libginn_a_CPPFLAGS = \
 	-I$(top_builddir) \
 	-I$(top_srcdir) \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
-	-DPKGDATADIR=\"$(pkgdatadir)\"
+	-DPKGDATADIR=\"$(pkgdatadir)\" \
+	$(XML2_CFLAGS)
 
 ginn_SOURCES = \
 	ginn.h ginn.cpp \
@@ -35,5 +40,6 @@ ginn_CPPFLAGS = \
 
 ginn_LDADD = \
 	libginn.a \
-	$(GLIB2_0_LIBS)
+	$(GLIB2_0_LIBS) \
+	$(XML2_LIBS)
 

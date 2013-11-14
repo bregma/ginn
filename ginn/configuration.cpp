@@ -177,12 +177,14 @@ find_wish_schema_file(std::string const& arg_wish_schema_file_name,
     }
   }
 
-  return "";
+  return Ginn::Configuration::WISH_NO_VALIDATE;
 }
 
 
 namespace Ginn
 {
+
+const std::string Configuration::WISH_NO_VALIDATE = "<no validate>";
 
 struct Configuration::Impl
 {
