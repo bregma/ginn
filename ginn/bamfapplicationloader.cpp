@@ -38,7 +38,7 @@ build_window(BamfMatcher* matcher, BamfWindow* bamf_window)
 {
   char const* title = bamf_view_get_name(BAMF_VIEW(bamf_window));
 
-  const gchar* application_id = "(none)";
+  const gchar* application_id = nullptr;
   BamfApplication* bamf_app = bamf_matcher_get_application_for_window(matcher,
                                                                       bamf_window);
   if (bamf_app)
@@ -46,7 +46,7 @@ build_window(BamfMatcher* matcher, BamfWindow* bamf_window)
 
   return Window{ bamf_window_get_xid(bamf_window),
                  (title?title:"???"),
-                 application_id,
+                 application_id ? application_id : "(none)",
                  (bool)bamf_view_is_active(BAMF_VIEW(bamf_window)),
                  (bool)bamf_view_is_user_visible(BAMF_VIEW(bamf_window)),
                  bamf_window_get_monitor(bamf_window) };
