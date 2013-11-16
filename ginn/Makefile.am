@@ -23,6 +23,9 @@ libginn_a_SOURCES = \
 	applicationobserver.h    \
 	bamfapplicationloader.h  bamfapplicationloader.cpp \
 	configuration.h          configuration.cpp \
+	geis.h                   geis.cpp \
+	geisobserver.h           \
+	gesturewatch.h           gesturewatch.cpp \
 	wish.h                   wish.cpp \
 	wishbuilder.h            wishbuilder.cpp \
 	wishloader.h             wishloader.cpp \
@@ -34,6 +37,7 @@ libginn_a_CPPFLAGS = \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-DPKGDATADIR=\"$(pkgdatadir)\" \
 	$(BAMF_CFLAGS) \
+	$(GEIS_CFLAGS) \
 	$(GIO_CFLAGS) \
 	$(XML2_CFLAGS)
 
@@ -48,6 +52,7 @@ ginn_CPPFLAGS = \
 ginn_LDADD = \
 	libginn.a \
 	$(BAMF_LIBS) \
+	$(GEIS_LIBS) \
 	$(GIO_LIBS) \
 	$(GLIB2_0_LIBS) \
 	$(XML2_LIBS)

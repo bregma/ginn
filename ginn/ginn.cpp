@@ -24,6 +24,9 @@
 #include "ginn/applicationloader.h"
 #include "ginn/applicationobserver.h"
 #include "ginn/configuration.h"
+#include "ginn/geis.h"
+#include "ginn/geisobserver.h"
+#include "ginn/gesturewatch.h"
 #include "ginn/wish.h"
 #include "ginn/wishloader.h"
 #include <glib.h>
@@ -131,6 +134,7 @@ namespace Ginn
  */
 struct Ginn::Impl
 : public ApplicationObserver
+, public GeisObserver
 {
   Impl(int argc, char* argv[]);
 
@@ -152,12 +156,26 @@ struct Ginn::Impl
   void
   window_removed(Window::Id window_id);
 
-  Configuration           config_;
-  main_loop_t             main_loop_;
-  WishLoader::Ptr         wish_loader_;
-  Wish::Table             wish_table_;
-  ApplicationLoader::Ptr  app_loader_;
-  Application::List       apps_;
+  void
+  geis_initialized();
+
+  void
+  geis_new_class(GeisGestureClass gesture_class);
+
+  void
+  run()
+  { g_main_loop_run(main_loop_.get()); }
+
+private:
+  Configuration                            config_;
+  main_loop_t                              main_loop_;
+  WishLoader::Ptr                          wish_loader_;
+  Wish::Table                              wish_table_;
+  ApplicationLoader::Ptr                   app_loader_;
+  Application::List                        apps_;
+  Geis                                     geis_;
+  std::map<std::string, GeisGestureClass>  class_map_;
+  GestureWatch::Map                        gesture_map_;
 };
 
 
@@ -171,12 +189,16 @@ Impl(int argc, char* argv[])
 , wish_loader_(WishLoader::wish_loader_factory(config_.wish_file_format(),
                                                config_.wish_schema_file_name()))
 , app_loader_(ApplicationLoader::application_loader_factory("bamf", this))
+, geis_(this)
 { 
   if (config_.is_verbose_mode())
     dump_configuration(config_);
 
   if (config_.wish_file_names().empty())
     throw std::runtime_error("no wish files found in configuration");
+
+  g_unix_signal_add(SIGTERM, quit_cb, main_loop_.get());
+  g_unix_signal_add(SIGINT,  quit_cb, main_loop_.get());
 }
 
 
@@ -286,6 +308,46 @@ window_removed(Window::Id window_id)
 }
 
 
+void Ginn::Impl::
+geis_initialized()
+{
+  // Create the initial gesture watches.
+  for (auto const& app: apps_)
+  {
+    for (auto const& wish: wish_table_)
+    {
+      if (app.first == wish.first)
+      {
+        for (auto const& window: app.second->windows())
+        {
+          for (auto const& w: wish.second)
+          {
+            gesture_map_[window.window_id] = std::move(
+                GestureWatch::Ptr(new GestureWatch(window.window_id,
+                                                   app.second,
+                                                   w.second,
+                                                   geis_)));
+          }
+        }
+      }
+    }
+  }
+
+  for (auto const& watch: gesture_map_)
+  {
+    watch.second->dump();
+  }
+}
+
+
+void Ginn::Impl::
+geis_new_class(GeisGestureClass gesture_class)
+{
+  char const* class_name = geis_gesture_class_name(gesture_class);
+  class_map_[class_name] = gesture_class;
+}
+
+
 /**
  * Constructs the Ginn by creating its internal implementation, hooking it up
  * to signal handlers, then loading the data.
@@ -294,9 +356,6 @@ Ginn::
 Ginn(int argc, char* argv[])
 : impl_(new Impl(argc, argv))
 {
-  g_unix_signal_add(SIGTERM, quit_cb, impl_->main_loop_.get());
-  g_unix_signal_add(SIGINT, quit_cb, impl_->main_loop_.get());
-
   impl_->load_wishes();
   impl_->load_applications();
 }
@@ -315,7 +374,7 @@ Ginn::
  */
 void Ginn::
 run()
-{ g_main_loop_run(impl_->main_loop_.get()); }
+{ impl_->run(); }
 
 
 } // namespace Ginn
