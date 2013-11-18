@@ -69,6 +69,14 @@ namespace Ginn
     { return name_; }
 
     std::string const&
+    gesture() const
+    { return gesture_; }
+
+    int
+    touches() const
+    { return touches_; }
+
+    std::string const&
     property() const
     { return property_; }
 
@@ -82,6 +90,8 @@ namespace Ginn
 
   private:
     std::string name_;
+    std::string gesture_;
+    int         touches_;
     std::string when_;
     std::string property_;
     float       min_;

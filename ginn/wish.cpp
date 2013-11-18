@@ -30,6 +30,8 @@ namespace Ginn
 Wish::
 Wish(const WishBuilder& builder)
 : name_(std::move(builder.name()))
+, gesture_(std::move(builder.gesture()))
+, touches_(std::move(builder.touches()))
 , when_(std::move(builder.when()))
 , property_(std::move(builder.property()))
 , min_(builder.min())

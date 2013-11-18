@@ -190,8 +190,12 @@ subscribe(Window::Id window_id, Wish::Ptr const& wish)
   std::string filter_name = wish->name();
   GeisFilter filter = geis_filter_new(impl_->geis_, filter_name.c_str());
   geis_filter_add_term(filter, GEIS_FILTER_REGION,
-               GEIS_REGION_ATTRIBUTE_WINDOWID, GEIS_FILTER_OP_EQ, window_id,
-               NULL);
+           GEIS_REGION_ATTRIBUTE_WINDOWID, GEIS_FILTER_OP_EQ, window_id,
+           NULL);
+  geis_filter_add_term(filter, GEIS_FILTER_CLASS,
+           GEIS_CLASS_ATTRIBUTE_NAME, GEIS_FILTER_OP_EQ, wish->gesture().c_str(),
+           GEIS_GESTURE_ATTRIBUTE_TOUCHES, GEIS_FILTER_OP_EQ, wish->touches(),
+           NULL);
   geis_subscription_add_filter(geis_sub, filter);
   Geis::Subscription subscription(geis_sub);
 
