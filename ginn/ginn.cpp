@@ -199,7 +199,7 @@ application_added(Application::Ptr const& application)
 {
   apps_[application->application_id()] = application;
   if (config_.is_verbose_mode())
-    std::cout << "application added: " << application << "\n";
+    std::cout << "application added: " << *application << "\n";
 }
 
 
