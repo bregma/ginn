@@ -31,7 +31,6 @@
 #include "ginn/wishloader.h"
 #include <glib.h>
 #include <glib-unix.h>
-#include <iomanip>
 #include <iostream>
 #include <stdexcept>
 #include <utility>
@@ -78,44 +77,6 @@ dump_configuration(Ginn::Configuration const& config)
   {
     std::cout << "wish validation schema: " << config.wish_schema_file_name()
               << "\n";
-  }
-}
-
-
-static void
-dump_window(Ginn::Window const& window)
-{
-  std::cout << "window_id="
-            << std::hex << std::setw(8) << std::setfill('0') << std::showbase
-            << window.window_id
-            << std::dec
-            << " application_id=\"" << window.application_id << "\""
-            << " monitor=" << window.monitor
-            << " title=\"" << window.title << "\"\n";
-}
-
-
-static void
-dump_application(Ginn::Application::Ptr const& application)
-{
-  std::cout << "application_id=\"" << application->application_id() << "\""
-            << " name=\"" << application->name() << "\""
-            << " generic_name=\"" << application->generic_name() << "\""
-            << "\n";
-  for (auto const& window: application->windows())
-  {
-    std::cout << "    ";
-    dump_window(window);
-  }
-}
-
-
-static void
-dump_applications(Ginn::Application::List const& apps)
-{
-  for (auto const& application: apps)
-  {
-    dump_application(application.second);
   }
 }
 
@@ -224,7 +185,8 @@ load_applications()
   if (config_.is_verbose_mode())
   {
     std::cout << apps_.size() << " applications recognized:\n";
-    dump_applications(apps_);
+    for (auto const& application: apps_)
+      std::cout << *application.second << "\n";
   }
 }
 
@@ -237,10 +199,7 @@ application_added(Application::Ptr const& application)
 {
   apps_[application->application_id()] = application;
   if (config_.is_verbose_mode())
-  {
-    std::cout << "application added: ";
-    dump_application(application);
-  }
+    std::cout << "application added: " << application << "\n";
 }
 
 
@@ -254,10 +213,7 @@ application_removed(Application::Id const& application_id)
   if (it != apps_.end())
   {
     if (config_.is_verbose_mode())
-    {
-      std::cout << "removing application: ";
-      dump_application(it->second);
-    }
+      std::cout << "removing application: " << it->second << "\n";;
     apps_.erase(it);
   }
 }
@@ -276,10 +232,7 @@ window_added(Window const& window)
   if (it != apps_.end())
   {
     if (config_.is_verbose_mode())
-    {
-      std::cout << "window added: ";
-      dump_window(window);
-    }
+      std::cout << "window added: " << window << "\n";
     it->second->add_window(window);
   }
 }
@@ -297,10 +250,7 @@ window_removed(Window::Id window_id)
     if (window)
     {
       if (config_.is_verbose_mode())
-      {
-        std::cout << "window removed: ";
-        dump_window(*window);
-      }
+        std::cout << "window removed: " << *window << "\n";;
       it.second->remove_window(window_id);
       break;
     }

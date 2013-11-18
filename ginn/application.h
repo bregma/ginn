@@ -21,6 +21,7 @@
 #ifndef GINN_APPLICATION_H_
 #define GINN_APPLICATION_H_
 
+#include <iosfwd>
 #include <map>
 #include <memory>
 #include <string>
@@ -95,12 +96,24 @@ public:
   void
   remove_window(Window::Id window_id);
 
+  /** Dump the application information to an output stream. */
+  std::ostream&
+  dump(std::ostream& ostr) const;
+
 private:
   Id          application_id_;  ///< name of the desktop file
   std::string name_;            ///< Name key in the desktop file
   std::string generic_name_;    ///< GenericName key in the desktop file
   Windows     windows_;
 };
+
+
+std::ostream&
+operator<<(std::ostream& ostr, Window const& window);
+
+inline std::ostream&
+operator<<(std::ostream& ostr, Application const& app)
+{ return app.dump(ostr); }
 
 } // namespace Ginn
 

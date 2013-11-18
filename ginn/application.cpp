@@ -22,6 +22,8 @@
 
 #include <algorithm>
 #include "ginn/applicationbuilder.h"
+#include <iomanip>
+#include <iostream>
 #include <utility>
 
 
@@ -94,6 +96,34 @@ remove_window(Window::Id window_id)
                          });
   if (it != windows_.end())
     windows_.erase(it);
+}
+
+
+std::ostream&
+operator<<(std::ostream& ostr, Window const& window)
+{
+  return ostr << "window_id="
+              << std::hex << std::setw(8) << std::setfill('0') << std::showbase
+              << window.window_id
+              << std::dec
+              << " application_id=\"" << window.application_id << "\""
+              << " monitor=" << window.monitor
+              << " title=\"" << window.title << "\"";
+}
+
+
+std::ostream& Application::
+dump(std::ostream& ostr) const
+{
+  ostr << "application_id=\"" << application_id() << "\""
+       << " name=\"" << name() << "\""
+       << " generic_name=\"" << generic_name() << "\""
+       << "\n";
+  for (auto const& window: windows())
+  {
+    std::cout << "    " << window << "\n";;
+  }
+  return ostr;
 }
 
 
