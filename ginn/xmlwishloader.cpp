@@ -114,11 +114,11 @@ struct XmlWishBuilder
 
   float
   min() const
-  { return 0.0f; }
+  { return min_; }
 
   float
   max() const
-  { return 0.0f; }
+  { return max_; }
 
   std::string
   action() const
@@ -140,6 +140,8 @@ struct XmlWishBuilder
   int         touches_;
   std::string when_;
   std::string property_;
+  float       min_;
+  float       max_;
   std::string action_;
 };
 
@@ -153,6 +155,8 @@ XmlWishBuilder::
 XmlWishBuilder(xmlNodePtr const& node)
 : gesture_((char const*)xmlGetProp(node, (xmlChar const*)"gesture"))
 , touches_(std::stoi((char const*)xmlGetProp(node, (xmlChar const*)"fingers")))
+, min_(0.0f)
+, max_(0.0f)
 {
   for (xmlNodePtr child = node->children; child; child = child->next)
   {
@@ -167,6 +171,16 @@ XmlWishBuilder(xmlNodePtr const& node)
           if (0 == strcmp((char const*)anode->name, "trigger"))
           {
             property_ = (char const*)xmlGetProp(anode, (xmlChar const*)"prop");
+            char const* smin = (char const*)xmlGetProp(anode, (xmlChar const*)"min");
+            if (smin)
+            {
+              min_ = std::stof(smin);
+            }
+            char const* smax = (char const*)xmlGetProp(anode, (xmlChar const*)"max");
+            if (smax)
+            {
+              max_ = std::stof(smax);
+            }
           }
           else if (0 == strcmp((char const*)anode->name, "button"))
           {
@@ -311,24 +325,23 @@ load_wishes(ValidatorPtr const& vctxt, std::string const& wish_file_name)
       int result = xmlRelaxNGValidateDoc(vctxt.get(), xml_doc.get());
       if (result) {
         std::cerr << "validation returned " << result << "\n";
+        return wish_table;
       }
-      else
-      {
-        xmlNodePtr root = xmlDocGetRootElement(xml_doc.get());
-        if (root == NULL)
-        {
-          std::cerr << wish_file_name << ": empty document\n";
-        }
-        else if (0 != std::strcmp((char const*)root->name, "ginn"))
-        {
-          std::cerr << wish_file_name << ": unexpected document root '"
-                    << root->name << "'\n";
-        }
-        else
-        {
-          process_ginn_node(root->children, wish_table);
-        }
-      }
+    }
+
+    xmlNodePtr root = xmlDocGetRootElement(xml_doc.get());
+    if (root == NULL)
+    {
+      std::cerr << wish_file_name << ": empty document\n";
+    }
+    else if (0 != std::strcmp((char const*)root->name, "ginn"))
+    {
+      std::cerr << wish_file_name << ": unexpected document root '"
+                << root->name << "'\n";
+    }
+    else
+    {
+      process_ginn_node(root->children, wish_table);
     }
   }
 
