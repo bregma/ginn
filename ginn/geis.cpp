@@ -33,18 +33,13 @@ namespace Ginn
 Geis::Subscription::
 Subscription(GeisSubscription subscription)
 : subscription_(subscription)
-{
-  std::cerr << __PRETTY_FUNCTION__ << "\n";
-}
+{ }
 
 
 Geis::Subscription::
 Subscription(Subscription&& rhs)
 : subscription_(rhs.subscription_)
-{
-  std::cerr << __PRETTY_FUNCTION__ << "\n";
-  rhs.subscription_ = 0;
-}
+{ rhs.subscription_ = 0; }
 
 
 Geis::Subscription::
@@ -52,7 +47,6 @@ Geis::Subscription::
 {
   if (subscription_)
   {
-    std::cerr << __PRETTY_FUNCTION__ << "\n";
     geis_subscription_delete(subscription_);
   }
 }
@@ -80,7 +74,8 @@ static gboolean
 geis_gio_event_ready(GIOChannel*, GIOCondition, gpointer pdata)
 {
   ::Geis geis = (::Geis)pdata;
-  geis_dispatch_events(geis);
+  while (GEIS_STATUS_CONTINUE == geis_dispatch_events(geis))
+    ;
   return TRUE;
 }
 
@@ -91,7 +86,6 @@ geis_gio_event_ready(GIOChannel*, GIOCondition, gpointer pdata)
 void
 geis_gesture_event_ready(::Geis, GeisEvent event, void* context)
 {
-  std::cerr << __PRETTY_FUNCTION__ << "\n";
   GeisObserver* observer = (GeisObserver*)context;
   
   switch (geis_event_type(event))
@@ -100,9 +94,28 @@ geis_gesture_event_ready(::Geis, GeisEvent event, void* context)
       observer->geis_initialized();
       break;
 
+    case GEIS_EVENT_ERROR:
+      std::cerr << "failed to initialize gesture interface\n";
+      break;
+
+    case GEIS_EVENT_DEVICE_AVAILABLE:
+      std::cout << "device-available event received\n";
+      break;
+    case GEIS_EVENT_DEVICE_UNAVAILABLE:
+      std::cout << "device-unavailale event received\n";
+      break;
+
+    case GEIS_EVENT_GESTURE_BEGIN:
+    case GEIS_EVENT_GESTURE_UPDATE:
+    case GEIS_EVENT_GESTURE_END:
+      std::cout << "gesture event received\n";
+      break;
+
     default:
+      std::cout << "event ignored\n";
       break;
   }
+  geis_event_delete(event);
 }
 
 
@@ -127,6 +140,7 @@ geis_class_event_ready(::Geis, GeisEvent event, void* context)
     default:
       break;
   }
+  geis_event_delete(event);
 }
 
 
@@ -142,6 +156,7 @@ Impl(GeisObserver* observer)
   if (!geis_)
     throw std::runtime_error("could not create GEIS instance");
 
+  geis_register_device_callback(geis_, geis_gesture_event_ready, observer_);
   geis_register_class_callback(geis_, geis_class_event_ready, observer_);
   geis_register_event_callback(geis_, geis_gesture_event_ready, observer_);
 
@@ -183,7 +198,6 @@ Geis::
 Geis::Subscription Geis::
 subscribe(Window::Id window_id, Wish::Ptr const& wish)
 {
-  std::cerr << __PRETTY_FUNCTION__ << " begins\n";
   GeisSubscription geis_sub = geis_subscription_new(impl_->geis_,
                                                     wish->name().c_str(),
                                                     GEIS_SUBSCRIPTION_CONT);
@@ -197,9 +211,9 @@ subscribe(Window::Id window_id, Wish::Ptr const& wish)
            GEIS_GESTURE_ATTRIBUTE_TOUCHES, GEIS_FILTER_OP_EQ, wish->touches(),
            NULL);
   geis_subscription_add_filter(geis_sub, filter);
+  geis_subscription_activate(geis_sub);
   Geis::Subscription subscription(geis_sub);
 
-  std::cerr << __PRETTY_FUNCTION__ << " ends\n";
   return std::move(subscription);
 }
 

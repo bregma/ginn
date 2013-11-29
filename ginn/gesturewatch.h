@@ -24,6 +24,7 @@
 #include "ginn/application.h"
 #include "ginn/geis.h"
 #include "ginn/wish.h"
+#include <iosfwd>
 #include <map>
 
 
@@ -39,8 +40,10 @@ class GestureWatch
 public:
   /** A pointer to a watch. */
   typedef std::unique_ptr<GestureWatch> Ptr;
-  /** Collection mapping a windowid to a gesture watch. */
-  typedef std::map<Window::Id, GestureWatch::Ptr> Map;
+  /** A list of gesture watches. */
+  typedef std::vector<GestureWatch::Ptr> List;
+  /** Collection mapping a windowid to gesture watches. */
+  typedef std::map<Window::Id, GestureWatch::List> Map;
 
 public:
   GestureWatch(Window::Id        window_id,
@@ -48,8 +51,10 @@ public:
                Wish::Ptr         wish,
                Geis&             geis);
 
-  void
-  dump() const;
+  ~GestureWatch();
+
+  friend std::ostream&
+  operator<<(std::ostream& ostr, GestureWatch const& watch);
 
 private:
   Window::Id         window_id_;
@@ -57,6 +62,7 @@ private:
   Wish::Ptr          wish_;
   Geis::Subscription subscription_;
 };
+
 
 } // namespace Ginn
 

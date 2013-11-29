@@ -42,13 +42,20 @@ GestureWatch(Window::Id        window_id,
 }
 
 
-void GestureWatch::
-dump() const
+GestureWatch::
+~GestureWatch()
 {
-  Window const* const w = application_->window(window_id_);
-  std::cerr << "app '" << application_->name() << "' window "
-            << std::hex << std::setw(8) << std::setfill('0') << std::showbase
-            << window_id_ << std::dec << " '" << w->title << "'\n";
+  std::cerr << __PRETTY_FUNCTION__ << " '" << wish_->name() << "'\n";
+}
+
+std::ostream&
+operator<<(std::ostream& ostr, GestureWatch const& watch)
+{
+  Window const* const w = watch.application_->window(watch.window_id_);
+  return ostr << "app '" << watch.application_->name()
+              << "' window "
+              << std::hex << std::setw(8) << std::setfill('0') << std::showbase
+              << watch.window_id_ << std::dec << " '" << w->title << "'";
 }
 
 

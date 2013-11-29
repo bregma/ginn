@@ -272,20 +272,23 @@ geis_initialized()
         {
           for (auto const& w: wish.second)
           {
-            gesture_map_[window.window_id] = std::move(
-                GestureWatch::Ptr(new GestureWatch(window.window_id,
-                                                   app.second,
-                                                   w.second,
-                                                   geis_)));
+            GestureWatch::Ptr watch { new GestureWatch(window.window_id,
+                                                       app.second,
+                                                       w.second,
+                                                       geis_) };
+            gesture_map_[window.window_id].push_back(std::move(watch));
           }
         }
       }
     }
   }
 
-  for (auto const& watch: gesture_map_)
+  for (auto const& watchlist: gesture_map_)
   {
-    watch.second->dump();
+    for (auto const& watch: watchlist.second)
+    {
+      std::cout << *watch << "\n";;
+    }
   }
 }
 
