@@ -53,6 +53,13 @@ public:
 
   ~GestureWatch();
 
+  /**
+   * Indicates if the @p event matches this watch.
+   * @param[in] event The Geis event to match.
+   */
+  bool
+  matches(GeisEvent event);
+
   friend std::ostream&
   operator<<(std::ostream& ostr, GestureWatch const& watch);
 

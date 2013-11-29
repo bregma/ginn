@@ -99,20 +99,16 @@ geis_gesture_event_ready(::Geis, GeisEvent event, void* context)
       break;
 
     case GEIS_EVENT_DEVICE_AVAILABLE:
-      std::cout << "device-available event received\n";
-      break;
     case GEIS_EVENT_DEVICE_UNAVAILABLE:
-      std::cout << "device-unavailale event received\n";
       break;
 
     case GEIS_EVENT_GESTURE_BEGIN:
     case GEIS_EVENT_GESTURE_UPDATE:
     case GEIS_EVENT_GESTURE_END:
-      std::cout << "gesture event received\n";
+      observer->geis_gesture_event(event);
       break;
 
     default:
-      std::cout << "event ignored\n";
       break;
   }
   geis_event_delete(event);

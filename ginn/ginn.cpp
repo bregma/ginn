@@ -124,6 +124,9 @@ struct Ginn::Impl
   geis_new_class(GeisGestureClass gesture_class);
 
   void
+  geis_gesture_event(GeisEvent event);
+
+  void
   run()
   { g_main_loop_run(main_loop_.get()); }
 
@@ -283,11 +286,14 @@ geis_initialized()
     }
   }
 
-  for (auto const& watchlist: gesture_map_)
+  if (config_.is_verbose_mode())
   {
-    for (auto const& watch: watchlist.second)
+    for (auto const& watchlist: gesture_map_)
     {
-      std::cout << *watch << "\n";;
+      for (auto const& watch: watchlist.second)
+      {
+        std::cout << *watch << "\n";;
+      }
     }
   }
 }
@@ -298,6 +304,22 @@ geis_new_class(GeisGestureClass gesture_class)
 {
   char const* class_name = geis_gesture_class_name(gesture_class);
   class_map_[class_name] = gesture_class;
+}
+
+
+void Ginn::Impl::
+geis_gesture_event(GeisEvent event)
+{
+  for (auto const& watchlist: gesture_map_)
+  {
+    for (auto const& watch: watchlist.second)
+    {
+      if (watch->matches(event))
+      {
+        std::cerr << "gesture event for window " << watchlist.first << "\n";
+      }
+    }
+  }
 }
 
 

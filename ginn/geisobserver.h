@@ -38,6 +38,9 @@ public:
 
   virtual void
   geis_new_class(GeisGestureClass gesture_class) = 0;
+
+  virtual void
+  geis_gesture_event(GeisEvent event) = 0;
 };
 
 }
