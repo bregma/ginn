@@ -1,6 +1,6 @@
 /**
- * @file ginn/xmlwishloader.cpp
- * @brief Definitions of the Ginn BAMF Wish Loader class.
+ * @file ginn/xmlwishsource.cpp
+ * @brief Definitions of the Ginn BAMF Wish Source class.
  */
 
 /*
@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "ginn/xmlwishloader.h"
+#include "ginn/xmlwishsource.h"
 
 #include <cstring>
 #include "ginn/wishbuilder.h"
@@ -198,9 +198,9 @@ XmlWishBuilder(xmlNodePtr const& node)
 
 
 /**
- * Internal implementation of the XML wish loader.
+ * Internal implementation of the XML wish source.
  */
-struct XmlWishLoader::Impl
+struct XmlWishSource::Impl
 {
   /** @todo: add proper error handling to schema load/parse */
   Impl(std::string const& schema_file_name)
@@ -222,15 +222,15 @@ struct XmlWishLoader::Impl
 };
 
 
-XmlWishLoader::
-XmlWishLoader(std::string const& wish_schema_file_name)
+XmlWishSource::
+XmlWishSource(std::string const& wish_schema_file_name)
 : impl_(new Impl(wish_schema_file_name))
 {
 }
 
 
-XmlWishLoader::
-~XmlWishLoader()
+XmlWishSource::
+~XmlWishSource()
 {
 }
 
@@ -354,7 +354,7 @@ load_wishes(ValidatorPtr const& vctxt, std::string const& wish_file_name)
  *
  * If configured, the wish file may be validated first.
  */
-Wish::Table XmlWishLoader::
+Wish::Table XmlWishSource::
 get_wishes(FileNameList const& wish_file_names)
 {
   Wish::Table wish_table;

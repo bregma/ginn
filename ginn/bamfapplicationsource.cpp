@@ -22,6 +22,7 @@
 
 #include "ginn/application.h"
 #include "ginn/applicationbuilder.h"
+#include "ginn/applicationobserver.h"
 #include <gio/gdesktopappinfo.h>
 #include <glib.h>
 #include <libbamf/bamf-matcher.h>

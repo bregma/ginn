@@ -30,8 +30,8 @@ libginn_a_SOURCES = \
 	gesturewatch.h           gesturewatch.cpp \
 	wish.h                   wish.cpp \
 	wishbuilder.h            wishbuilder.cpp \
-	wishloader.h             wishloader.cpp \
-	xmkwishloader.h          xmlwishloader.cpp
+	wishsource.h             wishsource.cpp \
+	xmkwishsource.h          xmlwishsource.cpp
 
 libginn_a_CPPFLAGS = \
 	-I$(top_builddir) \

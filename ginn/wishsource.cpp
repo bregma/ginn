@@ -1,6 +1,6 @@
 /**
- * @file ginn/xmlwishloader.h
- * @brief Declarations of the Ginn XML Wish Loader class.
+ * @file wishsource.cpp
+ * @brief DEfinition of the Ginn WishSource interface class.
  */
 
 /*
@@ -18,37 +18,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_XMLWISHLOADER_H_
-#define GINN_XMLWISHLOADER_H_
+#include "ginn/wishsource.h"
 
-#include "ginn/wishloader.h"
-#include <memory>
-#include <string>
+#include "ginn/xmlwishsource.h"
 
 
 namespace Ginn
 {
 
-/**
- * A factory class to load wishes from an XML file.
- */
-class XmlWishLoader
-: public WishLoader
+
+WishSource::
+~WishSource()
+{ }
+
+
+WishSource::Ptr WishSource::
+wish_source_factory(WishFileFormat format, std::string const& schema_file_name)
 {
-public:
-  XmlWishLoader(std::string const& schema_file_name);
-  ~XmlWishLoader();
-
-  Wish::Table
-  get_wishes(FileNameList const& wish_file_names);
-
-private:
-  struct Impl;
-
-  std::unique_ptr<Impl> impl_;
-};
-
+  Ptr source;
+  if (format == WishFileFormat::XML)
+    source.reset(new XmlWishSource(schema_file_name));
+  return source;
 }
 
-#endif // GINN_XMLWISHLOADER_H_
+
+} // namespace Ginn
+
 

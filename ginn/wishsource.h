@@ -1,6 +1,6 @@
 /**
- * @file ginn/wishloader.h
- * @brief Declarations of the Ginn Wish Loader module interface.
+ * @file ginn/wishsource.h
+ * @brief Declarations of the Ginn Wish Source module interface.
  */
 
 /*
@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_WISHLOADER_H_
-#define GINN_WISHLOADER_H_
+#ifndef GINN_WISHSOURCE_H_
+#define GINN_WISHSOURCE_H_
 
 #include "ginn/configuration.h"
 #include "ginn/wish.h"
@@ -31,25 +31,28 @@ namespace Ginn
 {
 
 /**
- * A factory class to load Wishes.
+ * An interface for Wish sources.
+ *
+ * Comes complete with a handy factory function to create Wish souces by name.
  */
-class WishLoader
+class WishSource
 {
 public:
-  typedef std::shared_ptr<WishLoader> Ptr;
+  typedef std::shared_ptr<WishSource> Ptr;
 
 public:
-  virtual ~WishLoader() = 0;
+  virtual ~WishSource() = 0;
 
-  /** Creates a concrete WishLoader. */
+  /** Creates a concrete WishSource. */
   static Ptr
-  wish_loader_factory(WishFileFormat format, std::string const& schema_file_name);
+  wish_source_factory(WishFileFormat format, std::string const& schema_file_name);
 
+  /** Gest wishes from the source. */
   virtual Wish::Table
   get_wishes(FileNameList const& wish_file_names) = 0;
 };
 
 }
 
-#endif // GINN_WISHLOADER_H_
+#endif // GINN_WISHSOURCE_H_
 

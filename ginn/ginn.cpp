@@ -28,7 +28,7 @@
 #include "ginn/geisobserver.h"
 #include "ginn/gesturewatch.h"
 #include "ginn/wish.h"
-#include "ginn/wishloader.h"
+#include "ginn/wishsource.h"
 #include <glib.h>
 #include <glib-unix.h>
 #include <iostream>
@@ -133,7 +133,7 @@ struct Ginn::Impl
 private:
   Configuration                            config_;
   main_loop_t                              main_loop_;
-  WishLoader::Ptr                          wish_loader_;
+  WishSource::Ptr                          wish_source_;
   Wish::Table                              wish_table_;
   ApplicationSource::Ptr                   app_source_;
   Application::List                        apps_;
@@ -150,7 +150,7 @@ Ginn::Impl::
 Impl(int argc, char* argv[])
 : config_(argc, argv)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
-, wish_loader_(WishLoader::wish_loader_factory(config_.wish_file_format(),
+, wish_source_(WishSource::wish_source_factory(config_.wish_file_format(),
                                                config_.wish_schema_file_name()))
 , app_source_(ApplicationSource::application_source_factory("bamf", this))
 , geis_(this)
@@ -172,7 +172,7 @@ Impl(int argc, char* argv[])
 void Ginn::Impl::
 load_wishes()
 {
-  wish_table_ = std::move(wish_loader_->get_wishes(config_.wish_file_names()));
+  wish_table_ = std::move(wish_source_->get_wishes(config_.wish_file_names()));
   if (config_.is_verbose_mode())
     std::cout << wish_table_.size() << " wishes loaded\n";
 }
