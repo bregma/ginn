@@ -17,11 +17,13 @@ bin_PROGRAMS = ginn
 noinst_LIBRARIES = libginn.a
 
 libginn_a_SOURCES = \
+	action.h                 action.cpp \
+	actionsink.h             actionsink.cpp \
 	application.h            application.cpp \
 	applicationbuilder.h     applicationbuilder.cpp \
-	applicationloader.h      applicationloader.cpp \
+	applicationsource.h      applicationsource.cpp \
 	applicationobserver.h    \
-	bamfapplicationloader.h  bamfapplicationloader.cpp \
+	bamfapplicationsource.h  bamfapplicationsource.cpp \
 	configuration.h          configuration.cpp \
 	geis.h                   geis.cpp \
 	geisobserver.h           \

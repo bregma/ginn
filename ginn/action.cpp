@@ -1,6 +1,6 @@
 /**
- * @file applicationloader.cpp
- * @brief DEfinition of the Ginn ApplicationLoader interface class.
+ * @file ginn/action.cpp
+ * @brief Implementation of the Ginn Action module.
  */
 
 /*
@@ -18,29 +18,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "ginn/applicationloader.h"
+#include "ginn/action.h"
 
-#include "ginn/bamfapplicationloader.h"
 
 namespace Ginn
 {
 
-ApplicationLoader::
-~ApplicationLoader()
-{ }
-
-
-ApplicationLoader::Ptr ApplicationLoader::
-application_loader_factory(std::string const&   name,
-                           ApplicationObserver* observer)
+Action::
+Action(ActionBuilder const& builder)
 {
-  Ptr loader;
-  if (name == "bamf")
-    loader.reset(new BamfApplicationLoader(observer));
-  return loader;
 }
 
 
-} // namespace Ginn
+Action::
+~Action()
+{
+}
 
+
+Action::EventList::const_iterator Action::
+begin() const
+{
+  return events_.cbegin();
+}
+
+
+Action::EventList::const_iterator Action::
+end() const
+{
+  return events_.cend();
+}
+
+} // namespace Ginn
 

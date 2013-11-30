@@ -57,7 +57,7 @@
 
 <!-- Applications specific gestures  -->
   <applications>
-    <application name="inkscape">
+    <application name="Inkscape Vector Graphics Editor">
     <wish gesture="Pinch" fingers="2">
       <action name="action1" when="update">
         <trigger prop="radius delta" min="-200" max="-40"/>
@@ -231,6 +231,33 @@
     </application>
 
     <application name="firefox">
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta y" min="20" max="80"/>
+        <key>Page_Up</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta y" min="-80" max="-20"/>
+        <key>Page_Down</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action5" when="update">
+        <trigger prop="delta x" min="20" max="80"/>
+        <key>Left</key>
+      </action>
+    </wish>
+    <wish gesture="Drag" fingers="2">
+      <action name="action6" when="update">
+        <trigger prop="delta x" min="-80" max="-20"/>
+        <key>Right</key>
+      </action>
+    </wish>
+    </application>
+
+    <application name="Terminal">
     <wish gesture="Drag" fingers="2">
       <action name="action5" when="update">
         <trigger prop="delta y" min="20" max="80"/>

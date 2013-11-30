@@ -79,3 +79,4 @@ core
 .git
 .gitignore
 src/ginn
+ginn/ginn

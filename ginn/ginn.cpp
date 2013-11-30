@@ -21,7 +21,7 @@
 #include "config.h"
 #include "ginn/ginn.h"
 
-#include "ginn/applicationloader.h"
+#include "ginn/applicationsource.h"
 #include "ginn/applicationobserver.h"
 #include "ginn/configuration.h"
 #include "ginn/geis.h"
@@ -135,7 +135,7 @@ private:
   main_loop_t                              main_loop_;
   WishLoader::Ptr                          wish_loader_;
   Wish::Table                              wish_table_;
-  ApplicationLoader::Ptr                   app_loader_;
+  ApplicationSource::Ptr                   app_source_;
   Application::List                        apps_;
   Geis                                     geis_;
   std::map<std::string, GeisGestureClass>  class_map_;
@@ -152,7 +152,7 @@ Impl(int argc, char* argv[])
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
 , wish_loader_(WishLoader::wish_loader_factory(config_.wish_file_format(),
                                                config_.wish_schema_file_name()))
-, app_loader_(ApplicationLoader::application_loader_factory("bamf", this))
+, app_source_(ApplicationSource::application_source_factory("bamf", this))
 , geis_(this)
 { 
   if (config_.is_verbose_mode())
@@ -184,7 +184,7 @@ load_wishes()
 void Ginn::Impl::
 load_applications()
 {
-  apps_ = std::move(app_loader_->get_applications());
+  apps_ = std::move(app_source_->get_applications());
   if (config_.is_verbose_mode())
   {
     std::cout << apps_.size() << " applications recognized:\n";

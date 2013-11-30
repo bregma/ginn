@@ -1,6 +1,6 @@
 /**
- * @file ginn/bamfapplicationloader.cpp
- * @brief Definitions of the Ginn BAMF Application Loader class.
+ * @file ginn/bamfapplicationsource.cpp
+ * @brief Definitions of the Ginn BAMF Application Source class.
  */
 
 /*
@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "ginn/bamfapplicationloader.h"
+#include "ginn/bamfapplicationsource.h"
 
 #include "ginn/application.h"
 #include "ginn/applicationbuilder.h"
@@ -155,7 +155,7 @@ on_view_closed(BamfMatcher* matcher, BamfView* view, gpointer data)
   }
 }
 
-struct BamfApplicationLoader::Impl
+struct BamfApplicationSource::Impl
 {
   Impl(ApplicationObserver* observer)
   : matcher_(bamf_matcher_get_default(), g_object_unref)
@@ -173,20 +173,20 @@ struct BamfApplicationLoader::Impl
 };
 
 
-BamfApplicationLoader::
-BamfApplicationLoader(ApplicationObserver* observer)
+BamfApplicationSource::
+BamfApplicationSource(ApplicationObserver* observer)
 : impl_(new Impl(observer))
 {
 }
 
 
-BamfApplicationLoader::
-~BamfApplicationLoader()
+BamfApplicationSource::
+~BamfApplicationSource()
 {
 }
 
 
-Application::List BamfApplicationLoader::
+Application::List BamfApplicationSource::
 get_applications()
 {
   Application::List apps;

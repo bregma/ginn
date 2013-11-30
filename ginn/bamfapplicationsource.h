@@ -1,6 +1,6 @@
 /**
- * @file ginn/applicationloader.h
- * @brief Declarations of the Ginn Application Loader interface.
+ * @file ginn/bamfapplicationsource.h
+ * @brief Declarations of the Ginn BAMF Application Source class.
  */
 
 /*
@@ -18,13 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_APPLICATIONLOADER_H_
-#define GINN_APPLICATIONLOADER_H_
+#ifndef GINN_BAMFAPPLICATIONSOURCE_H_
+#define GINN_BAMFAPPLICATIONSOURCE_H_
 
-#include "ginn/application.h"
-#include "ginn/applicationobserver.h"
+#include "ginn/applicationsource.h"
 #include <memory>
-#include <string>
 
 
 namespace Ginn
@@ -33,22 +31,22 @@ namespace Ginn
   /**
    * A factory class to load Applications through BAMF.
    */
-  class ApplicationLoader
+  class BamfApplicationSource
+  : public ApplicationSource
   {
   public:
-    typedef std::shared_ptr<ApplicationLoader> Ptr;
+    BamfApplicationSource(ApplicationObserver* observer);
+    ~BamfApplicationSource();
 
-  public:
-    virtual ~ApplicationLoader() = 0;
+  Application::List
+  get_applications();
 
-    static Ptr
-    application_loader_factory(std::string const&   name,
-                               ApplicationObserver* observer);
+  private:
+    struct Impl;
 
-    virtual Application::List
-    get_applications() = 0;
+    std::unique_ptr<Impl> impl_;
   };
 }
 
-#endif // GINN_APPLICATIONLOADER_H_
+#endif // GINN_BAMFAPPLICATIONSOURCE_H_
 

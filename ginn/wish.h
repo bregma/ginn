@@ -21,6 +21,7 @@
 #ifndef GINN_WISH_H_
 #define GINN_WISH_H_
 
+#include "ginn/action.h"
 #include <map>
 #include <memory>
 #include <string>
