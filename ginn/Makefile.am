@@ -31,7 +31,7 @@ libginn_a_SOURCES = \
 	wish.h                   wish.cpp \
 	wishbuilder.h            wishbuilder.cpp \
 	wishsource.h             wishsource.cpp \
-	xmkwishsource.h          xmlwishsource.cpp
+	xmlwishsource.h          xmlwishsource.cpp
 
 libginn_a_CPPFLAGS = \
 	-I$(top_builddir) \

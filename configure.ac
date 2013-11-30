@@ -23,7 +23,7 @@ PKG_CHECK_MODULES([GEIS],    [libgeis >= 1.0.10])
 PKG_CHECK_MODULES([GIO],     [gio-unix-2.0])
 PKG_CHECK_MODULES([X11],     [x11 >= 1.3.3])
 PKG_CHECK_MODULES([XML2],    [libxml-2.0 >= 2.7.7])
-PKG_CHECK_MODULES([XTST],    [xtst >= 1.1.0])
+PKG_CHECK_MODULES([XTEST],   [xcb-xtest >= 1.9.0, xcb-keysyms >= 0.3.9])
 PKG_CHECK_MODULES([BAMF],    [libbamf3 >= 0.2.53])
 
 AC_ARG_ENABLE([tests],
@@ -37,7 +37,6 @@ AM_CONDITIONAL(BUILD_TESTS, [test "x$enable_tests" = "xyes"])
 AC_SUBST(AM_CXXFLAGS, "-Wall -Wextra -pedantic -std=c++11")
 
 AC_CONFIG_FILES([Makefile
-                 src/Makefile
                  ginn/Makefile
                  etc/Makefile
                  test/Makefile
