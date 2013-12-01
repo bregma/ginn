@@ -87,16 +87,15 @@ config_search_path()
 /**
  * Creates an ordered list of wish definition files.
  */
-static Ginn::FileNameList
-find_wish_source_files(std::string const& arg_wish_file_name,
-                       ConfigPath const&  path)
+static Ginn::WishSource::NameList
+find_wish_sources(std::string const& arg_wish_file_name, ConfigPath const& path)
 {
-  Ginn::FileNameList file_list;
+  Ginn::WishSource::NameList name_list;
 
   if (!arg_wish_file_name.empty())
   {
-    file_list.push_back(arg_wish_file_name);
-    return file_list;
+    name_list.push_back(arg_wish_file_name);
+    return name_list;
   }
 
   for (auto const& d: path)
@@ -110,7 +109,7 @@ find_wish_source_files(std::string const& arg_wish_file_name,
         if (0 == std::strcmp(de->d_name, "wishes.xml"))
         {
           std::string file_name = refdir + "/" + de->d_name;
-          file_list.push_back(file_name);
+          name_list.push_back(file_name);
         }
       }
 
@@ -133,7 +132,7 @@ find_wish_source_files(std::string const& arg_wish_file_name,
                 if (file_name.rfind(".xml") == file_name.length() - 4)
                 {
                   file_name = dir + "/" + file_name;
-                  file_list.push_back(file_name);
+                  name_list.push_back(file_name);
                 }
               }
               closedir(sdir);
@@ -145,7 +144,7 @@ find_wish_source_files(std::string const& arg_wish_file_name,
     }
   }
 
-  return file_list;
+  return name_list;
 }
 
 
@@ -190,10 +189,10 @@ struct Configuration::Impl
 {
   Impl();
 
-  bool         is_verbose_mode;
-  ConfigPath   config_path;
-  std::string  wish_schema_file_name;
-  FileNameList wish_file_names;
+  bool                 is_verbose_mode;
+  ConfigPath           config_path;
+  std::string          wish_schema_file_name;
+  WishSource::NameList wish_sources;
 };
 
 
@@ -274,8 +273,7 @@ Configuration(int argc, char* argv[])
     }
   }
 
-  impl_->wish_file_names = find_wish_source_files(arg_wish_file_name,
-                                                  impl_->config_path);
+  impl_->wish_sources = find_wish_sources(arg_wish_file_name, impl_->config_path);
   impl_->wish_schema_file_name = find_wish_schema_file(arg_wish_schema_file_name,
                                                        impl_->config_path);
 
@@ -297,17 +295,17 @@ is_verbose_mode() const
 }
 
 
-WishFileFormat Configuration::
+WishSource::Format Configuration::
 wish_file_format() const
 {
-  return WishFileFormat::XML;
+  return WishSource::Format::XML;
 }
 
 
-FileNameList const& Configuration::
-wish_file_names() const
+WishSource::NameList const& Configuration::
+wish_sources() const
 {
-  return impl_->wish_file_names;
+  return impl_->wish_sources;
 }
 
 

@@ -65,7 +65,7 @@ dump_configuration(Ginn::Configuration const& config)
   std::cout << "Copyright 2013 Canonical Ltd.\n\n";
 
   std::cout << "Loading wishes from the following files:\n";
-  for (auto const& wish_file_name: config.wish_file_names())
+  for (auto const& wish_file_name: config.wish_sources())
   {
     std::cout << "    " << wish_file_name << "\n";
   }
@@ -158,8 +158,8 @@ Impl(int argc, char* argv[])
   if (config_.is_verbose_mode())
     dump_configuration(config_);
 
-  if (config_.wish_file_names().empty())
-    throw std::runtime_error("no wish files found in configuration");
+  if (config_.wish_sources().empty())
+    throw std::runtime_error("no wish sources found");
 
   g_unix_signal_add(SIGTERM, quit_cb, main_loop_.get());
   g_unix_signal_add(SIGINT,  quit_cb, main_loop_.get());
@@ -172,7 +172,7 @@ Impl(int argc, char* argv[])
 void Ginn::Impl::
 load_wishes()
 {
-  wish_table_ = std::move(wish_source_->get_wishes(config_.wish_file_names()));
+  wish_table_ = std::move(wish_source_->get_wishes(config_.wish_sources()));
   if (config_.is_verbose_mode())
     std::cout << wish_table_.size() << " wishes loaded\n";
 }

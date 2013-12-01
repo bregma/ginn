@@ -21,6 +21,7 @@
 #ifndef GINN_CONFIGURATION_H_
 #define GINN_CONFIGURATION_H_
 
+#include "ginn/wishsource.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -28,16 +29,6 @@
 
 namespace Ginn
 {
-
-/** A collection of file names. */
-typedef std::vector<std::string> FileNameList;
-
-/** Types of wish file formats supported. @todo support more than one format. */
-enum class WishFileFormat
-{
-  XML,
-};
-
 
 /**
  * Consolidated configuration values.
@@ -54,12 +45,12 @@ public:
   is_verbose_mode() const;
 
   /** Gets the wish file format to use. */
-  WishFileFormat
+  WishSource::Format
   wish_file_format() const;
 
   /** Gets a list of names of files containing wish definitions. */
-  FileNameList const&
-  wish_file_names() const;
+  WishSource::NameList const&
+  wish_sources() const;
 
   /** Special schema file name indicating 'do not validate'. */
   static const std::string WISH_NO_VALIDATE;

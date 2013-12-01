@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <cstring>
 #include "ginn/actionbuilder.h"
+#include "ginn/configuration.h"
 #include "ginn/wishbuilder.h"
 #include "ginn/wish.h"
 #include <iostream>
@@ -419,10 +420,10 @@ load_wishes(ValidatorPtr const& vctxt, std::string const& wish_file_name)
  * If configured, the wish file may be validated first.
  */
 Wish::Table XmlWishSource::
-get_wishes(FileNameList const& wish_file_names)
+get_wishes(WishSource::NameList const& wish_sources)
 {
   Wish::Table wish_table;
-  for (auto const& wish_file_name: wish_file_names)
+  for (auto const& wish_file_name: wish_sources)
   {
     wish_table_merge(wish_table, load_wishes(impl_->vctxt_, wish_file_name));
   }

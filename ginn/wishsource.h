@@ -21,7 +21,6 @@
 #ifndef GINN_WISHSOURCE_H_
 #define GINN_WISHSOURCE_H_
 
-#include "ginn/configuration.h"
 #include "ginn/wish.h"
 #include <memory>
 #include <string>
@@ -40,16 +39,28 @@ class WishSource
 public:
   typedef std::shared_ptr<WishSource> Ptr;
 
+  /**
+   * Supported formats for wish sources.
+   * @todo support additional wish file formats
+   */
+  enum class Format
+  {
+    XML,
+  };
+
+  /** A collection of named wish sources. */
+  typedef std::vector<std::string> NameList;
+
 public:
   virtual ~WishSource() = 0;
 
   /** Creates a concrete WishSource. */
   static Ptr
-  wish_source_factory(WishFileFormat format, std::string const& schema_file_name);
+  wish_source_factory(Format format, std::string const& schema_file_name);
 
   /** Gest wishes from the source. */
   virtual Wish::Table
-  get_wishes(FileNameList const& wish_file_names) = 0;
+  get_wishes(NameList const& wish_file_names) = 0;
 };
 
 }

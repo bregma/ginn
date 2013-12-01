@@ -33,10 +33,10 @@ WishSource::
 
 
 WishSource::Ptr WishSource::
-wish_source_factory(WishFileFormat format, std::string const& schema_file_name)
+wish_source_factory(Format format, std::string const& schema_file_name)
 {
   Ptr source;
-  if (format == WishFileFormat::XML)
+  if (format == Format::XML)
     source.reset(new XmlWishSource(schema_file_name));
   return source;
 }
