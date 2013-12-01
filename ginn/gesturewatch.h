@@ -21,6 +21,7 @@
 #ifndef GINN_GESTUREWATCH_H_
 #define GINN_GESTUREWATCH_H_
 
+#include "ginn/actionsink.h"
 #include "ginn/application.h"
 #include "ginn/geis.h"
 #include "ginn/wish.h"
@@ -58,7 +59,7 @@ public:
    * @param[in] event The Geis event to match.
    */
   bool
-  matches(GeisEvent event);
+  matches(GeisEvent event, ActionSink::Ptr const& action_sink);
 
   friend std::ostream&
   operator<<(std::ostream& ostr, GestureWatch const& watch);

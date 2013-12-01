@@ -62,7 +62,7 @@ frame_matches_window_id(GeisFrame frame, Window::Id window_id)
 
 
 bool GestureWatch::
-matches(GeisEvent event)
+matches(GeisEvent event, ActionSink::Ptr const& action_sink)
 {
   GeisAttr attr = geis_event_attr_by_name(event, GEIS_EVENT_ATTRIBUTE_GROUPSET);
   GeisGroupSet groupset = (GeisGroupSet)geis_attr_value_to_pointer(attr);
@@ -83,7 +83,7 @@ matches(GeisEvent event)
                       << " (min=" << wish_->min() << ", max=" << wish_->max() << ")";
             if (wish_->min() <= fval && fval <= wish_->max())
             {
-              std::cerr << " " << wish_->action() << "\n";
+              action_sink->perform(wish_->action());
               return true;
             }
             std::cerr << "\n";

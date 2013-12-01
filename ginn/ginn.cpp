@@ -317,9 +317,10 @@ geis_gesture_event(GeisEvent event)
   {
     for (auto const& watch: watchlist.second)
     {
-      if (watch->matches(event))
+      if (watch->matches(event, action_sink_))
       {
-        std::cerr << "gesture event for window " << watchlist.first << "\n";
+        std::cerr << "gesture event handled for window " << watchlist.first << "\n";
+        break;
       }
     }
   }
