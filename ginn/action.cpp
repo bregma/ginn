@@ -20,20 +20,27 @@
  */
 #include "ginn/action.h"
 
+#include "ginn/actionbuilder.h"
+#include <utility>
+
 
 namespace Ginn
 {
 
 Action::
+Action()
+{ }
+
+
+Action::
 Action(ActionBuilder const& builder)
-{
-}
+: events_(std::move(builder.events()))
+{ }
 
 
 Action::
 ~Action()
-{
-}
+{ }
 
 
 Action::EventList::const_iterator Action::

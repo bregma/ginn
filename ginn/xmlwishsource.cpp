@@ -20,10 +20,13 @@
  */
 #include "ginn/xmlwishsource.h"
 
+#include <algorithm>
 #include <cstring>
+#include "ginn/actionbuilder.h"
 #include "ginn/wishbuilder.h"
 #include "ginn/wish.h"
 #include <iostream>
+#include <iterator>
 #include <libxml/xmlreader.h>
 #include <memory>
 #include <string>
@@ -82,6 +85,81 @@ typedef std::unique_ptr<xmlDoc>               XmlDocPtr;
 
   
 /**
+ * Transforms an action XML entity into an Action.
+ */
+struct XmlActionBuilder
+: public ActionBuilder
+{
+  XmlActionBuilder(xmlNodePtr const& node);
+
+  Action::EventList const&
+  events() const;
+
+private:
+  Action::EventList events_;
+};
+
+
+XmlActionBuilder::
+XmlActionBuilder(xmlNodePtr const& node)
+{
+  Action::EventList tail;
+
+  char const* mod1 = (char const*)xmlGetProp(node, (xmlChar const*)"modifier1");
+  if (mod1)
+  {
+    // @todo map keysyms to keycodes
+    events_.push_back({Action::EventType::key_press, (uint8_t)0});
+    tail.push_back({Action::EventType::key_release, (uint8_t)0});
+  }
+
+  char const* mod2 = (char const*)xmlGetProp(node, (xmlChar const*)"modifier2");
+  if (mod2)
+  {
+    // @todo map keysyms to keycodes
+    events_.push_back({Action::EventType::key_press, (uint8_t)0});
+    tail.push_back({Action::EventType::key_release, (uint8_t)0});
+  }
+
+  if (0 == strcmp((char const*)node->name, "button"))
+  {
+    for (xmlNodePtr child = node->children; child; child = child->next)
+    {
+      if (child->type == XML_TEXT_NODE)
+      {
+        // @todo use something better to convert content to keycode
+        events_.push_back({Action::EventType::button_press,
+                           (uint8_t)std::stoi((char const*)child->content)});
+        tail.push_back({Action::EventType::button_release,
+                        (uint8_t)std::stoi((char const*)child->content)});
+      }
+    }
+  }
+  else if (0 == strcmp((char const*)node->name, "key"))
+  {
+    for (xmlNodePtr child = node->children; child; child = child->next)
+    {
+      if (child->type == XML_TEXT_NODE)
+      {
+        // @todo map keysyms to keycodes
+        events_.push_back({Action::EventType::key_press, (uint8_t)0});
+        tail.push_back({Action::EventType::key_release, (uint8_t)0});
+      }
+    }
+  }
+
+  std::copy(tail.rbegin(), tail.rend(), std::back_inserter(events_));
+}
+
+
+Action::EventList const& XmlActionBuilder::
+events() const
+{
+  return events_;
+}
+
+
+/**
  * Transforms a wish XML node into a Wish object.
  */
 struct XmlWishBuilder
@@ -120,29 +198,18 @@ struct XmlWishBuilder
   max() const
   { return max_; }
 
-  std::string
+  Action
   action() const
   { return action_; }
 
-  std::string
-  modifier1() const
-  { return ""; }
-
-  std::string
-  modifier2() const
-  { return ""; }
-
-  std::string
-  modifier3() const
-  { return ""; }
-
+private:
   std::string gesture_;
   int         touches_;
   std::string when_;
   std::string property_;
   float       min_;
   float       max_;
-  std::string action_;
+  Action      action_;
 };
 
 
@@ -182,13 +249,10 @@ XmlWishBuilder(xmlNodePtr const& node)
               max_ = std::stof(smax);
             }
           }
-          else if (0 == strcmp((char const*)anode->name, "button"))
+          else if (0 == strcmp((char const*)anode->name, "button")
+                || 0 == strcmp((char const*)anode->name, "key"))
           {
-            action_ = "button";
-          }
-          else if (0 == strcmp((char const*)anode->name, "key"))
-          {
-            action_ = "key";
+            action_ = Action(XmlActionBuilder(anode));
           }
         }
       }

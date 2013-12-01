@@ -18,6 +18,7 @@ noinst_LIBRARIES = libginn.a
 
 libginn_a_SOURCES = \
 	action.h                 action.cpp \
+	actionbuilder.h          actionbuilder.cpp \
 	actionsink.h             actionsink.cpp \
 	application.h            application.cpp \
 	applicationbuilder.h     applicationbuilder.cpp \

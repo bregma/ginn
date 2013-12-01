@@ -55,8 +55,6 @@ class ActionBuilder;
 class Action
 {
 public:
-  std::unique_ptr<Action> Ptr;
-
   /** The types of action events that can be defined. */
   enum class EventType
   {
@@ -69,7 +67,6 @@ public:
   /** An actual action event. */
   struct Event
   {
-    std::string description;  ///< describes the event
     EventType   type;         ///< the type of event
     uint8_t     code;         ///< event detail
   };
@@ -78,7 +75,10 @@ public:
   typedef std::vector<Event> EventList;
 
 public:
-  /** Constructs an Action. */
+  /** Constructs an Action with no data. */
+  Action();
+
+  /** Constructs an Action with data. */
   Action(ActionBuilder const& builder);
 
   /** Destroys an action. */

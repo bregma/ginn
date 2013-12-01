@@ -97,10 +97,7 @@ namespace Ginn
     std::string property_;
     float       min_;
     float       max_;
-    std::string action_;
-    std::string modifier1_;
-    std::string modifier2_;
-    std::string modifier3_;
+    Action      action_;
   };
 
 }

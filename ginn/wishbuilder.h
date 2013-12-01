@@ -27,48 +27,42 @@
 namespace Ginn
 {
 
-  /**
-   * Interface for building an Wish object.
-   */
-  class WishBuilder
-  {
-  public:
-    virtual ~WishBuilder() = 0;
+class Action;
 
-    virtual std::string
-    name() const = 0;
+/**
+ * Interface for building an Wish object.
+ */
+class WishBuilder
+{
+public:
+  virtual ~WishBuilder() = 0;
 
-    virtual std::string
-    gesture() const = 0;
+  virtual std::string
+  name() const = 0;
 
-    virtual int
-    touches() const = 0;
+  virtual std::string
+  gesture() const = 0;
 
-    virtual std::string
-    when() const = 0;
+  virtual int
+  touches() const = 0;
 
-    virtual std::string
-    property() const = 0;
+  virtual std::string
+  when() const = 0;
 
-    virtual float
-    min() const = 0;
+  virtual std::string
+  property() const = 0;
 
-    virtual float
-    max() const = 0;
+  virtual float
+  min() const = 0;
 
-    virtual std::string
-    action() const = 0;
+  virtual float
+  max() const = 0;
 
-    virtual std::string
-    modifier1() const = 0;
+  virtual Action
+  action() const = 0;
+};
 
-    virtual std::string
-    modifier2() const = 0;
-
-    virtual std::string
-    modifier3() const = 0;
-  };
-}
+} // namespace Ginn
 
 #endif // GINN_WISHBUILDER_H_
 

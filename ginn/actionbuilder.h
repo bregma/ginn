@@ -1,6 +1,6 @@
 /**
- * @file ginn/wish.cpp
- * @brief Definitions of the Ginn Wish class.
+ * @file ginn/actionbuilder.h
+ * @brief Interface to the Ginn Action Builder interface.
  */
 
 /*
@@ -18,28 +18,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "ginn/wish.h"
+#ifndef GINN_ACTIONBUILDER_H_
+#define GINN_ACTIONBUILDER_H_
 
-#include <utility>
-#include "ginn/wishbuilder.h"
+#include "ginn/action.h"
 
 
 namespace Ginn
 {
 
-Wish::
-Wish(const WishBuilder& builder)
-: name_(std::move(builder.name()))
-, gesture_(std::move(builder.gesture()))
-, touches_(std::move(builder.touches()))
-, when_(std::move(builder.when()))
-, property_(std::move(builder.property()))
-, min_(builder.min())
-, max_(builder.max())
-, action_(std::move(builder.action()))
+class ActionBuilder
 {
-}
+public:
+  virtual ~ActionBuilder() = 0;
 
+  virtual Action::EventList const&
+  events() const = 0;
+};
 
-}
+} // namespace Ginn
+
+#endif // GINN_ACTIONBUILDER_H_
 
