@@ -80,8 +80,14 @@ matches(GeisEvent event)
             float fval = geis_attr_value_to_float(attr);
             std::cerr << "gesture attr '" << wish_->property() << "' "
                       << "value " << fval << " "
-                      << " (min=" << wish_->min() << ", max=" << wish_->max() << ")\n";
-            return wish_->min() <= fval && fval >= wish_->max();
+                      << " (min=" << wish_->min() << ", max=" << wish_->max() << ")";
+            if (wish_->min() <= fval && fval <= wish_->max())
+            {
+              std::cerr << " " << wish_->action() << "\n";
+              return true;
+            }
+            std::cerr << "\n";
+            return false;
         }
       }
     }

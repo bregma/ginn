@@ -21,7 +21,7 @@
 #ifndef GINN_ACTION_H_
 #define GINN_ACTION_H_
 
-#include <memory>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -95,6 +95,15 @@ public:
 private:
   EventList events_;
 };
+
+
+/** Formats an action as a readable string. */
+std::ostream&
+operator<<(std::ostream& ostr, Action const& action);
+
+/** Formats an action event as a readable string. */
+std::ostream&
+operator<<(std::ostream& ostr, Action::Event const& event);
 
 } // namespace Ginn
 

@@ -89,6 +89,10 @@ namespace Ginn
     max() const
     { return max_; }
 
+    Action const&
+    action() const
+    { return action_; }
+
   private:
     std::string name_;
     std::string gesture_;
