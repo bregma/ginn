@@ -32,11 +32,10 @@ ApplicationSource::
 
 
 ApplicationSource::Ptr ApplicationSource::
-application_source_factory(std::string const&   name,
-                           ApplicationObserver* observer)
+application_source_factory(Type type, ApplicationObserver* observer)
 {
   Ptr source;
-  if (name == "bamf")
+  if (type == Type::BAMF)
     source.reset(new BamfApplicationSource(observer));
   return source;
 }

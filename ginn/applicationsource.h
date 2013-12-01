@@ -43,13 +43,21 @@ class ApplicationSource
 public:
   typedef std::shared_ptr<ApplicationSource> Ptr;
 
+  /**
+   * Supported types of application sources.
+   * @todo support additional types of application sources.
+   */
+  enum class Type
+  {
+    BAMF,
+  };
+
 public:
   virtual ~ApplicationSource() = 0;
 
   /** Creates a named Application source. */
   static Ptr
-  application_source_factory(std::string const&   name,
-                             ApplicationObserver* observer);
+  application_source_factory(Type type, ApplicationObserver* observer);
 
   /** Sources Applications. */
   virtual Application::List

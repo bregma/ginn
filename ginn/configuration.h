@@ -21,6 +21,7 @@
 #ifndef GINN_CONFIGURATION_H_
 #define GINN_CONFIGURATION_H_
 
+#include "ginn/applicationsource.h"
 #include "ginn/wishsource.h"
 #include <memory>
 #include <string>
@@ -44,9 +45,13 @@ public:
   bool
   is_verbose_mode() const;
 
+  /** Gets the application source type to use.  */
+  ApplicationSource::Type
+  application_source_type() const;
+
   /** Gets the wish file format to use. */
   WishSource::Format
-  wish_file_format() const;
+  wish_source_format() const;
 
   /** Gets a list of names of files containing wish definitions. */
   WishSource::NameList const&

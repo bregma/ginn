@@ -150,9 +150,9 @@ Ginn::Impl::
 Impl(int argc, char* argv[])
 : config_(argc, argv)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
-, wish_source_(WishSource::wish_source_factory(config_.wish_file_format(),
+, wish_source_(WishSource::wish_source_factory(config_.wish_source_format(),
                                                config_.wish_schema_file_name()))
-, app_source_(ApplicationSource::application_source_factory("bamf", this))
+, app_source_(ApplicationSource::application_source_factory(config_.application_source_type(), this))
 , geis_(this)
 { 
   if (config_.is_verbose_mode())
