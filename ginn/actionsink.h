@@ -35,13 +35,24 @@ class Action;
 class ActionSink
 {
 public:
-  std::unique_ptr<ActionSink> Ptr;
+  typedef std::unique_ptr<ActionSink> Ptr;
+
+  /**
+   * Types of action sinks supported.
+   */
+  enum class Type
+  {
+    X11,
+  };
 
 public:
   virtual ~ActionSink() = 0;
 
   virtual void
   perform(Action const& action) = 0;
+
+  static Ptr
+  action_sink_factory(Type type);
 };
 
 } // namespace Ginn

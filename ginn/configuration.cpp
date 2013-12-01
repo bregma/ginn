@@ -309,6 +309,13 @@ wish_source_format() const
 }
 
 
+ActionSink::Type Configuration::
+action_sink_type() const
+{
+  return ActionSink::Type::X11;
+}
+
+
 WishSource::NameList const& Configuration::
 wish_sources() const
 {

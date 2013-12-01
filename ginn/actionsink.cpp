@@ -20,6 +20,8 @@
  */
 #include "ginn/actionsink.h"
 
+#include "ginn/x11actionsink.h"
+
 
 namespace Ginn
 {
@@ -29,6 +31,15 @@ ActionSink::
 {
 }
 
+
+ActionSink::Ptr ActionSink::
+action_sink_factory(Type type)
+{
+  Ptr sink;
+  if (type == Type::X11)
+    sink.reset(new X11ActionSink);
+  return sink;
+}
 
 } // namespace Ginn
 

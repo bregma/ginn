@@ -31,6 +31,7 @@ namespace Ginn
  * A place where actions end up getting sent.
  */
 class X11ActionSink
+: public ActionSink
 {
 public:
   ~X11ActionSink();

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ginn/ginn.h"
 
+#include "ginn/actionsink.h"
 #include "ginn/applicationsource.h"
 #include "ginn/applicationobserver.h"
 #include "ginn/configuration.h"
@@ -90,7 +91,7 @@ namespace Ginn
  * This is hidden behind a compile-time firewall to (a) hide the nasty business
  * of using a glib main loop, which is forced on us by the use of GObject-based
  * BAMF client interface, and (2) to make development and maintenance a little
- * easier, in that internals don;t leaks and everything is kept as
+ * easier, in that internals don't leak and everything is kept as
  * self-contained as possible.
  */
 struct Ginn::Impl
@@ -140,6 +141,7 @@ private:
   Geis                                     geis_;
   std::map<std::string, GeisGestureClass>  class_map_;
   GestureWatch::Map                        gesture_map_;
+  ActionSink::Ptr                          action_sink_;
 };
 
 
@@ -154,6 +156,7 @@ Impl(int argc, char* argv[])
                                                config_.wish_schema_file_name()))
 , app_source_(ApplicationSource::application_source_factory(config_.application_source_type(), this))
 , geis_(this)
+, action_sink_(ActionSink::action_sink_factory(config_.action_sink_type()))
 { 
   if (config_.is_verbose_mode())
     dump_configuration(config_);
