@@ -33,7 +33,7 @@ WishSource::
 
 
 WishSource::Ptr WishSource::
-wish_source_factory(Format format, std::string const& schema_file_name)
+factory(Format format, std::string const& schema_file_name)
 {
   Ptr source;
   if (format == Format::XML)

@@ -24,6 +24,7 @@
 #include <cstring>
 #include "ginn/actionbuilder.h"
 #include "ginn/configuration.h"
+#include "ginn/keymap.h"
 #include "ginn/wishbuilder.h"
 #include "ginn/wish.h"
 #include <iostream>
@@ -91,7 +92,7 @@ typedef std::unique_ptr<xmlDoc>               XmlDocPtr;
 struct XmlActionBuilder
 : public ActionBuilder
 {
-  XmlActionBuilder(xmlNodePtr const& node);
+  XmlActionBuilder(xmlNodePtr const& node, Keymap const& keymap);
 
   Action::EventList const&
   events() const;
@@ -102,24 +103,22 @@ private:
 
 
 XmlActionBuilder::
-XmlActionBuilder(xmlNodePtr const& node)
+XmlActionBuilder(xmlNodePtr const& node, Keymap const& keymap)
 {
   Action::EventList tail;
 
   char const* mod1 = (char const*)xmlGetProp(node, (xmlChar const*)"modifier1");
   if (mod1)
   {
-    // @todo map keysyms to keycodes
-    events_.push_back({Action::EventType::key_press, (uint8_t)0});
-    tail.push_back({Action::EventType::key_release, (uint8_t)0});
+    events_.push_back({Action::EventType::key_press, keymap.to_keycode(mod1)});
+    tail.push_back({Action::EventType::key_release, keymap.to_keycode(mod1)});
   }
 
   char const* mod2 = (char const*)xmlGetProp(node, (xmlChar const*)"modifier2");
   if (mod2)
   {
-    // @todo map keysyms to keycodes
-    events_.push_back({Action::EventType::key_press, (uint8_t)0});
-    tail.push_back({Action::EventType::key_release, (uint8_t)0});
+    events_.push_back({Action::EventType::key_press, keymap.to_keycode(mod2)});
+    tail.push_back({Action::EventType::key_release, keymap.to_keycode(mod2)});
   }
 
   if (0 == strcmp((char const*)node->name, "button"))
@@ -129,10 +128,11 @@ XmlActionBuilder(xmlNodePtr const& node)
       if (child->type == XML_TEXT_NODE)
       {
         // @todo use something better to convert content to keycode
+        std::string keysym(reinterpret_cast<char const*>(child->content));
         events_.push_back({Action::EventType::button_press,
-                           (uint8_t)std::stoi((char const*)child->content)});
+                           static_cast<Keymap::Keycode>(std::stoi(keysym))});
         tail.push_back({Action::EventType::button_release,
-                        (uint8_t)std::stoi((char const*)child->content)});
+                        static_cast<Keymap::Keycode>(std::stoi(keysym))});
       }
     }
   }
@@ -142,9 +142,11 @@ XmlActionBuilder(xmlNodePtr const& node)
     {
       if (child->type == XML_TEXT_NODE)
       {
-        // @todo map keysyms to keycodes
-        events_.push_back({Action::EventType::key_press, (uint8_t)0});
-        tail.push_back({Action::EventType::key_release, (uint8_t)0});
+        std::string keysym(reinterpret_cast<char const*>(child->content));
+        events_.push_back({Action::EventType::key_press,
+                          keymap.to_keycode(keysym)});
+        tail.push_back({Action::EventType::key_release,
+                        keymap.to_keycode(keysym)});
       }
     }
   }
@@ -166,7 +168,7 @@ events() const
 struct XmlWishBuilder
 : public WishBuilder
 {
-  XmlWishBuilder(xmlNodePtr const& node);
+  XmlWishBuilder(xmlNodePtr const& node, Keymap const& keymap);
 
   ~XmlWishBuilder()
   { }
@@ -220,7 +222,7 @@ private:
  * @param[in] node     The wish XML DOM.
  */
 XmlWishBuilder::
-XmlWishBuilder(xmlNodePtr const& node)
+XmlWishBuilder(xmlNodePtr const& node, Keymap const& keymap)
 : gesture_((char const*)xmlGetProp(node, (xmlChar const*)"gesture"))
 , touches_(std::stoi((char const*)xmlGetProp(node, (xmlChar const*)"fingers")))
 , min_(0.0f)
@@ -253,7 +255,7 @@ XmlWishBuilder(xmlNodePtr const& node)
           else if (0 == strcmp((char const*)anode->name, "button")
                 || 0 == strcmp((char const*)anode->name, "key"))
           {
-            action_ = Action(XmlActionBuilder(anode));
+            action_ = Action(XmlActionBuilder(anode, keymap));
           }
         }
       }
@@ -307,7 +309,7 @@ XmlWishSource::
  * @param[out] wishes    The current collection of processed wishes.
  */
 static Wish::List
-process_application_node(xmlNodePtr node)
+process_application_node(xmlNodePtr node, Keymap const& keymap)
 {
   Wish::List wish_list;
   while (node)
@@ -315,7 +317,7 @@ process_application_node(xmlNodePtr node)
     if (node->type == XML_ELEMENT_NODE
      && 0 == strcmp((char const*)node->name, "wish"))
     {
-      auto wish = std::make_shared<Wish>(XmlWishBuilder(node));
+      auto wish = std::make_shared<Wish>(XmlWishBuilder(node, keymap));
       wish_list[wish->name()] = wish;
     }
     node = node->next;
@@ -326,11 +328,12 @@ process_application_node(xmlNodePtr node)
 
 /**
  * Processes the top-level <ginn> node of the wish XML.
- * @param[in]  node   An XML node to process.
- * @param[out] wishes The current collection of processed wishes.
+ * @param[in]  node    An XML node to process.
+ * @param[in]  keymap  The mapping between key symbol names and keycodes.
+ * @param[out] wishes  The current collection of processed wishes.
  */
 static void
-process_ginn_node(xmlNodePtr node, Wish::Table& wish_table)
+process_ginn_node(xmlNodePtr node, Keymap const& keymap, Wish::Table& wish_table)
 {
   while (node)
   {
@@ -338,7 +341,8 @@ process_ginn_node(xmlNodePtr node, Wish::Table& wish_table)
     {
       if (0 == strcmp((char const*)node->name, "global"))
       {
-        wish_table["<global>"] = process_application_node(node->children);
+        wish_table["<global>"] = process_application_node(node->children,
+                                                          keymap);
       }
       else if (0 == strcmp((char const*)node->name, "applications"))
       {
@@ -350,7 +354,8 @@ process_ginn_node(xmlNodePtr node, Wish::Table& wish_table)
            && 0 == strcmp((char const*)app_node->name, "application"))
           {
             char const* name = (char const*)xmlGetProp(app_node, (xmlChar const*)"name");
-            wish_table[name] = process_application_node(app_node->children);
+            wish_table[name] = process_application_node(app_node->children,
+                                                        keymap);
           }
         }
       }
@@ -374,7 +379,9 @@ wish_table_merge(Wish::Table& lhs, Wish::Table const& rhs)
 
 
 static Wish::Table
-load_wishes(ValidatorPtr const& vctxt, std::string const& wish_file_name)
+load_wishes(ValidatorPtr const& vctxt,
+            std::string const&  wish_file_name,
+            Keymap const&       keymap)
 {
   Wish::Table wish_table;
 
@@ -406,7 +413,7 @@ load_wishes(ValidatorPtr const& vctxt, std::string const& wish_file_name)
     }
     else
     {
-      process_ginn_node(root->children, wish_table);
+      process_ginn_node(root->children, keymap, wish_table);
     }
   }
 
@@ -420,12 +427,13 @@ load_wishes(ValidatorPtr const& vctxt, std::string const& wish_file_name)
  * If configured, the wish file may be validated first.
  */
 Wish::Table XmlWishSource::
-get_wishes(WishSource::NameList const& wish_sources)
+get_wishes(WishSource::NameList const& wish_sources, Keymap const& keymap)
 {
   Wish::Table wish_table;
   for (auto const& wish_file_name: wish_sources)
   {
-    wish_table_merge(wish_table, load_wishes(impl_->vctxt_, wish_file_name));
+    wish_table_merge(wish_table,
+                     load_wishes(impl_->vctxt_, wish_file_name, keymap));
   }
   return wish_table;
 }

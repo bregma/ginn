@@ -21,6 +21,7 @@
 #ifndef GINN_ACTION_H_
 #define GINN_ACTION_H_
 
+#include "ginn/keymap.h"
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -67,8 +68,8 @@ public:
   /** An actual action event. */
   struct Event
   {
-    EventType   type;         ///< the type of event
-    uint8_t     code;         ///< event detail
+    EventType        type;         ///< the type of event
+    Keymap::Keycode  code;         ///< the keycode
   };
 
   /** A collection of action events that make up an actipon. */

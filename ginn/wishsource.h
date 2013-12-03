@@ -28,6 +28,7 @@
 
 namespace Ginn
 {
+class Keymap;
 
 /**
  * An interface for Wish sources.
@@ -56,11 +57,11 @@ public:
 
   /** Creates a concrete WishSource. */
   static Ptr
-  wish_source_factory(Format format, std::string const& schema_file_name);
+  factory(Format format, std::string const& schema_file_name);
 
   /** Gest wishes from the source. */
   virtual Wish::Table
-  get_wishes(NameList const& wish_file_names) = 0;
+  get_wishes(NameList const& wish_file_names, Keymap const& keymap) = 0;
 };
 
 }

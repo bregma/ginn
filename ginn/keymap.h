@@ -48,7 +48,7 @@ public:
   ~Keymap();
 
   Keycode
-  to_keycode(std::string const& keysym_name);
+  to_keycode(std::string const& keysym_name) const;
 
 private:
   std::unique_ptr<Impl> impl_;

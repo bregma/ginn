@@ -40,7 +40,7 @@ public:
   ~XmlWishSource();
 
   Wish::Table
-  get_wishes(WishSource::NameList const& wish_sources);
+  get_wishes(WishSource::NameList const& wish_sources, Keymap const& keymap);
 
 private:
   struct Impl;

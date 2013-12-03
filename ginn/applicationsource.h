@@ -57,7 +57,7 @@ public:
 
   /** Creates a named Application source. */
   static Ptr
-  application_source_factory(Type type, ApplicationObserver* observer);
+  factory(Type type, ApplicationObserver* observer);
 
   /** Sources Applications. */
   virtual Application::List

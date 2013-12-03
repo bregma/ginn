@@ -32,7 +32,7 @@ ApplicationSource::
 
 
 ApplicationSource::Ptr ApplicationSource::
-application_source_factory(Type type, ApplicationObserver* observer)
+factory(Type type, ApplicationObserver* observer)
 {
   Ptr source;
   if (type == Type::BAMF)

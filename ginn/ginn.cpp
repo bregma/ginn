@@ -199,9 +199,9 @@ Ginn::Impl::
 Impl(int argc, char* argv[])
 : config_(argc, argv)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
-, wish_source_(WishSource::wish_source_factory(config_.wish_source_format(),
-                                               config_.wish_schema_file_name()))
-, app_source_(ApplicationSource::application_source_factory(config_.application_source_type(), this))
+, wish_source_(WishSource::factory(config_.wish_source_format(),
+                                   config_.wish_schema_file_name()))
+, app_source_(ApplicationSource::factory(config_.application_source_type(), this))
 , keymap_is_initialized_(false)
 , keymap_(std::bind(&Ginn::Impl::keymap_initialized, this))
 , geis_is_initialized_(false)
@@ -231,7 +231,8 @@ Impl(int argc, char* argv[])
 void Ginn::Impl::
 load_wishes()
 {
-  wish_table_ = std::move(wish_source_->get_wishes(config_.wish_sources()));
+  wish_table_ = std::move(wish_source_->get_wishes(config_.wish_sources(),
+                                                   keymap_));
   if (config_.is_verbose_mode())
     std::cout << wish_table_.size() << " wishes loaded\n";
 }
