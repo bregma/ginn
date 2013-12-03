@@ -21,6 +21,7 @@
 #ifndef GINN_ACTIONSINK_H_
 #define GINN_ACTIONSINK_H_
 
+#include <functional>
 #include <memory>
 
 
@@ -45,6 +46,9 @@ public:
     X11,
   };
 
+  /** Signal for when the action sink has completed its initialization. */
+  typedef std::function<void()> InitializedCallback;
+
 public:
   virtual ~ActionSink() = 0;
 
@@ -52,7 +56,7 @@ public:
   perform(Action const& action) = 0;
 
   static Ptr
-  action_sink_factory(Type type);
+  factory(Type type, InitializedCallback initialized_callback);
 };
 
 } // namespace Ginn

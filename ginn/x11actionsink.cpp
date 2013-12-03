@@ -28,6 +28,13 @@ namespace Ginn
 {
 
 X11ActionSink::
+X11ActionSink(InitializedCallback initialized_callback)
+{
+  initialized_callback();
+}
+
+
+X11ActionSink::
 ~X11ActionSink()
 {
 }

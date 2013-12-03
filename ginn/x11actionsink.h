@@ -34,6 +34,8 @@ class X11ActionSink
 : public ActionSink
 {
 public:
+  X11ActionSink(ActionSink::InitializedCallback initialized_callback);
+
   ~X11ActionSink();
 
   void

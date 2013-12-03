@@ -121,6 +121,9 @@ struct Ginn::Impl
   keymap_initialized();
 
   void
+  action_sink_initialized();
+
+  void
   geis_initialized();
 
   void
@@ -205,8 +208,9 @@ Impl(int argc, char* argv[])
 , geis_(std::bind(&Ginn::Impl::geis_new_class, this, std::placeholders::_1),
         std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
         std::bind(&Ginn::Impl::geis_initialized, this))
-, action_sink_is_initialized_(true)
-, action_sink_(ActionSink::action_sink_factory(config_.action_sink_type()))
+, action_sink_is_initialized_(false)
+, action_sink_(ActionSink::factory(config_.action_sink_type(),
+                                   std::bind(&Ginn::Impl::action_sink_initialized, this)))
 { 
   if (config_.is_verbose_mode())
     dump_configuration(config_);
@@ -321,6 +325,19 @@ window_removed(Window::Id window_id)
 
 
 /**
+ * Reacts to the Geis being initialized.
+ *
+ * The action sink can be initialized asynchronously.  No Ginn is completely
+ * initialized without a fully initialized action sink.
+ */
+void Ginn::Impl::
+action_sink_initialized()
+{
+  action_sink_is_initialized_ = true;
+}
+
+
+/**
  * Reacts to the keymap being initialized.
  *
  * The keymap can be initialized asynchronously, and it needs to be fully
@@ -339,7 +356,7 @@ keymap_initialized()
 /**
  * Reacts to the Geis being initialized.
  *
- * The Geis can be initialized asymchronously.  No Ginn is completely
+ * The Geis can be initialized asynchronously.  No Ginn is completely
  * initialized without a fully initialized Geis.
  */
 void Ginn::Impl::
