@@ -21,7 +21,6 @@
 #include "ginn/geis.h"
 
 #include <geis/geis.h>
-#include "ginn/geisobserver.h"
 #include <glib.h>
 #include <iostream>
 #include <stdexcept>
@@ -57,13 +56,17 @@ Geis::Subscription::
  */
 struct Geis::Impl
 {
-  Impl(GeisObserver* observer);
+  Impl(Geis::NewClassCallback const&      new_class_callback,
+       Geis::EventReceivedCallback const& event_received_callback,
+       Geis::InitializedCallback const&   initialized_callback);
   ~Impl();
 
-  GeisObserver* observer_;
-  ::Geis        geis_;
-  GIOChannel*   iochannel_;
-  int           iochannel_watch_;
+  ::Geis                      geis_;
+  Geis::NewClassCallback      new_class_callback_;
+  Geis::EventReceivedCallback event_received_callback_;
+  Geis::InitializedCallback   initialized_callback_;
+  GIOChannel*                 iochannel_;
+  int                         iochannel_watch_;
 };
 
 
@@ -86,12 +89,12 @@ geis_gio_event_ready(GIOChannel*, GIOCondition, gpointer pdata)
 void
 geis_gesture_event_ready(::Geis, GeisEvent event, void* context)
 {
-  GeisObserver* observer = (GeisObserver*)context;
+  Geis::Impl* impl = static_cast<Geis::Impl*>(context);
   
   switch (geis_event_type(event))
   {
     case GEIS_EVENT_INIT_COMPLETE:
-      observer->geis_initialized();
+      impl->initialized_callback_();
       break;
 
     case GEIS_EVENT_ERROR:
@@ -105,7 +108,7 @@ geis_gesture_event_ready(::Geis, GeisEvent event, void* context)
     case GEIS_EVENT_GESTURE_BEGIN:
     case GEIS_EVENT_GESTURE_UPDATE:
     case GEIS_EVENT_GESTURE_END:
-      observer->geis_gesture_event(event);
+      impl->event_received_callback_(event);
       break;
 
     default:
@@ -121,7 +124,7 @@ geis_gesture_event_ready(::Geis, GeisEvent event, void* context)
 void
 geis_class_event_ready(::Geis, GeisEvent event, void* context)
 {
-  GeisObserver* observer = (GeisObserver*)context;
+  Geis::Impl* impl = static_cast<Geis::Impl*>(context);
   GeisAttr attr = geis_event_attr_by_name(event, GEIS_EVENT_ATTRIBUTE_CLASS);
   GeisGestureClass gesture_class =
       static_cast<GeisGestureClass>(geis_attr_value_to_pointer(attr));
@@ -129,7 +132,7 @@ geis_class_event_ready(::Geis, GeisEvent event, void* context)
   {
     case GEIS_EVENT_CLASS_AVAILABLE:
     {
-      observer->geis_new_class(gesture_class);
+      impl->new_class_callback_(gesture_class);
       break;
     }
 
@@ -144,17 +147,21 @@ geis_class_event_ready(::Geis, GeisEvent event, void* context)
  * Sets up the GEIS dispatch mechanism and lets it go wild.
  */
 Geis::Impl::
-Impl(GeisObserver* observer)
-: observer_(observer)
-, geis_(geis_new(GEIS_INIT_TRACK_DEVICES, GEIS_INIT_TRACK_GESTURE_CLASSES, NULL))
+Impl(Geis::NewClassCallback const&      new_class_callback,
+     Geis::EventReceivedCallback const& event_received_callback,
+     Geis::InitializedCallback const&   initialized_callback)
+: geis_(geis_new(GEIS_INIT_TRACK_DEVICES, GEIS_INIT_TRACK_GESTURE_CLASSES, NULL))
+, new_class_callback_(new_class_callback)
+, event_received_callback_(event_received_callback)
+, initialized_callback_(initialized_callback)
 , iochannel_(NULL)
 {
   if (!geis_)
     throw std::runtime_error("could not create GEIS instance");
 
-  geis_register_device_callback(geis_, geis_gesture_event_ready, observer_);
-  geis_register_class_callback(geis_, geis_class_event_ready, observer_);
-  geis_register_event_callback(geis_, geis_gesture_event_ready, observer_);
+  geis_register_device_callback(geis_, geis_gesture_event_ready, this);
+  geis_register_class_callback(geis_, geis_class_event_ready, this);
+  geis_register_event_callback(geis_, geis_gesture_event_ready, this);
 
   int fd = -1;
   geis_get_configuration(geis_, GEIS_CONFIGURATION_FD, &fd);
@@ -180,8 +187,12 @@ Geis::Impl::
 
 
 Geis::
-Geis(GeisObserver* observer)
-: impl_(new Impl(observer))
+Geis(NewClassCallback const&      new_class_callback,
+     EventReceivedCallback const& event_received_callback,
+     InitializedCallback const&   initialized_calback)
+: impl_(new Impl(new_class_callback,
+                 event_received_callback,
+                 initialized_calback))
 {
 }
 

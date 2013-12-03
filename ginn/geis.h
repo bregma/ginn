@@ -21,6 +21,7 @@
 #ifndef GINN_GEIS_H_
 #define GINN_GEIS_H_
 
+#include <functional>
 #include "geis/geis.h"
 #include "ginn/application.h"
 #include "ginn/wish.h"
@@ -29,12 +30,20 @@
 
 namespace Ginn
 {
-class GeisObserver;
-
 
 class Geis
 {
 public:
+  /** Signal indicating a new Geis class has been defined. */
+  typedef std::function<void(::GeisGestureClass)> NewClassCallback;
+
+  /** Signal indicating a new Geis event has been received. */
+  typedef std::function<void(::GeisEvent)> EventReceivedCallback;
+
+  /** Signal for when Geis has completed its asynchronous initialization. */
+  typedef std::function<void()> InitializedCallback;
+
+  /** A wrapper arounf the Geis subscription object. */
   class Subscription
   {
   public:
@@ -46,8 +55,13 @@ public:
     GeisSubscription subscription_;
   };
 
+  /** The internal implementation of this class. */
+  struct Impl;
+
 public:
-  Geis(GeisObserver* observer);
+  Geis(NewClassCallback const&      new_class_callback,
+       EventReceivedCallback const& event_received_callback,
+       InitializedCallback const&   initialized_callback);
 
   ~Geis();
 
@@ -55,8 +69,6 @@ public:
   subscribe(Window::Id window_id, Wish::Ptr const& wish);
 
 private:
-  struct Impl;
-
   std::unique_ptr<Impl> impl_;
 };
 

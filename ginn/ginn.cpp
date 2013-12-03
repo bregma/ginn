@@ -26,7 +26,6 @@
 #include "ginn/applicationobserver.h"
 #include "ginn/configuration.h"
 #include "ginn/geis.h"
-#include "ginn/geisobserver.h"
 #include "ginn/gesturewatch.h"
 #include "ginn/wish.h"
 #include "ginn/wishsource.h"
@@ -96,7 +95,6 @@ namespace Ginn
  */
 struct Ginn::Impl
 : public ApplicationObserver
-, public GeisObserver
 {
   Impl(int argc, char* argv[]);
 
@@ -155,7 +153,9 @@ Impl(int argc, char* argv[])
 , wish_source_(WishSource::wish_source_factory(config_.wish_source_format(),
                                                config_.wish_schema_file_name()))
 , app_source_(ApplicationSource::application_source_factory(config_.application_source_type(), this))
-, geis_(this)
+, geis_(std::bind(&Ginn::Impl::geis_new_class, this, std::placeholders::_1),
+        std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
+        std::bind(&Ginn::Impl::geis_initialized, this))
 , action_sink_(ActionSink::action_sink_factory(config_.action_sink_type()))
 { 
   if (config_.is_verbose_mode())

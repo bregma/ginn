@@ -27,7 +27,6 @@ libginn_a_SOURCES = \
 	bamfapplicationsource.h  bamfapplicationsource.cpp \
 	configuration.h          configuration.cpp \
 	geis.h                   geis.cpp \
-	geisobserver.h           \
 	gesturewatch.h           gesturewatch.cpp \
 	wish.h                   wish.cpp \
 	wishbuilder.h            wishbuilder.cpp \
