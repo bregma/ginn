@@ -27,6 +27,7 @@
 #include "ginn/configuration.h"
 #include "ginn/geis.h"
 #include "ginn/gesturewatch.h"
+#include "ginn/keymap.h"
 #include "ginn/wish.h"
 #include "ginn/wishsource.h"
 #include <glib.h>
@@ -117,6 +118,9 @@ struct Ginn::Impl
   window_removed(Window::Id window_id);
 
   void
+  keymap_initialized();
+
+  void
   geis_initialized();
 
   void
@@ -126,8 +130,23 @@ struct Ginn::Impl
   geis_gesture_event(GeisEvent event);
 
   void
+  create_watches();
+
+  /** Indicates if all the asynch Ginn init has completed. */
+  bool
+  is_initialized() const
+  {
+    return keymap_is_initialized_
+        && geis_is_initialized_
+        && action_sink_is_initialized_;
+  }
+
+  void
   run()
   { g_main_loop_run(main_loop_.get()); }
+
+  static gboolean
+  on_ginn_initialized(gpointer data);
 
 private:
   Configuration                            config_;
@@ -136,11 +155,38 @@ private:
   Wish::Table                              wish_table_;
   ApplicationSource::Ptr                   app_source_;
   Application::List                        apps_;
+  bool                                     keymap_is_initialized_;
+  Keymap                                   keymap_;
+  bool                                     geis_is_initialized_;
   Geis                                     geis_;
   std::map<std::string, GeisGestureClass>  class_map_;
   GestureWatch::Map                        gesture_map_;
+  bool                                     action_sink_is_initialized_;
   ActionSink::Ptr                          action_sink_;
 };
+
+
+/**
+ * GLib callback for polling Ginn initialization state from an idle callback.
+ * @param[in] data A disguised pointer to the Ginn object.
+ *
+ * This callback function determines if the Ginn is completely ready for action,
+ * and if it is, creates the initial watches and starts the action.
+ *
+ * @returns true if the Ginn object is fully initialzed (and the idle callback
+ * should be removed, false otherwise (and the callback should be re-queued).
+ */
+gboolean Ginn::Impl::
+on_ginn_initialized(gpointer data)
+{
+  Ginn::Impl* ginn = (Ginn::Impl*)data;
+  if (ginn->is_initialized())
+  {
+    ginn->create_watches();
+    return false;
+  }
+  return true;
+}
 
 
 /**
@@ -153,9 +199,13 @@ Impl(int argc, char* argv[])
 , wish_source_(WishSource::wish_source_factory(config_.wish_source_format(),
                                                config_.wish_schema_file_name()))
 , app_source_(ApplicationSource::application_source_factory(config_.application_source_type(), this))
+, keymap_is_initialized_(false)
+, keymap_(std::bind(&Ginn::Impl::keymap_initialized, this))
+, geis_is_initialized_(false)
 , geis_(std::bind(&Ginn::Impl::geis_new_class, this, std::placeholders::_1),
         std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
         std::bind(&Ginn::Impl::geis_initialized, this))
+, action_sink_is_initialized_(true)
 , action_sink_(ActionSink::action_sink_factory(config_.action_sink_type()))
 { 
   if (config_.is_verbose_mode())
@@ -166,6 +216,8 @@ Impl(int argc, char* argv[])
 
   g_unix_signal_add(SIGTERM, quit_cb, main_loop_.get());
   g_unix_signal_add(SIGINT,  quit_cb, main_loop_.get());
+
+  g_idle_add(on_ginn_initialized, this);
 }
 
 
@@ -199,6 +251,7 @@ load_applications()
 
 /**
  * Reacts to a new active application being added.
+ * @param[in] application  The new application being added.
  */
 void Ginn::Impl::
 application_added(Application::Ptr const& application)
@@ -211,6 +264,7 @@ application_added(Application::Ptr const& application)
 
 /**
  * Reacts to an active application being removed.
+ * @param[in] application_id  Identifies the application being removed.
  */
 void Ginn::Impl::
 application_removed(Application::Id const& application_id)
@@ -227,6 +281,7 @@ application_removed(Application::Id const& application_id)
 
 /**
  * Reacts to an application window being added.
+ * @param[in] window  The new application window being added.
  *
  * If the window's application is not known, the window is ignored and will
  * probably be added later when the new-application notification comes in.
@@ -246,6 +301,7 @@ window_added(Window const& window)
 
 /**
  * Reacts to an application window being removed.
+ * @param[in]  window_id  Identifies the application window being removed.
  */
 void Ginn::Impl::
 window_removed(Window::Id window_id)
@@ -264,10 +320,77 @@ window_removed(Window::Id window_id)
 }
 
 
+/**
+ * Reacts to the keymap being initialized.
+ *
+ * The keymap can be initialized asynchronously, and it needs to be fully
+ * initialized before the wishes get loaded because the wish loader needs the
+ * keymap to map the keysyms found in a wish definition to the keycodes used in
+ * the action sink.
+ */
+void Ginn::Impl::
+keymap_initialized()
+{
+  keymap_is_initialized_ = true;
+  load_wishes();
+}
+
+
+/**
+ * Reacts to the Geis being initialized.
+ *
+ * The Geis can be initialized asymchronously.  No Ginn is completely
+ * initialized without a fully initialized Geis.
+ */
 void Ginn::Impl::
 geis_initialized()
 {
-  // Create the initial gesture watches.
+  geis_is_initialized_ = true;
+}
+
+
+/**
+ * Reacts to a new gesture class being reported by the Geis.
+ * @param[in]  gesture_class  The gesture class being added.
+ */
+void Ginn::Impl::
+geis_new_class(GeisGestureClass gesture_class)
+{
+  char const* class_name = geis_gesture_class_name(gesture_class);
+  class_map_[class_name] = gesture_class;
+}
+
+
+/**
+ * Reacts to a new gesture event coming from the Geis.
+ * @param[in]  event  The Geis event being reported.
+ */
+void Ginn::Impl::
+geis_gesture_event(GeisEvent event)
+{
+  for (auto const& watchlist: gesture_map_)
+  {
+    for (auto const& watch: watchlist.second)
+    {
+      if (watch->matches(event, action_sink_))
+      {
+        std::cerr << "gesture event handled for window " << watchlist.first << "\n";
+        break;
+      }
+    }
+  }
+}
+
+
+/**
+ * Creates the initial gesture watches.
+ *
+ * Requires a fully-initialized Ginn (wishes loaded, Geis initialized, action
+ * sink ready).
+ */
+void Ginn::Impl::
+create_watches()
+{
   for (auto const& app: apps_)
   {
     for (auto const& wish: wish_table_)
@@ -302,31 +425,6 @@ geis_initialized()
 }
 
 
-void Ginn::Impl::
-geis_new_class(GeisGestureClass gesture_class)
-{
-  char const* class_name = geis_gesture_class_name(gesture_class);
-  class_map_[class_name] = gesture_class;
-}
-
-
-void Ginn::Impl::
-geis_gesture_event(GeisEvent event)
-{
-  for (auto const& watchlist: gesture_map_)
-  {
-    for (auto const& watch: watchlist.second)
-    {
-      if (watch->matches(event, action_sink_))
-      {
-        std::cerr << "gesture event handled for window " << watchlist.first << "\n";
-        break;
-      }
-    }
-  }
-}
-
-
 /**
  * Constructs the Ginn by creating its internal implementation, hooking it up
  * to signal handlers, then loading the data.
@@ -335,7 +433,6 @@ Ginn::
 Ginn(int argc, char* argv[])
 : impl_(new Impl(argc, argv))
 {
-  impl_->load_wishes();
   impl_->load_applications();
 }
 

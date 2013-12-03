@@ -1,6 +1,6 @@
 /**
- * @file ginn/ginn.h
- * @brief Declarations of the Ginn module.
+ * @file ginn/keymap.h
+ * @brief Interface to the Ginn keymap module.
  */
 
 /*
@@ -18,35 +18,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_GINN_H_
-#define GINN_GINN_H_
+#ifndef GINN_KEYMAP_H_
+#define GINN_KEYMAP_H_
 
+#include <cstdint>
+#include <functional>
 #include <memory>
+#include <string>
 
 
 namespace Ginn
 {
 
-/**
- * The Ginn module encapsulates everything necessary for the daemon to grant
- * wishes to the lucky uncpator.
- */
-class Ginn
+class Keymap
 {
 public:
-  /** The internal implemntation of this class. */
+  /** The encoded key (may have to change for non-X11 support). */
+  typedef std::uint8_t Keycode;
+
+  /** Signal for when Keymap has completed its asynchronous initialization. */
+  typedef std::function<void()> InitializedCallback;
+
+  /** The internal implementation of this class. */
   struct Impl;
 
 public:
-  /** Lets the Ginn out of te bottle. */
-  Ginn(int argc, char* argv[]);
+  Keymap(InitializedCallback const& initialized_callback);
 
-  /** Puts the Ginn back in the bottle. */
-  ~Ginn();
+  ~Keymap();
 
-  /** Lets the Ginn go wild. */
-  void
-  run();
+  Keycode
+  to_keycode(std::string const& keysym_name);
 
 private:
   std::unique_ptr<Impl> impl_;
@@ -54,5 +56,5 @@ private:
 
 } // namespace Ginn
 
-#endif // GINN_GINN_H_
+#endif // GINN_KEYMAP_H_
 
