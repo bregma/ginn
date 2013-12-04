@@ -43,7 +43,8 @@ libginn_a_CPPFLAGS = \
 	$(BAMF_CFLAGS) \
 	$(GEIS_CFLAGS) \
 	$(GIO_CFLAGS) \
-	$(XML2_CFLAGS)
+	$(XML2_CFLAGS) \
+	$(XTEST_CFLAGS)
 
 ginn_SOURCES = \
 	ginn.h ginn.cpp \
@@ -59,5 +60,6 @@ ginn_LDADD = \
 	$(GEIS_LIBS) \
 	$(GIO_LIBS) \
 	$(GLIB2_0_LIBS) \
-	$(XML2_LIBS)
+	$(XML2_LIBS) \
+	$(XTEST_LIBS)
 

@@ -22,6 +22,7 @@
 #define GINN_X11ACTIONSINK_H_
 
 #include "ginn/actionsink.h"
+#include <memory>
 
 
 namespace Ginn
@@ -34,12 +35,20 @@ class X11ActionSink
 : public ActionSink
 {
 public:
+
+  /** Internal implementation of this class. */
+  struct Impl;
+
+public:
   X11ActionSink(ActionSink::InitializedCallback initialized_callback);
 
   ~X11ActionSink();
 
   void
   perform(Action const& action);
+
+private:
+  std::unique_ptr<Impl> impl_;
 };
 
 } // namespace Ginn
