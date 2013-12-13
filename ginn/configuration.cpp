@@ -205,19 +205,36 @@ Impl()
 
 
 static void
-print_help()
+print_version_and_exit()
 {
-  std::cerr
-  << "usage:\n"
-  << "  ginn [OPTION...] - convert multi-touch input events to key/mouse events\n"
-  << "\n"
-  << "Applicationo Options:\n"
-  << "  -h, --help                       Print this message and exit.\n"
-  << "  -n, --novalidate                 Do not validate the wishes file.\n"
-  << "  -v, --verbose                    Keep a running commentary on stdout.\n"
-  << "  -f, --wishes-file=FILE           Name the (single) wish file to load.\n"
-  << "  -s, --wishes-schema-file=FILE    Name the wish schema file to load.\n"
-  << "\n";
+  std::cerr <<
+    PACKAGE_STRING "\n\n"
+    "Copyright 2013 Canonical Ltd.\n"
+    "This program comes with ABSOLUTELY NO WARRANTY.\n"
+    PACKAGE_NAME " is free software and you are welcome to redistribute it "
+    "under certain conditions;\n"
+    "see the file /usr/share/common-licenses/GPL-3 for details."
+    "\n";
+  exit(0);
+}
+
+
+static void
+print_help_and_exit()
+{
+  std::cerr <<
+    "usage:\n"
+    "  ginn [OPTION...] - convert multi-touch input events to key/mouse events\n"
+    "\n"
+    "Applicationo Options:\n"
+    "  -h, --help                       Print this message and exit.\n"
+    "  -V, --version                    Print the program version and exit.\n"
+    "  -n, --novalidate                 Do not validate the wishes file.\n"
+    "  -v, --verbose                    Keep a running commentary on stdout.\n"
+    "  -f, --wishes-file=FILE           Name the (single) wish file to load.\n"
+    "  -s, --wishes-schema-file=FILE    Name the wish schema file to load.\n"
+    "\n";
+  exit(-1);
 }
 
 
@@ -245,6 +262,7 @@ Configuration(int argc, char* argv[])
       { "novalidate",          no_argument,       NULL, 'n' },
       { "wishes-schema-file",  required_argument, NULL, 's' },
       { "verbose",             no_argument,       NULL, 'v' },
+      { "version",             no_argument,       NULL, 'V' },
       { "wishes-file",         required_argument, NULL, 'f' },
       { 0,                     no_argument,       NULL,  0  }
     };
@@ -263,10 +281,12 @@ Configuration(int argc, char* argv[])
       case 'v':
         impl_->is_verbose_mode = true;
         break;
+      case 'V':
+        print_version_and_exit();
+        break;
       case 'h':
       case '?':
-        print_help();
-        exit(-1);
+        print_help_and_exit();
         break;
       default:
         break;
