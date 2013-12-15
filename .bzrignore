@@ -80,3 +80,6 @@ core
 .gitignore
 src/ginn
 ginn/ginn
+test/gtest_ginn
+test/gtest_ginn.*
+test/test-suite.log

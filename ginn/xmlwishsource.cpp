@@ -379,16 +379,17 @@ wish_table_merge(Wish::Table& lhs, Wish::Table const& rhs)
 
 
 static Wish::Table
-load_wishes(ValidatorPtr const& vctxt,
-            std::string const&  wish_file_name,
-            Keymap const&       keymap)
+load_wishes(ValidatorPtr const&          vctxt,
+            WishSource::RawSource const& raw_source,
+            Keymap const&                keymap)
 {
   Wish::Table wish_table;
 
-  XmlDocPtr xml_doc { xmlParseFile(wish_file_name.c_str()) };
+  XmlDocPtr xml_doc { xmlParseMemory(raw_source.source.data(),
+                                     raw_source.source.size()) };
   if (!xml_doc)
   {
-    std::cerr << "error reading " << wish_file_name << "\n";
+    std::cerr << "error reading " << raw_source.name << "\n";
   }
   else
   {
@@ -404,11 +405,11 @@ load_wishes(ValidatorPtr const& vctxt,
     xmlNodePtr root = xmlDocGetRootElement(xml_doc.get());
     if (root == NULL)
     {
-      std::cerr << wish_file_name << ": empty document\n";
+      std::cerr << raw_source.name << ": empty document\n";
     }
     else if (0 != std::strcmp((char const*)root->name, "ginn"))
     {
-      std::cerr << wish_file_name << ": unexpected document root '"
+      std::cerr << raw_source.name << ": unexpected document root '"
                 << root->name << "'\n";
     }
     else
@@ -427,13 +428,13 @@ load_wishes(ValidatorPtr const& vctxt,
  * If configured, the wish file may be validated first.
  */
 Wish::Table XmlWishSource::
-get_wishes(WishSource::NameList const& wish_sources, Keymap const& keymap)
+get_wishes(WishSource::RawSourceList const& raw_wishes, Keymap const& keymap)
 {
   Wish::Table wish_table;
-  for (auto const& wish_file_name: wish_sources)
+  for (auto const& raw_source: raw_wishes)
   {
     wish_table_merge(wish_table,
-                     load_wishes(impl_->vctxt_, wish_file_name, keymap));
+                     load_wishes(impl_->vctxt_, raw_source, keymap));
   }
   return wish_table;
 }

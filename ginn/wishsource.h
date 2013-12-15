@@ -24,6 +24,7 @@
 #include "ginn/wish.h"
 #include <memory>
 #include <string>
+#include <vector>
 
 
 namespace Ginn
@@ -52,6 +53,16 @@ public:
   /** A collection of named wish sources. */
   typedef std::vector<std::string> NameList;
 
+  /** A memory image of a raw wish source. */
+  struct RawSource
+  {
+    std::string name;    ///< name of the source
+    std::string source;  ///< the raw source itself
+  };
+
+  /** A collection of raw sources */
+  typedef std::vector<RawSource> RawSourceList;
+
 public:
   virtual ~WishSource() = 0;
 
@@ -59,9 +70,13 @@ public:
   static Ptr
   factory(Format format, std::string const& schema_file_name);
 
-  /** Gest wishes from the source. */
+  /** Reads the raw wishes into a buffer. */
+  static RawSourceList
+  read_raw_sources(NameList const& wish_file_names);
+
+  /** Gets wishes from the source. */
   virtual Wish::Table
-  get_wishes(NameList const& wish_file_names, Keymap const& keymap) = 0;
+  get_wishes(RawSourceList const& raw_wishes, Keymap const& keymap) = 0;
 };
 
 }

@@ -15,11 +15,28 @@
 if BUILD_TESTS
 
 check_LIBRARIES = libgtest.a
+check_PROGRAMS = gtest_ginn
+TESTS = $(check_PROGRAMS)
 
 nodist_libgtest_a_SOURCES = \
  $(GTEST_PREFIX)/src/gtest-all.cc
 
 libgtest_a_CPPFLAGS = \
 	$(GTEST_CPPFLAGS)
+
+gtest_ginn_SOURCES = \
+ $(GTEST_PREFIX)/src/gtest_main.cc \
+ gtest_xml_wish_source.cpp
+
+gtest_ginn_LDADD = \
+	$(top_builddir)/ginn/libginn.a \
+	$(BAMF_LIBS) \
+	$(GEIS_LIBS) \
+	$(GIO_LIBS) \
+	$(GLIB2_0_LIBS) \
+	$(XML2_LIBS) \
+	$(XTEST_LIBS) \
+	libgtest.a \
+	-lpthread
 
 endif

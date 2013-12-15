@@ -1,6 +1,6 @@
 /**
- * @file ginn/xmlwishsource.h
- * @brief Declarations of the Ginn XML Wish Source class.
+ * @file test/gtest_xml_wish_source.cpp
+ * @brief Unit tests of teh XML wish source module.
  */
 
 /*
@@ -18,37 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_XMLWISHSOURCE_H_
-#define GINN_XMLWISHSOURCE_H_
-
 #include "ginn/wishsource.h"
-#include <memory>
-#include <string>
+#include <gtest/gtest.h>
 
 
-namespace Ginn
+TEST(TestXMLWishSource, construct)
 {
-
-/**
- * A factory class to load wishes from an XML file.
- */
-class XmlWishSource
-: public WishSource
-{
-public:
-  XmlWishSource(std::string const& schema_file_name);
-  ~XmlWishSource();
-
-  Wish::Table
-  get_wishes(RawSourceList const& raw_wishes, Keymap const& keymap);
-
-private:
-  struct Impl;
-
-  std::unique_ptr<Impl> impl_;
-};
-
+  Ginn::WishSource::Ptr ptr = Ginn::WishSource::factory(Ginn::WishSource::Format::XML, "");
+  ASSERT_NE(ptr, nullptr);
 }
-
-#endif // GINN_XMLWISHSOURCE_H_
 

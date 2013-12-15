@@ -231,8 +231,12 @@ Impl(int argc, char* argv[])
 void Ginn::Impl::
 load_wishes()
 {
-  wish_table_ = std::move(wish_source_->get_wishes(config_.wish_sources(),
-                                                   keymap_));
+  WishSource::RawSourceList raw_sources = WishSource::read_raw_sources(config_.wish_sources());
+  if (config_.is_verbose_mode())
+    for (auto const& raw: raw_sources)
+      std::cout << " loading wish source '" << raw.name << "'"
+                << " size " << raw.source.length() << "\n";
+  wish_table_ = wish_source_->get_wishes(raw_sources, keymap_);
   if (config_.is_verbose_mode())
     std::cout << wish_table_.size() << " wishes loaded\n";
 }

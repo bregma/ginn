@@ -20,7 +20,10 @@
  */
 #include "ginn/wishsource.h"
 
+#include <fstream>
 #include "ginn/xmlwishsource.h"
+#include <iostream>
+#include <utility>
 
 
 namespace Ginn
@@ -32,6 +35,13 @@ WishSource::
 { }
 
 
+/**
+ * Gets the identified wish source.
+ * @param[in] format           Identifies te format of the wish source.
+ * @param[in] schema_file_name Names the wish schema file.
+ *
+ * @returns the identified wish source object.
+ */
 WishSource::Ptr WishSource::
 factory(Format format, std::string const& schema_file_name)
 {
@@ -41,6 +51,33 @@ factory(Format format, std::string const& schema_file_name)
   return source;
 }
 
+
+/**
+ * Reads the raw sources from the named files into in-memory buffers.
+ * @param[in] wish_file_names a collection of wish files to read
+ *
+ * @returns a collection of loaded raw wish sources.
+ */
+WishSource::RawSourceList WishSource::
+read_raw_sources(NameList const& wish_file_names)
+{
+  RawSourceList raw_source_list;
+  for (auto const& file_name: wish_file_names)
+  {
+    std::ifstream ifs(file_name);
+    if (ifs)
+    {
+      std::string contents;
+      ifs.seekg(0, std::ios::end);
+      contents.resize(ifs.tellg());
+      ifs.seekg(0, std::ios::beg);
+      ifs.read(&contents[0], contents.size());
+      raw_source_list.push_back({file_name, contents});
+    }
+  }
+
+  return raw_source_list;
+}
 
 } // namespace Ginn
 
