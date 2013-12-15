@@ -26,7 +26,6 @@
 #include "ginn/wishsource.h"
 #include <memory>
 #include <string>
-#include <vector>
 
 
 namespace Ginn
@@ -65,7 +64,7 @@ public:
   /** Special schema file name indicating 'do not validate'. */
   static const std::string WISH_NO_VALIDATE;
 
-  /** Gets the name of the wish schema file (empty if no validation) */
+  /** Gets the name of the wish schema file. */
   std::string const&
   wish_schema_file_name() const;
 
