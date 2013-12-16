@@ -52,7 +52,7 @@ AC_SUBST(AM_CXXFLAGS, "-Wall -Wextra -pedantic -std=c++11")
 
 AC_CONFIG_FILES([Makefile
                  ginn/Makefile
-                 etc/Makefile
+                 data/Makefile
                  test/Makefile
                  doc/Makefile
                  ginn.pc])

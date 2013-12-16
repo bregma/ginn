@@ -15,7 +15,7 @@
 
 AM_MAKEFLAGS = --no-print-directory
 
-SUBDIRS = ginn etc test doc
+SUBDIRS = ginn data test doc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ginn.pc
