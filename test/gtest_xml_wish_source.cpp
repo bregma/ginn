@@ -18,13 +18,65 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "ginn/configuration.h"
+#include "ginn/keymap.h"
 #include "ginn/wishsource.h"
 #include <gtest/gtest.h>
 
-
-TEST(TestXMLWishSource, construct)
+class TestXMLWishSource
+: public testing::Test
 {
-  Ginn::WishSource::Ptr ptr = Ginn::WishSource::factory(Ginn::WishSource::Format::XML, "");
-  ASSERT_NE(ptr, nullptr);
+public:
+  TestXMLWishSource()
+  : keymap_([](){})
+  { }
+
+  virtual void
+  SetUp()
+  {
+    source_ = Ginn::WishSource::factory(Ginn::WishSource::Format::XML,
+                                        Ginn::Configuration::WISH_NO_VALIDATE);
+    ASSERT_NE(source_, nullptr);
+  };
+
+protected:
+  Ginn::WishSource::Ptr source_;
+  Ginn::Keymap          keymap_;
+};
+
+
+TEST_F(TestXMLWishSource, invalidXML)
+{
+  Ginn::WishSource::RawSourceList raws = {
+    { "invalid xml", "invalid xml" }
+  };
+
+  Ginn::Wish::Table table = source_->get_wishes(raws, keymap_);
+  ASSERT_TRUE(table.size() == 0);
 }
+
+
+TEST_F(TestXMLWishSource, basic)
+{
+  Ginn::WishSource::RawSourceList raws = {
+    { "basic",
+      "<ginn>"
+        "<applications>"
+          "<application name=\"dummy\">"
+            "<wish gesture=\"Pinch\" fingers=\"2\">"
+              "<action name=\"stud\" when=\"update\">"
+                "<trigger prop=\"radius delta\" min=\"20\" max=\"80\"/>"
+                "<key modifier1=\"Control_L\">Up</key>"
+              "</action>"
+            "</wish>"
+          "</application>"
+        "</applications>"
+      "</ginn>" }
+  };
+
+  Ginn::Wish::Table table = source_->get_wishes(raws, keymap_);
+  ASSERT_TRUE(table.size() == 1);
+}
+
+
 
