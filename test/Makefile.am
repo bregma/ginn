@@ -24,9 +24,15 @@ nodist_libgtest_a_SOURCES = \
 libgtest_a_CPPFLAGS = \
 	$(GTEST_CPPFLAGS)
 
+nodist_gtest_ginn_SOURCES = \
+ $(GTEST_PREFIX)/src/gtest_main.cc
+
 gtest_ginn_SOURCES = \
- $(GTEST_PREFIX)/src/gtest_main.cc \
  gtest_xml_wish_source.cpp
+
+gtest_ginn_CPPFLAGS = \
+	-I$(top_srcdir) \
+	-I$(top_builddir)
 
 gtest_ginn_LDADD = \
 	$(top_builddir)/ginn/libginn.a \
