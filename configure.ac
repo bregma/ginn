@@ -54,6 +54,5 @@ AC_CONFIG_FILES([Makefile
                  ginn/Makefile
                  data/Makefile
                  test/Makefile
-                 doc/Makefile
-                 ginn.pc])
+                 doc/Makefile])
 AC_OUTPUT

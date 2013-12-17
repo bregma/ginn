@@ -17,9 +17,6 @@ AM_MAKEFLAGS = --no-print-directory
 
 SUBDIRS = ginn data test doc
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = ginn.pc
-
 dist-hook:
 	@test -d "$(top_srcdir)/.bzr" && \
 	  $(top_srcdir)/config-aux/missing --run \
