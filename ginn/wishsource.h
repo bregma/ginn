@@ -29,6 +29,7 @@
 
 namespace Ginn
 {
+class Configuration;
 class Keymap;
 
 /**
@@ -68,7 +69,7 @@ public:
 
   /** Creates a concrete WishSource. */
   static Ptr
-  factory(Format format, std::string const& schema_file_name);
+  factory(Configuration const& configration);
 
   /** Reads the raw wishes into a buffer. */
   static RawSourceList

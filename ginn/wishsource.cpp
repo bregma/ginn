@@ -21,6 +21,7 @@
 #include "ginn/wishsource.h"
 
 #include <fstream>
+#include "ginn/configuration.h"
 #include "ginn/xmlwishsource.h"
 #include <iostream>
 #include <utility>
@@ -43,11 +44,12 @@ WishSource::
  * @returns the identified wish source object.
  */
 WishSource::Ptr WishSource::
-factory(Format format, std::string const& schema_file_name)
+factory(Configuration const& configuration)
 {
+  Format format = configuration.wish_source_format();
   Ptr source;
   if (format == Format::XML)
-    source.reset(new XmlWishSource(schema_file_name));
+    source.reset(new XmlWishSource(configuration));
   return source;
 }
 

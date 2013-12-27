@@ -290,8 +290,8 @@ struct XmlWishSource::Impl
 
 
 XmlWishSource::
-XmlWishSource(std::string const& wish_schema_file_name)
-: impl_(new Impl(wish_schema_file_name))
+XmlWishSource(Configuration const& configuration)
+: impl_(new Impl(configuration.wish_schema_file_name()))
 {
 }
 

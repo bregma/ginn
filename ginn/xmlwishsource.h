@@ -28,6 +28,7 @@
 
 namespace Ginn
 {
+class Configuration;
 
 /**
  * A factory class to load wishes from an XML file.
@@ -36,7 +37,7 @@ class XmlWishSource
 : public WishSource
 {
 public:
-  XmlWishSource(std::string const& schema_file_name);
+  XmlWishSource(Configuration const& configuration);
   ~XmlWishSource();
 
   Wish::Table

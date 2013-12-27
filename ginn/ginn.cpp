@@ -199,8 +199,7 @@ Ginn::Impl::
 Impl(Configuration const& config)
 : config_(config)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
-, wish_source_(WishSource::factory(config_.wish_source_format(),
-                                   config_.wish_schema_file_name()))
+, wish_source_(WishSource::factory(config_))
 , app_source_(ApplicationSource::factory(config_.application_source_type(), this))
 , keymap_is_initialized_(false)
 , keymap_(std::bind(&Ginn::Impl::keymap_initialized, this))
