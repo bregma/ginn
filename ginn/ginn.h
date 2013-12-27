@@ -26,6 +26,7 @@
 
 namespace Ginn
 {
+  class Configuration;
 
 /**
  * The Ginn module encapsulates everything necessary for the daemon to grant
@@ -39,7 +40,7 @@ public:
 
 public:
   /** Lets the Ginn out of te bottle. */
-  Ginn(int argc, char* argv[]);
+  Ginn(Configuration const& config);
 
   /** Puts the Ginn back in the bottle. */
   ~Ginn();

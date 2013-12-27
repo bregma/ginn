@@ -97,7 +97,7 @@ namespace Ginn
 struct Ginn::Impl
 : public ApplicationObserver
 {
-  Impl(int argc, char* argv[]);
+  Impl(Configuration const& config);
 
   void
   load_wishes();
@@ -196,8 +196,8 @@ on_ginn_initialized(gpointer data)
  * Constructs the internal Ginn implementation.
  */
 Ginn::Impl::
-Impl(int argc, char* argv[])
-: config_(argc, argv)
+Impl(Configuration const& config)
+: config_(config)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
 , wish_source_(WishSource::factory(config_.wish_source_format(),
                                    config_.wish_schema_file_name()))
@@ -452,8 +452,8 @@ create_watches()
  * to signal handlers, then loading the data.
  */
 Ginn::
-Ginn(int argc, char* argv[])
-: impl_(new Impl(argc, argv))
+Ginn(Configuration const& config)
+: impl_(new Impl(config))
 {
   impl_->load_applications();
 }

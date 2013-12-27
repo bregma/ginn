@@ -28,6 +28,7 @@
 #include <getopt.h>
 #include <iostream>
 #include <sys/stat.h>
+#include <utility>
 
 
 typedef std::vector<std::string> ConfigPath;
@@ -245,7 +246,7 @@ print_help_and_exit()
  */
 Configuration::
 Configuration(int argc, char* argv[])
-: impl_(new Impl)
+: impl_(std::make_shared<Impl>())
 {
   std::string arg_wish_file_name;
   char const* env_wish_file = std::getenv("GINN_WISH_FILE");

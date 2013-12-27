@@ -20,6 +20,7 @@
  */
 #include "config.h"
 
+#include "ginn/configuration.h"
 #include "ginn/ginn.h"
 #include <iostream>
 #include <stdexcept>
@@ -30,7 +31,8 @@ main(int argc, char* argv[])
 {
   try
   {
-    Ginn::Ginn ginn(argc, argv);
+    Ginn::Configuration configuration(argc, argv);
+    Ginn::Ginn ginn(configuration);
     ginn.run();
   }
   catch (std::exception& ex)
