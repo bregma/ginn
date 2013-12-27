@@ -270,8 +270,10 @@ XmlWishBuilder(xmlNodePtr const& node, Keymap const& keymap)
 struct XmlWishSource::Impl
 {
   /** @todo: add proper error handling to schema load/parse */
-  Impl(std::string const& schema_file_name)
+  Impl(Configuration const& config)
+  : config_(config)
   {
+    std::string const& schema_file_name = config_.wish_schema_file_name();
     if (schema_file_name != Configuration::WISH_NO_VALIDATE)
     {
       ctxt_ = ParserCtxtPtr(xmlRelaxNGNewParserCtxt(schema_file_name.c_str()));
@@ -283,6 +285,7 @@ struct XmlWishSource::Impl
   ~Impl()
   { }
 
+  Configuration config_;
   ParserCtxtPtr ctxt_;
   SchemaPtr     schema_;
   ValidatorPtr  vctxt_;
@@ -291,7 +294,7 @@ struct XmlWishSource::Impl
 
 XmlWishSource::
 XmlWishSource(Configuration const& configuration)
-: impl_(new Impl(configuration.wish_schema_file_name()))
+: impl_(new Impl(configuration))
 {
 }
 
@@ -433,6 +436,9 @@ get_wishes(WishSource::RawSourceList const& raw_wishes, Keymap const& keymap)
   Wish::Table wish_table;
   for (auto const& raw_source: raw_wishes)
   {
+    if (impl_->config_.is_verbose_mode())
+      std::cout << __FUNCTION__ << "(): "
+                << " loading '" << raw_source.name << "'\n";
     wish_table_merge(wish_table,
                      load_wishes(impl_->vctxt_, raw_source, keymap));
   }
