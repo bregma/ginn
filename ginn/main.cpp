@@ -22,8 +22,10 @@
 
 #include "ginn/configuration.h"
 #include "ginn/ginn.h"
+#include "ginn/wishsource.h"
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 
 
 int
@@ -32,8 +34,20 @@ main(int argc, char* argv[])
   try
   {
     Ginn::Configuration configuration(argc, argv);
-    Ginn::Ginn ginn(configuration);
+    if (configuration.is_verbose_mode())
+      std::cout << __FUNCTION__ << ": creating components\n";
+    Ginn::WishSource::Ptr wish_source = Ginn::WishSource::factory(configuration);
+
+    if (configuration.is_verbose_mode())
+      std::cout << __FUNCTION__ << ": creating Ginn\n";
+    Ginn::Ginn ginn(configuration, std::move(wish_source));
+
+    if (configuration.is_verbose_mode())
+      std::cout << __FUNCTION__ << ": starting main loop\n";
     ginn.run();
+
+    if (configuration.is_verbose_mode())
+      std::cout << __FUNCTION__ << ": shutting down cleanly\n";
   }
   catch (std::exception& ex)
   {

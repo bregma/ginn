@@ -33,6 +33,18 @@
 
 typedef std::vector<std::string> ConfigPath;
 
+
+/**
+ * Prints out a banner message in verbose mode.
+ */
+static void
+print_version()
+{
+  std::cout << PACKAGE_STRING << "\n";
+  std::cout << "Copyright 2013 Canonical Ltd.\n\n";
+}
+
+
 /**
  * Creates a list of directories following the XDG basedir spec (see
  * http://http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html)
@@ -205,6 +217,9 @@ Impl()
 }
 
 
+/**
+ * Handles the --version command-line switch.
+ */
 static void
 print_version_and_exit()
 {
@@ -220,6 +235,9 @@ print_version_and_exit()
 }
 
 
+/**
+ * Handles the --help command-line switch.
+ */
 static void
 print_help_and_exit()
 {
@@ -298,6 +316,8 @@ Configuration(int argc, char* argv[])
   impl_->wish_schema_file_name = find_wish_schema_file(arg_wish_schema_file_name,
                                                        impl_->config_path);
 
+  if (is_verbose_mode())
+    print_version();
 }
 
 

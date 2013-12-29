@@ -56,32 +56,6 @@ quit_cb(gpointer loop)
 }
 
 
-/**
- * Dumps the current confiuration values.
- */
-static void
-dump_configuration(Ginn::Configuration const& config)
-{
-  std::cout << PACKAGE_STRING << "\n";
-  std::cout << "Copyright 2013 Canonical Ltd.\n\n";
-
-  std::cout << "Loading wishes from the following files:\n";
-  for (auto const& wish_file_name: config.wish_sources())
-  {
-    std::cout << "    " << wish_file_name << "\n";
-  }
-  if (config.wish_schema_file_name() == Ginn::Configuration::WISH_NO_VALIDATE)
-  {
-    std::cout << "wish validation is disabled.\n";
-  }
-  else
-  {
-    std::cout << "wish validation schema: " << config.wish_schema_file_name()
-              << "\n";
-  }
-}
-
-
 namespace Ginn
 {
 
@@ -97,10 +71,11 @@ namespace Ginn
 struct Ginn::Impl
 : public ApplicationObserver
 {
-  Impl(Configuration const& config);
+  Impl(Configuration const& config,
+       WishSource::Ptr&&    wish_source);
 
   void
-  load_wishes();
+  load_raw_wishes();
 
   void
   load_applications();
@@ -153,7 +128,6 @@ struct Ginn::Impl
 
 private:
   Configuration                            config_;
-  main_loop_t                              main_loop_;
   WishSource::Ptr                          wish_source_;
   Wish::Table                              wish_table_;
   ApplicationSource::Ptr                   app_source_;
@@ -166,6 +140,7 @@ private:
   GestureWatch::Map                        gesture_map_;
   bool                                     action_sink_is_initialized_;
   ActionSink::Ptr                          action_sink_;
+  main_loop_t                              main_loop_;
 };
 
 
@@ -196,10 +171,10 @@ on_ginn_initialized(gpointer data)
  * Constructs the internal Ginn implementation.
  */
 Ginn::Impl::
-Impl(Configuration const& config)
+Impl(Configuration const& config,
+     WishSource::Ptr&&    wish_source)
 : config_(config)
-, main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
-, wish_source_(WishSource::factory(config_))
+, wish_source_(std::move(wish_source))
 , app_source_(ApplicationSource::factory(config_.application_source_type(), this))
 , keymap_is_initialized_(false)
 , keymap_(std::bind(&Ginn::Impl::keymap_initialized, this))
@@ -210,10 +185,8 @@ Impl(Configuration const& config)
 , action_sink_is_initialized_(false)
 , action_sink_(ActionSink::factory(config_.action_sink_type(),
                                    std::bind(&Ginn::Impl::action_sink_initialized, this)))
+, main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
 { 
-  if (config_.is_verbose_mode())
-    dump_configuration(config_);
-
   if (config_.wish_sources().empty())
     throw std::runtime_error("no wish sources found");
 
@@ -228,12 +201,12 @@ Impl(Configuration const& config)
  * Loads the wishes from all the configured sources.
  */
 void Ginn::Impl::
-load_wishes()
+load_raw_wishes()
 {
   WishSource::RawSourceList raw_sources = WishSource::read_raw_sources(config_.wish_sources());
   wish_table_ = wish_source_->get_wishes(raw_sources, keymap_);
   if (config_.is_verbose_mode())
-    std::cout << wish_table_.size() << " wishes loaded\n";
+    std::cout << wish_table_.size() << " raw wishes loaded\n";
 }
 
 
@@ -334,6 +307,8 @@ void Ginn::Impl::
 action_sink_initialized()
 {
   action_sink_is_initialized_ = true;
+  if (config_.is_verbose_mode())
+    std::cout << "action sink is initialized\n";
 }
 
 
@@ -349,7 +324,9 @@ void Ginn::Impl::
 keymap_initialized()
 {
   keymap_is_initialized_ = true;
-  load_wishes();
+  if (config_.is_verbose_mode())
+    std::cout << "keymap is initialized\n";
+  load_raw_wishes();
 }
 
 
@@ -363,6 +340,8 @@ void Ginn::Impl::
 geis_initialized()
 {
   geis_is_initialized_ = true;
+  if (config_.is_verbose_mode())
+    std::cout << "gesture recognizer is initialized\n";
 }
 
 
@@ -408,6 +387,9 @@ geis_gesture_event(GeisEvent event)
 void Ginn::Impl::
 create_watches()
 {
+  if (config_.is_verbose_mode())
+    std::cout << "creating watches...\n";
+
   for (auto const& app: apps_)
   {
     for (auto const& wish: wish_table_)
@@ -447,8 +429,9 @@ create_watches()
  * to signal handlers, then loading the data.
  */
 Ginn::
-Ginn(Configuration const& config)
-: impl_(new Impl(config))
+Ginn(Configuration const& config,
+     WishSource::Ptr      wish_source)
+: impl_(new Impl(config, std::move(wish_source)))
 {
   impl_->load_applications();
 }

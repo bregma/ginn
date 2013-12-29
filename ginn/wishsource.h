@@ -40,7 +40,7 @@ class Keymap;
 class WishSource
 {
 public:
-  typedef std::shared_ptr<WishSource> Ptr;
+  typedef std::unique_ptr<WishSource> Ptr;
 
   /**
    * Supported formats for wish sources.

@@ -21,6 +21,7 @@
 #ifndef GINN_GINN_H_
 #define GINN_GINN_H_
 
+#include "ginn/wishsource.h"
 #include <memory>
 
 
@@ -40,7 +41,8 @@ public:
 
 public:
   /** Lets the Ginn out of te bottle. */
-  Ginn(Configuration const& config);
+  Ginn(Configuration const&   config,
+       WishSource::Ptr        wish_source);
 
   /** Puts the Ginn back in the bottle. */
   ~Ginn();
