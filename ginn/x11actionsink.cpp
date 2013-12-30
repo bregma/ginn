@@ -38,9 +38,8 @@ typedef std::queue<Callback> CallbackQueue;
 struct X11ActionSink::Impl
 {
 public:
-  Impl(InitializedCallback initialized_callback)
+  Impl()
   : connection_(xcb_connect(NULL, NULL))
-  , initialized_callback_(initialized_callback)
   {
     if (!connection_)
     {
@@ -73,7 +72,8 @@ public:
     if (cond == G_IO_HUP)
     {
       g_io_channel_unref(channel);
-      impl->initialized_callback_();
+      if (impl->initialized_callback_)
+        impl->initialized_callback_();
       return FALSE;
     }
 
@@ -98,7 +98,8 @@ public:
                 << (int)reply->major_version << "." << (int)reply->minor_version
                 << "\n";
       free(reply);
-      initialized_callback_();
+      if (initialized_callback_)
+        initialized_callback_();
     }
     if (e)
     {
@@ -137,14 +138,22 @@ public:
 
 X11ActionSink::
 X11ActionSink(InitializedCallback initialized_callback)
-: impl_(new Impl(initialized_callback))
+: impl_(new Impl())
 {
+  set_initialized_callback(initialized_callback);
 }
 
 
 X11ActionSink::
 ~X11ActionSink()
 {
+}
+
+
+void X11ActionSink::
+set_initialized_callback(InitializedCallback const& callback)
+{
+  impl_->initialized_callback_ = callback;
 }
 
 

@@ -45,6 +45,9 @@ public:
   ~X11ActionSink();
 
   void
+  set_initialized_callback(InitializedCallback const& callback);
+
+  void
   perform(Action const& action);
 
 private:

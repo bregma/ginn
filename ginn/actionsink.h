@@ -53,6 +53,9 @@ public:
   virtual ~ActionSink() = 0;
 
   virtual void
+  set_initialized_callback(InitializedCallback const& callback) = 0;
+
+  virtual void
   perform(Action const& action) = 0;
 
   static Ptr
