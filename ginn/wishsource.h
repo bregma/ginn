@@ -69,7 +69,7 @@ public:
 
   /** Creates a concrete WishSource. */
   static Ptr
-  factory(Configuration const& configration);
+  factory(Format format, Configuration const& configration);
 
   /** Reads the raw wishes into a buffer. */
   static RawSourceList

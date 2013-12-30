@@ -36,7 +36,10 @@ main(int argc, char* argv[])
     Ginn::Configuration configuration(argc, argv);
     if (configuration.is_verbose_mode())
       std::cout << __FUNCTION__ << ": creating components\n";
-    Ginn::WishSource::Ptr wish_source = Ginn::WishSource::factory(configuration);
+
+    Ginn::WishSource::Ptr wish_source
+          = Ginn::WishSource::factory(configuration.wish_source_format(),
+                                      configuration);
 
     if (configuration.is_verbose_mode())
       std::cout << __FUNCTION__ << ": creating Ginn\n";

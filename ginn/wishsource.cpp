@@ -44,9 +44,8 @@ WishSource::
  * @returns the identified wish source object.
  */
 WishSource::Ptr WishSource::
-factory(Configuration const& configuration)
+factory(Format format, Configuration const& configuration)
 {
-  Format format = configuration.wish_source_format();
   Ptr source;
   if (format == Format::XML)
     source.reset(new XmlWishSource(configuration));

@@ -28,18 +28,19 @@ class TestXMLWishSource
 {
 public:
   TestXMLWishSource()
-  : keymap_([](){})
+  : config_(0, nullptr)
+  , keymap_([](){})
   { }
 
   virtual void
   SetUp()
   {
-    source_ = Ginn::WishSource::factory(Ginn::WishSource::Format::XML,
-                                        Ginn::Configuration::WISH_NO_VALIDATE);
+    source_ = Ginn::WishSource::factory(Ginn::WishSource::Format::XML, config_);
     ASSERT_NE(source_, nullptr);
   };
 
 protected:
+  Ginn::Configuration   config_;
   Ginn::WishSource::Ptr source_;
   Ginn::Keymap          keymap_;
 };
