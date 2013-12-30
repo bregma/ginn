@@ -183,9 +183,11 @@ find_wish_schema_file(std::string const& arg_wish_schema_file_name,
       {
         if (0 == std::strcmp(de->d_name, "ginn.rng"))
         {
+          closedir(dir);
           return refdir + "/" + de->d_name;
         }
       }
+      closedir(dir);
     }
   }
 
