@@ -143,6 +143,8 @@ X11ActionSink::
 X11ActionSink(Configuration const& config)
 : impl_(new Impl(config))
 {
+  if (impl_->config_.is_verbose_mode())
+    std::cerr << __FUNCTION__ << " created\n";
 }
 
 

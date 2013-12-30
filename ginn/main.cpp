@@ -20,6 +20,7 @@
  */
 #include "config.h"
 
+#include "ginn/actionsink.h"
 #include "ginn/configuration.h"
 #include "ginn/ginn.h"
 #include "ginn/wishsource.h"
@@ -40,10 +41,15 @@ main(int argc, char* argv[])
     Ginn::WishSource::Ptr wish_source
           = Ginn::WishSource::factory(configuration.wish_source_format(),
                                       configuration);
+    Ginn::ActionSink::Ptr action_sink
+          = Ginn::ActionSink::factory(configuration.action_sink_type(),
+                                      configuration);
 
     if (configuration.is_verbose_mode())
       std::cout << __FUNCTION__ << ": creating Ginn\n";
-    Ginn::Ginn ginn(configuration, std::move(wish_source));
+    Ginn::Ginn ginn(configuration,
+                    std::move(wish_source),
+                    std::move(action_sink));
 
     if (configuration.is_verbose_mode())
       std::cout << __FUNCTION__ << ": starting main loop\n";

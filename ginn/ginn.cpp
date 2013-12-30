@@ -72,7 +72,8 @@ struct Ginn::Impl
 : public ApplicationObserver
 {
   Impl(Configuration const& config,
-       WishSource::Ptr&&    wish_source);
+       WishSource::Ptr&&    wish_source,
+       ActionSink::Ptr&&    action_sink);
 
   void
   load_raw_wishes();
@@ -172,7 +173,8 @@ on_ginn_initialized(gpointer data)
  */
 Ginn::Impl::
 Impl(Configuration const& config,
-     WishSource::Ptr&&    wish_source)
+     WishSource::Ptr&&    wish_source,
+     ActionSink::Ptr&&    action_sink)
 : config_(config)
 , wish_source_(std::move(wish_source))
 , app_source_(ApplicationSource::factory(config_.application_source_type(), this))
@@ -183,7 +185,7 @@ Impl(Configuration const& config,
         std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
         std::bind(&Ginn::Impl::geis_initialized, this))
 , action_sink_is_initialized_(false)
-, action_sink_(ActionSink::factory(config_.action_sink_type(), config_))
+, action_sink_(std::move(action_sink))
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
 { 
   if (config_.wish_sources().empty())
@@ -432,8 +434,11 @@ create_watches()
  */
 Ginn::
 Ginn(Configuration const& config,
-     WishSource::Ptr      wish_source)
-: impl_(new Impl(config, std::move(wish_source)))
+     WishSource::Ptr      wish_source,
+     ActionSink::Ptr      action_sink)
+: impl_(new Impl(config,
+                 std::move(wish_source),
+                 std::move(action_sink)))
 {
   impl_->load_applications();
 }
