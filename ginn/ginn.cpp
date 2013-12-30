@@ -71,9 +71,10 @@ namespace Ginn
 struct Ginn::Impl
 : public ApplicationObserver
 {
-  Impl(Configuration const& config,
-       WishSource::Ptr&&    wish_source,
-       ActionSink::Ptr&&    action_sink);
+  Impl(Configuration const&      config,
+       WishSource::Ptr&&         wish_source,
+       ApplicationSource::Ptr&&  app_source,
+       ActionSink::Ptr&&         action_sink);
 
   void
   load_raw_wishes();
@@ -172,12 +173,13 @@ on_ginn_initialized(gpointer data)
  * Constructs the internal Ginn implementation.
  */
 Ginn::Impl::
-Impl(Configuration const& config,
-     WishSource::Ptr&&    wish_source,
-     ActionSink::Ptr&&    action_sink)
+Impl(Configuration const&      config,
+     WishSource::Ptr&&         wish_source,
+     ApplicationSource::Ptr&&  app_source,
+     ActionSink::Ptr&&         action_sink)
 : config_(config)
 , wish_source_(std::move(wish_source))
-, app_source_(ApplicationSource::factory(config_.application_source_type(), config_))
+, app_source_(std::move(app_source))
 , keymap_is_initialized_(false)
 , keymap_(std::bind(&Ginn::Impl::keymap_initialized, this))
 , geis_is_initialized_(false)
@@ -434,11 +436,13 @@ create_watches()
  * to signal handlers, then loading the data.
  */
 Ginn::
-Ginn(Configuration const& config,
-     WishSource::Ptr      wish_source,
-     ActionSink::Ptr      action_sink)
+Ginn(Configuration const&   config,
+     WishSource::Ptr        wish_source,
+     ApplicationSource::Ptr app_source,
+     ActionSink::Ptr        action_sink)
 : impl_(new Impl(config,
                  std::move(wish_source),
+                 std::move(app_source),
                  std::move(action_sink)))
 {
   impl_->load_applications();

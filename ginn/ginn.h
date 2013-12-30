@@ -22,6 +22,7 @@
 #define GINN_GINN_H_
 
 #include "ginn/actionsink.h"
+#include "ginn/applicationsource.h"
 #include "ginn/wishsource.h"
 #include <memory>
 
@@ -44,6 +45,7 @@ public:
   /** Lets the Ginn out of te bottle. */
   Ginn(Configuration const&   config,
        WishSource::Ptr        wish_source,
+       ApplicationSource::Ptr app_source,
        ActionSink::Ptr        action_sink);
 
   /** Puts the Ginn back in the bottle. */
