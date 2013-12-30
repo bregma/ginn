@@ -29,6 +29,7 @@
 namespace Ginn
 {
 class ApplicationObserver;
+class Configuration;
 
 /**
  * An abstract interface for Application sources.
@@ -57,7 +58,11 @@ public:
 
   /** Creates a named Application source. */
   static Ptr
-  factory(Type type, ApplicationObserver* observer);
+  factory(Type type, Configuration const& config);
+
+  /** Sets the observer. */
+  virtual void
+  set_observer(ApplicationObserver* observer) = 0;
 
   /** Sources Applications. */
   virtual Application::List

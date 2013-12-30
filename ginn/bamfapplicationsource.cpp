@@ -23,8 +23,10 @@
 #include "ginn/application.h"
 #include "ginn/applicationbuilder.h"
 #include "ginn/applicationobserver.h"
+#include "ginn/configuration.h"
 #include <gio/gdesktopappinfo.h>
 #include <glib.h>
+#include <iostream>
 #include <libbamf/bamf-matcher.h>
 
 
@@ -156,34 +158,52 @@ on_view_closed(BamfMatcher* matcher, BamfView* view, gpointer data)
   }
 }
 
+
 struct BamfApplicationSource::Impl
 {
-  Impl(ApplicationObserver* observer)
-  : matcher_(bamf_matcher_get_default(), g_object_unref)
-  , observer_(observer)
+  Impl(Configuration const& config)
+  : config_(config)
+  , matcher_(bamf_matcher_get_default(), g_object_unref)
+  , observer_(nullptr)
   {
-    g_signal_connect(G_OBJECT(matcher_.get()), "view-opened", (GCallback)on_view_opened, observer_);
-    g_signal_connect(G_OBJECT(matcher_.get()), "view_closed", (GCallback)on_view_closed, observer_);
   }
 
   ~Impl()
   { }
 
+  Configuration        config_;
   bamf_matcher_t       matcher_;
   ApplicationObserver* observer_;
 };
 
 
 BamfApplicationSource::
-BamfApplicationSource(ApplicationObserver* observer)
-: impl_(new Impl(observer))
+BamfApplicationSource(Configuration const& config)
+: impl_(new Impl(config))
 {
+  if (impl_->config_.is_verbose_mode())
+    std::cout << __FUNCTION__ << " created\n";
 }
 
 
 BamfApplicationSource::
 ~BamfApplicationSource()
 {
+}
+
+
+void BamfApplicationSource::
+set_observer(ApplicationObserver* observer)
+{
+  impl_->observer_ = observer;
+  g_signal_connect(G_OBJECT(impl_->matcher_.get()),
+                   "view-opened",
+                   (GCallback)on_view_opened,
+                   impl_->observer_);
+  g_signal_connect(G_OBJECT(impl_->matcher_.get()),
+                   "view_closed",
+                   (GCallback)on_view_closed,
+                   impl_->observer_);
 }
 
 

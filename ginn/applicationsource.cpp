@@ -21,6 +21,7 @@
 #include "ginn/applicationsource.h"
 
 #include "ginn/bamfapplicationsource.h"
+#include "ginn/configuration.h"
 
 
 namespace Ginn
@@ -32,11 +33,11 @@ ApplicationSource::
 
 
 ApplicationSource::Ptr ApplicationSource::
-factory(Type type, ApplicationObserver* observer)
+factory(Type type, Configuration const& config)
 {
   Ptr source;
   if (type == Type::BAMF)
-    source.reset(new BamfApplicationSource(observer));
+    source.reset(new BamfApplicationSource(config));
   return source;
 }
 

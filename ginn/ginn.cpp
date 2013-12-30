@@ -177,7 +177,7 @@ Impl(Configuration const& config,
      ActionSink::Ptr&&    action_sink)
 : config_(config)
 , wish_source_(std::move(wish_source))
-, app_source_(ApplicationSource::factory(config_.application_source_type(), this))
+, app_source_(ApplicationSource::factory(config_.application_source_type(), config_))
 , keymap_is_initialized_(false)
 , keymap_(std::bind(&Ginn::Impl::keymap_initialized, this))
 , geis_is_initialized_(false)
@@ -196,6 +196,7 @@ Impl(Configuration const& config,
 
   g_idle_add(on_ginn_initialized, this);
 
+  app_source_->set_observer(this);
   action_sink_->set_initialized_callback(std::bind(&Impl::action_sink_initialized,
                                                    this));
 }

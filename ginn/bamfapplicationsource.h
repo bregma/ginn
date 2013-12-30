@@ -35,8 +35,11 @@ namespace Ginn
   : public ApplicationSource
   {
   public:
-    BamfApplicationSource(ApplicationObserver* observer);
+    BamfApplicationSource(Configuration const& config);
     ~BamfApplicationSource();
+
+  void
+  set_observer(ApplicationObserver* observer);
 
   Application::List
   get_applications();
