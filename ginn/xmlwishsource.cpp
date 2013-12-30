@@ -296,6 +296,8 @@ XmlWishSource::
 XmlWishSource(Configuration const& configuration)
 : impl_(new Impl(configuration))
 {
+  if (impl_->config_.is_verbose_mode())
+    std::cout << __FUNCTION__ << " created\n";
 }
 
 
