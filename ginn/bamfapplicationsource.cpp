@@ -84,18 +84,21 @@ struct BamfApplicationBuilder
   std::string
   generic_name() const
   {
+    std::string name = "";
     GDesktopAppInfo* app_info = g_desktop_app_info_new_from_filename(application_id().c_str());
     if (app_info)
     {
       if (g_desktop_app_info_has_key(app_info,
                                      G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME))
       {
-        gchar const* generic_name = g_desktop_app_info_get_string(app_info,
+        gchar* generic_name = g_desktop_app_info_get_string(app_info,
                                         G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME);
-        return generic_name ? generic_name : "";
+        name = generic_name ? generic_name : "";
+        g_free(generic_name);
       }
+      g_clear_object(&app_info);
     }
-    return "";
+    return name;
   }
 
   Application::Windows
@@ -112,6 +115,7 @@ struct BamfApplicationBuilder
         windows.push_back(std::move(build_window(matcher_, bamf_window)));
       }
     }
+    g_list_free(window_list);
 
     return windows;
   }
@@ -158,15 +162,13 @@ on_view_closed(BamfMatcher* matcher, BamfView* view, gpointer data)
   }
 }
 
-
 struct BamfApplicationSource::Impl
 {
   Impl(Configuration const& config)
   : config_(config)
   , matcher_(bamf_matcher_get_default(), g_object_unref)
   , observer_(nullptr)
-  {
-  }
+  { }
 
   ~Impl()
   { }
@@ -188,8 +190,7 @@ BamfApplicationSource(Configuration const& config)
 
 BamfApplicationSource::
 ~BamfApplicationSource()
-{
-}
+{ }
 
 
 void BamfApplicationSource::
@@ -222,6 +223,7 @@ get_applications()
                                                                   bamf_app));
     apps[a->name()] = a;
   }
+  g_list_free(app_list);
   return apps;
 }
 
