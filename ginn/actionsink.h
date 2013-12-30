@@ -28,6 +28,7 @@
 namespace Ginn
 {
 class Action;
+class Configuration;
 
 
 /**
@@ -59,7 +60,7 @@ public:
   perform(Action const& action) = 0;
 
   static Ptr
-  factory(Type type, InitializedCallback initialized_callback);
+  factory(Type type, Configuration const& config);
 };
 
 } // namespace Ginn

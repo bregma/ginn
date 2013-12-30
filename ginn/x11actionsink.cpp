@@ -21,6 +21,7 @@
 #include "ginn/x11actionsink.h"
 
 #include "ginn/action.h"
+#include "ginn/configuration.h"
 #include <glib.h>
 #include <iostream>
 #include <map>
@@ -38,8 +39,9 @@ typedef std::queue<Callback> CallbackQueue;
 struct X11ActionSink::Impl
 {
 public:
-  Impl()
-  : connection_(xcb_connect(NULL, NULL))
+  Impl(Configuration const& config)
+  : config_(config)
+  , connection_(xcb_connect(NULL, NULL))
   {
     if (!connection_)
     {
@@ -129,6 +131,7 @@ public:
 #endif
   }
 
+  Configuration       config_;
   xcb_connection_t*   connection_;
   GIOChannel*         iochannel_;
   InitializedCallback initialized_callback_;
@@ -137,10 +140,9 @@ public:
 
 
 X11ActionSink::
-X11ActionSink(InitializedCallback initialized_callback)
-: impl_(new Impl())
+X11ActionSink(Configuration const& config)
+: impl_(new Impl(config))
 {
-  set_initialized_callback(initialized_callback);
 }
 
 

@@ -33,11 +33,11 @@ ActionSink::
 
 
 ActionSink::Ptr ActionSink::
-factory(Type type, InitializedCallback initialized_callback)
+factory(Type type, Configuration const& config)
 {
   Ptr sink;
   if (type == Type::X11)
-    sink.reset(new X11ActionSink(initialized_callback));
+    sink.reset(new X11ActionSink(config));
   return sink;
 }
 

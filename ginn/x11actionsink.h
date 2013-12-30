@@ -40,7 +40,7 @@ public:
   struct Impl;
 
 public:
-  X11ActionSink(ActionSink::InitializedCallback initialized_callback);
+  X11ActionSink(Configuration const& config);
 
   ~X11ActionSink();
 

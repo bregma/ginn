@@ -183,8 +183,7 @@ Impl(Configuration const& config,
         std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
         std::bind(&Ginn::Impl::geis_initialized, this))
 , action_sink_is_initialized_(false)
-, action_sink_(ActionSink::factory(config_.action_sink_type(),
-                                   std::bind(&Ginn::Impl::action_sink_initialized, this)))
+, action_sink_(ActionSink::factory(config_.action_sink_type(), config_))
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
 { 
   if (config_.wish_sources().empty())
@@ -194,6 +193,9 @@ Impl(Configuration const& config,
   g_unix_signal_add(SIGINT,  quit_cb, main_loop_.get());
 
   g_idle_add(on_ginn_initialized, this);
+
+  action_sink_->set_initialized_callback(std::bind(&Impl::action_sink_initialized,
+                                                   this));
 }
 
 
