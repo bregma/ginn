@@ -51,7 +51,7 @@ main(int argc, char* argv[])
     if (config.is_verbose_mode())
       std::cout << __FUNCTION__ << ": creating Ginn\n";
     Ginn::Ginn ginn(config,
-                    std::move(wish_source),
+                    wish_source.get(),
                     std::move(app_source),
                     action_sink.get());
 

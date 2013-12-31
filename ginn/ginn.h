@@ -22,14 +22,15 @@
 #define GINN_GINN_H_
 
 #include "ginn/applicationsource.h"
-#include "ginn/wishsource.h"
 #include <memory>
 
 
 namespace Ginn
 {
-  class ActionSink;
-  class Configuration;
+
+class ActionSink;
+class Configuration;
+class WishSource;
 
 /**
  * The Ginn module encapsulates everything necessary for the daemon to grant
@@ -44,7 +45,7 @@ public:
 public:
   /** Lets the Ginn out of te bottle. */
   Ginn(Configuration const&   config,
-       WishSource::Ptr        wish_source,
+       WishSource*            wish_source,
        ApplicationSource::Ptr app_source,
        ActionSink*            action_sink);
 

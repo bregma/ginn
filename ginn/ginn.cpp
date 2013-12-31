@@ -72,7 +72,7 @@ struct Ginn::Impl
 : public ApplicationObserver
 {
   Impl(Configuration const&      config,
-       WishSource::Ptr&&         wish_source,
+       WishSource*               wish_source,
        ApplicationSource::Ptr&&  app_source,
        ActionSink*               action_sink);
 
@@ -130,7 +130,7 @@ struct Ginn::Impl
 
 private:
   Configuration                            config_;
-  WishSource::Ptr                          wish_source_;
+  WishSource*                              wish_source_;
   Wish::Table                              wish_table_;
   ApplicationSource::Ptr                   app_source_;
   Application::List                        apps_;
@@ -174,11 +174,11 @@ on_ginn_initialized(gpointer data)
  */
 Ginn::Impl::
 Impl(Configuration const&      config,
-     WishSource::Ptr&&         wish_source,
+     WishSource*               wish_source,
      ApplicationSource::Ptr&&  app_source,
      ActionSink*               action_sink)
 : config_(config)
-, wish_source_(std::move(wish_source))
+, wish_source_(wish_source)
 , app_source_(std::move(app_source))
 , keymap_is_initialized_(false)
 , keymap_(std::bind(&Ginn::Impl::keymap_initialized, this))
@@ -437,13 +437,10 @@ create_watches()
  */
 Ginn::
 Ginn(Configuration const&   config,
-     WishSource::Ptr        wish_source,
+     WishSource*            wish_source,
      ApplicationSource::Ptr app_source,
      ActionSink*            action_sink)
-: impl_(new Impl(config,
-                 std::move(wish_source),
-                 std::move(app_source),
-                 action_sink))
+: impl_(new Impl(config, wish_source, std::move(app_source), action_sink))
 {
   impl_->load_applications();
 }
