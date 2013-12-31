@@ -29,6 +29,7 @@ namespace Ginn
 {
 
 class ActionSink;
+class ApplicationSource;
 class Configuration;
 class WishSource;
 
@@ -44,10 +45,10 @@ public:
 
 public:
   /** Lets the Ginn out of te bottle. */
-  Ginn(Configuration const&   config,
-       WishSource*            wish_source,
-       ApplicationSource::Ptr app_source,
-       ActionSink*            action_sink);
+  Ginn(Configuration const&  config,
+       WishSource*           wish_source,
+       ApplicationSource*    app_source,
+       ActionSink*           action_sink);
 
   /** Puts the Ginn back in the bottle. */
   ~Ginn();

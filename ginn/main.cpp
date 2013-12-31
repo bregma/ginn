@@ -21,7 +21,7 @@
 #include "config.h"
 
 #include "ginn/x11actionsink.h"
-#include "ginn/applicationsource.h"
+#include "ginn/bamfapplicationsource.h"
 #include "ginn/configuration.h"
 #include "ginn/ginn.h"
 #include "ginn/wishsource.h"
@@ -35,41 +35,41 @@ int
 main(int argc, char* argv[])
 {
   using namespace Ginn;
+  using namespace std;
 
   try
   {
     Configuration config(argc, argv);
     if (config.is_verbose_mode())
-      std::cout << __FUNCTION__ << ": creating components\n";
+      cout << __FUNCTION__ << ": creating components\n";
 
     WishSource::Ptr wish_source = WishSource::factory(config.wish_source_format(),
                                                       config);
-    ApplicationSource::Ptr app_source 
-          = ApplicationSource::factory(config.application_source_type(), config);
-    std::unique_ptr<ActionSink> action_sink(new X11ActionSink(config));
+    unique_ptr<ApplicationSource> app_source(new BamfApplicationSource(config));
+    unique_ptr<ActionSink> action_sink(new X11ActionSink(config));
 
     if (config.is_verbose_mode())
-      std::cout << __FUNCTION__ << ": creating Ginn\n";
+      cout << __FUNCTION__ << ": creating Ginn\n";
     Ginn::Ginn ginn(config,
                     wish_source.get(),
-                    std::move(app_source),
+                    app_source.get(),
                     action_sink.get());
 
     if (config.is_verbose_mode())
-      std::cout << __FUNCTION__ << ": starting main loop\n";
+      cout << __FUNCTION__ << ": starting main loop\n";
     ginn.run();
 
     if (config.is_verbose_mode())
-      std::cout << __FUNCTION__ << ": shutting down cleanly\n";
+      cout << __FUNCTION__ << ": shutting down cleanly\n";
   }
-  catch (std::exception& ex)
+  catch (exception& ex)
   {
-    std::cerr << "exception caught: " << ex.what() << "\n";
+    cerr << "exception caught: " << ex.what() << "\n";
     return 1;
   }
   catch (...)
   {
-    std::cerr << "unknown exception caught\n";
+    cerr << "unknown exception caught\n";
     return 1;
   }
   return 0;

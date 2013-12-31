@@ -22,7 +22,6 @@
 #define GINN_APPLICATIONSOURCE_H_
 
 #include "ginn/application.h"
-#include <memory>
 #include <string>
 
 
@@ -42,7 +41,6 @@ class Configuration;
 class ApplicationSource
 {
 public:
-  typedef std::shared_ptr<ApplicationSource> Ptr;
 
   /**
    * Supported types of application sources.
@@ -55,10 +53,6 @@ public:
 
 public:
   virtual ~ApplicationSource() = 0;
-
-  /** Creates a named Application source. */
-  static Ptr
-  factory(Type type, Configuration const& config);
 
   /** Sets the observer. */
   virtual void

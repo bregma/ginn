@@ -71,10 +71,10 @@ namespace Ginn
 struct Ginn::Impl
 : public ApplicationObserver
 {
-  Impl(Configuration const&      config,
-       WishSource*               wish_source,
-       ApplicationSource::Ptr&&  app_source,
-       ActionSink*               action_sink);
+  Impl(Configuration const&  config,
+       WishSource*           wish_source,
+       ApplicationSource*    app_source,
+       ActionSink*           action_sink);
 
   void
   load_raw_wishes();
@@ -132,7 +132,7 @@ private:
   Configuration                            config_;
   WishSource*                              wish_source_;
   Wish::Table                              wish_table_;
-  ApplicationSource::Ptr                   app_source_;
+  ApplicationSource*                       app_source_;
   Application::List                        apps_;
   bool                                     keymap_is_initialized_;
   Keymap                                   keymap_;
@@ -173,13 +173,13 @@ on_ginn_initialized(gpointer data)
  * Constructs the internal Ginn implementation.
  */
 Ginn::Impl::
-Impl(Configuration const&      config,
-     WishSource*               wish_source,
-     ApplicationSource::Ptr&&  app_source,
-     ActionSink*               action_sink)
+Impl(Configuration const&  config,
+     WishSource*           wish_source,
+     ApplicationSource*    app_source,
+     ActionSink*           action_sink)
 : config_(config)
 , wish_source_(wish_source)
-, app_source_(std::move(app_source))
+, app_source_(app_source)
 , keymap_is_initialized_(false)
 , keymap_(std::bind(&Ginn::Impl::keymap_initialized, this))
 , geis_is_initialized_(false)
@@ -436,11 +436,11 @@ create_watches()
  * to signal handlers, then loading the data.
  */
 Ginn::
-Ginn(Configuration const&   config,
-     WishSource*            wish_source,
-     ApplicationSource::Ptr app_source,
-     ActionSink*            action_sink)
-: impl_(new Impl(config, wish_source, std::move(app_source), action_sink))
+Ginn(Configuration const&  config,
+     WishSource*           wish_source,
+     ApplicationSource*    app_source,
+     ActionSink*           action_sink)
+: impl_(new Impl(config, wish_source, app_source, action_sink))
 {
   impl_->load_applications();
 }

@@ -1,6 +1,6 @@
 /**
  * @file applicationsource.cpp
- * @brief DEfinition of the Ginn ApplicationSource interface class.
+ * @brief Definition of the Ginn ApplicationSource interface class.
  */
 
 /*
@@ -20,9 +20,6 @@
  */
 #include "ginn/applicationsource.h"
 
-#include "ginn/bamfapplicationsource.h"
-#include "ginn/configuration.h"
-
 
 namespace Ginn
 {
@@ -30,17 +27,6 @@ namespace Ginn
 ApplicationSource::
 ~ApplicationSource()
 { }
-
-
-ApplicationSource::Ptr ApplicationSource::
-factory(Type type, Configuration const& config)
-{
-  Ptr source;
-  if (type == Type::BAMF)
-    source.reset(new BamfApplicationSource(config));
-  return source;
-}
-
 
 } // namespace Ginn
 
