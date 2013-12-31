@@ -34,9 +34,6 @@ namespace Ginn
 class Geis
 {
 public:
-  /** Signal indicating a new Geis class has been defined. */
-  typedef std::function<void(::GeisGestureClass)> NewClassCallback;
-
   /** Signal indicating a new Geis event has been received. */
   typedef std::function<void(::GeisEvent)> EventReceivedCallback;
 
@@ -59,8 +56,7 @@ public:
   struct Impl;
 
 public:
-  Geis(NewClassCallback const&      new_class_callback,
-       EventReceivedCallback const& event_received_callback,
+  Geis(EventReceivedCallback const& event_received_callback,
        InitializedCallback const&   initialized_callback);
 
   ~Geis();

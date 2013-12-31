@@ -105,9 +105,6 @@ struct Ginn::Impl
   geis_initialized();
 
   void
-  geis_new_class(GeisGestureClass gesture_class);
-
-  void
   geis_gesture_event(GeisEvent event);
 
   void
@@ -139,7 +136,6 @@ private:
   Keymap*                                  keymap_;
   bool                                     geis_is_initialized_;
   Geis                                     geis_;
-  std::map<std::string, GeisGestureClass>  class_map_;
   GestureWatch::Map                        gesture_map_;
   bool                                     action_sink_is_initialized_;
   ActionSink*                              action_sink_;
@@ -185,8 +181,7 @@ Impl(Configuration const&  config,
 , keymap_is_initialized_(false)
 , keymap_(keymap)
 , geis_is_initialized_(false)
-, geis_(std::bind(&Ginn::Impl::geis_new_class, this, std::placeholders::_1),
-        std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
+, geis_(std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
         std::bind(&Ginn::Impl::geis_initialized, this))
 , action_sink_is_initialized_(false)
 , action_sink_(action_sink)
@@ -353,18 +348,6 @@ geis_initialized()
   geis_is_initialized_ = true;
   if (config_.is_verbose_mode())
     std::cout << "gesture recognizer is initialized\n";
-}
-
-
-/**
- * Reacts to a new gesture class being reported by the Geis.
- * @param[in]  gesture_class  The gesture class being added.
- */
-void Ginn::Impl::
-geis_new_class(GeisGestureClass gesture_class)
-{
-  char const* class_name = geis_gesture_class_name(gesture_class);
-  class_map_[class_name] = gesture_class;
 }
 
 

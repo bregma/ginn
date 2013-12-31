@@ -23,6 +23,7 @@
 #include <geis/geis.h>
 #include <glib.h>
 #include <iostream>
+#include <map>
 #include <stdexcept>
 
 
@@ -56,17 +57,16 @@ Geis::Subscription::
  */
 struct Geis::Impl
 {
-  Impl(Geis::NewClassCallback const&      new_class_callback,
-       Geis::EventReceivedCallback const& event_received_callback,
+  Impl(Geis::EventReceivedCallback const& event_received_callback,
        Geis::InitializedCallback const&   initialized_callback);
   ~Impl();
 
-  ::Geis                      geis_;
-  Geis::NewClassCallback      new_class_callback_;
-  Geis::EventReceivedCallback event_received_callback_;
-  Geis::InitializedCallback   initialized_callback_;
-  GIOChannel*                 iochannel_;
-  int                         iochannel_watch_;
+  ::Geis                                  geis_;
+  Geis::EventReceivedCallback             event_received_callback_;
+  Geis::InitializedCallback               initialized_callback_;
+  GIOChannel*                             iochannel_;
+  int                                     iochannel_watch_;
+  std::map<std::string, GeisGestureClass> class_map_;
 };
 
 
@@ -132,7 +132,8 @@ geis_class_event_ready(::Geis, GeisEvent event, void* context)
   {
     case GEIS_EVENT_CLASS_AVAILABLE:
     {
-      impl->new_class_callback_(gesture_class);
+      char const* class_name = geis_gesture_class_name(gesture_class);
+      impl->class_map_[class_name] = gesture_class;
       break;
     }
 
@@ -147,11 +148,9 @@ geis_class_event_ready(::Geis, GeisEvent event, void* context)
  * Sets up the GEIS dispatch mechanism and lets it go wild.
  */
 Geis::Impl::
-Impl(Geis::NewClassCallback const&      new_class_callback,
-     Geis::EventReceivedCallback const& event_received_callback,
+Impl(Geis::EventReceivedCallback const& event_received_callback,
      Geis::InitializedCallback const&   initialized_callback)
 : geis_(geis_new(GEIS_INIT_TRACK_DEVICES, GEIS_INIT_TRACK_GESTURE_CLASSES, NULL))
-, new_class_callback_(new_class_callback)
 , event_received_callback_(event_received_callback)
 , initialized_callback_(initialized_callback)
 , iochannel_(NULL)
@@ -187,11 +186,9 @@ Geis::Impl::
 
 
 Geis::
-Geis(NewClassCallback const&      new_class_callback,
-     EventReceivedCallback const& event_received_callback,
+Geis(EventReceivedCallback const& event_received_callback,
      InitializedCallback const&   initialized_calback)
-: impl_(new Impl(new_class_callback,
-                 event_received_callback,
+: impl_(new Impl(event_received_callback,
                  initialized_calback))
 {
 }
