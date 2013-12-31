@@ -77,7 +77,7 @@ public:
 
   /** Gets wishes from the source. */
   virtual Wish::Table
-  get_wishes(RawSourceList const& raw_wishes, Keymap const& keymap) = 0;
+  get_wishes(RawSourceList const& raw_wishes, Keymap* keymap) = 0;
 };
 
 }

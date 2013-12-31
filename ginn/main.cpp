@@ -24,9 +24,9 @@
 #include "ginn/bamfapplicationsource.h"
 #include "ginn/configuration.h"
 #include "ginn/ginn.h"
+#include "ginn/keymap.h"
 #include "ginn/wishsource.h"
 #include <iostream>
-#include <memory>
 #include <stdexcept>
 #include <utility>
 
@@ -45,15 +45,17 @@ main(int argc, char* argv[])
 
     WishSource::Ptr wish_source = WishSource::factory(config.wish_source_format(),
                                                       config);
-    unique_ptr<ApplicationSource> app_source(new BamfApplicationSource(config));
-    unique_ptr<ActionSink> action_sink(new X11ActionSink(config));
+    BamfApplicationSource app_source(config);
+    Keymap keymap(config);
+    X11ActionSink action_sink(config);
 
     if (config.is_verbose_mode())
       cout << __FUNCTION__ << ": creating Ginn\n";
     Ginn::Ginn ginn(config,
                     wish_source.get(),
-                    app_source.get(),
-                    action_sink.get());
+                    &app_source,
+                    &keymap,
+                    &action_sink);
 
     if (config.is_verbose_mode())
       cout << __FUNCTION__ << ": starting main loop\n";

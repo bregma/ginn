@@ -20,6 +20,7 @@
  */
 #include "ginn/keymap.h"
 
+#include "ginn/configuration.h"
 #include <glib.h>
 #include <iostream>
 #include "keymap.h"
@@ -32,12 +33,14 @@ namespace Ginn
 
 struct Keymap::Impl
 {
-  Impl()
-  : pid_(-1)
+  Impl(Configuration const& config)
+  : config_(config)
+  , pid_(-1)
   , out_fd_(-1)
   , err_fd_(-1)
   { }
   
+  Configuration                  config_;
   InitializedCallback            initialized_callback_;
   GPid                           pid_;
   gint                           out_fd_;
@@ -111,8 +114,8 @@ cb_err_watch(GIOChannel* channel, GIOCondition cond, gpointer)
 
 
 Keymap::
-Keymap()
-: impl_(new Impl())
+Keymap(Configuration const& config)
+: impl_(new Impl(config))
 {
   char const* argv[] = { "/usr/bin/xmodmap", "xmodmap", "-pke", NULL };
   gboolean bstat = g_spawn_async_with_pipes(NULL,
@@ -136,6 +139,8 @@ Keymap()
   g_io_add_watch(out_ch, GIOCondition(G_IO_IN | G_IO_HUP), cb_out_watch, impl_.get());
   g_io_add_watch(err_ch, GIOCondition(G_IO_IN | G_IO_HUP), (GIOFunc)cb_err_watch, impl_.get());
 
+  if (impl_->config_.is_verbose_mode())
+    std::cout << __FUNCTION__ << " created\n";
 }
 
 

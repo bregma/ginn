@@ -41,7 +41,7 @@ public:
   ~XmlWishSource();
 
   Wish::Table
-  get_wishes(RawSourceList const& raw_wishes, Keymap const& keymap);
+  get_wishes(RawSourceList const& raw_wishes, Keymap* keymap);
 
 private:
   struct Impl;

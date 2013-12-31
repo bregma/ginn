@@ -92,7 +92,7 @@ typedef std::unique_ptr<xmlDoc>               XmlDocPtr;
 struct XmlActionBuilder
 : public ActionBuilder
 {
-  XmlActionBuilder(xmlNodePtr const& node, Keymap const& keymap);
+  XmlActionBuilder(xmlNodePtr const& node, Keymap* keymap);
 
   Action::EventList const&
   events() const;
@@ -103,22 +103,22 @@ private:
 
 
 XmlActionBuilder::
-XmlActionBuilder(xmlNodePtr const& node, Keymap const& keymap)
+XmlActionBuilder(xmlNodePtr const& node, Keymap* keymap)
 {
   Action::EventList tail;
 
   char const* mod1 = (char const*)xmlGetProp(node, (xmlChar const*)"modifier1");
   if (mod1)
   {
-    events_.push_back({Action::EventType::key_press, keymap.to_keycode(mod1)});
-    tail.push_back({Action::EventType::key_release, keymap.to_keycode(mod1)});
+    events_.push_back({Action::EventType::key_press, keymap->to_keycode(mod1)});
+    tail.push_back({Action::EventType::key_release, keymap->to_keycode(mod1)});
   }
 
   char const* mod2 = (char const*)xmlGetProp(node, (xmlChar const*)"modifier2");
   if (mod2)
   {
-    events_.push_back({Action::EventType::key_press, keymap.to_keycode(mod2)});
-    tail.push_back({Action::EventType::key_release, keymap.to_keycode(mod2)});
+    events_.push_back({Action::EventType::key_press, keymap->to_keycode(mod2)});
+    tail.push_back({Action::EventType::key_release, keymap->to_keycode(mod2)});
   }
 
   if (0 == strcmp((char const*)node->name, "button"))
@@ -144,9 +144,9 @@ XmlActionBuilder(xmlNodePtr const& node, Keymap const& keymap)
       {
         std::string keysym(reinterpret_cast<char const*>(child->content));
         events_.push_back({Action::EventType::key_press,
-                          keymap.to_keycode(keysym)});
+                          keymap->to_keycode(keysym)});
         tail.push_back({Action::EventType::key_release,
-                        keymap.to_keycode(keysym)});
+                        keymap->to_keycode(keysym)});
       }
     }
   }
@@ -168,7 +168,7 @@ events() const
 struct XmlWishBuilder
 : public WishBuilder
 {
-  XmlWishBuilder(xmlNodePtr const& node, Keymap const& keymap);
+  XmlWishBuilder(xmlNodePtr const& node, Keymap* keymap);
 
   ~XmlWishBuilder()
   { }
@@ -222,7 +222,7 @@ private:
  * @param[in] node     The wish XML DOM.
  */
 XmlWishBuilder::
-XmlWishBuilder(xmlNodePtr const& node, Keymap const& keymap)
+XmlWishBuilder(xmlNodePtr const& node, Keymap* keymap)
 : gesture_((char const*)xmlGetProp(node, (xmlChar const*)"gesture"))
 , touches_(std::stoi((char const*)xmlGetProp(node, (xmlChar const*)"fingers")))
 , min_(0.0f)
@@ -314,7 +314,7 @@ XmlWishSource::
  * @param[out] wishes    The current collection of processed wishes.
  */
 static Wish::List
-process_application_node(xmlNodePtr node, Keymap const& keymap)
+process_application_node(xmlNodePtr node, Keymap* keymap)
 {
   Wish::List wish_list;
   while (node)
@@ -338,7 +338,7 @@ process_application_node(xmlNodePtr node, Keymap const& keymap)
  * @param[out] wishes  The current collection of processed wishes.
  */
 static void
-process_ginn_node(xmlNodePtr node, Keymap const& keymap, Wish::Table& wish_table)
+process_ginn_node(xmlNodePtr node, Keymap* keymap, Wish::Table& wish_table)
 {
   while (node)
   {
@@ -386,7 +386,7 @@ wish_table_merge(Wish::Table& lhs, Wish::Table const& rhs)
 static Wish::Table
 load_wishes(ValidatorPtr const&          vctxt,
             WishSource::RawSource const& raw_source,
-            Keymap const&                keymap)
+            Keymap*                keymap)
 {
   Wish::Table wish_table;
 
@@ -433,7 +433,7 @@ load_wishes(ValidatorPtr const&          vctxt,
  * If configured, the wish file may be validated first.
  */
 Wish::Table XmlWishSource::
-get_wishes(WishSource::RawSourceList const& raw_wishes, Keymap const& keymap)
+get_wishes(WishSource::RawSourceList const& raw_wishes, Keymap* keymap)
 {
   Wish::Table wish_table;
   for (auto const& raw_source: raw_wishes)

@@ -29,6 +29,7 @@ class TestXMLWishSource
 public:
   TestXMLWishSource()
   : config_(0, nullptr)
+  , keymap_(config_)
   { }
 
   virtual void
@@ -51,7 +52,7 @@ TEST_F(TestXMLWishSource, invalidXML)
     { "invalid xml", "invalid xml" }
   };
 
-  Ginn::Wish::Table table = source_->get_wishes(raws, keymap_);
+  Ginn::Wish::Table table = source_->get_wishes(raws, &keymap_);
   ASSERT_TRUE(table.size() == 0);
 }
 
@@ -74,7 +75,7 @@ TEST_F(TestXMLWishSource, basic)
       "</ginn>" }
   };
 
-  Ginn::Wish::Table table = source_->get_wishes(raws, keymap_);
+  Ginn::Wish::Table table = source_->get_wishes(raws, &keymap_);
   ASSERT_TRUE(table.size() == 1);
 }
 

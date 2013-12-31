@@ -74,6 +74,7 @@ struct Ginn::Impl
   Impl(Configuration const&  config,
        WishSource*           wish_source,
        ApplicationSource*    app_source,
+       Keymap*               keymap,
        ActionSink*           action_sink);
 
   void
@@ -135,7 +136,7 @@ private:
   ApplicationSource*                       app_source_;
   Application::List                        apps_;
   bool                                     keymap_is_initialized_;
-  Keymap                                   keymap_;
+  Keymap*                                  keymap_;
   bool                                     geis_is_initialized_;
   Geis                                     geis_;
   std::map<std::string, GeisGestureClass>  class_map_;
@@ -176,11 +177,13 @@ Ginn::Impl::
 Impl(Configuration const&  config,
      WishSource*           wish_source,
      ApplicationSource*    app_source,
+     Keymap*               keymap,
      ActionSink*           action_sink)
 : config_(config)
 , wish_source_(wish_source)
 , app_source_(app_source)
 , keymap_is_initialized_(false)
+, keymap_(keymap)
 , geis_is_initialized_(false)
 , geis_(std::bind(&Ginn::Impl::geis_new_class, this, std::placeholders::_1),
         std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
@@ -200,8 +203,8 @@ Impl(Configuration const&  config,
   app_source_->set_observer(this);
   action_sink_->set_initialized_callback(std::bind(&Impl::action_sink_initialized,
                                                    this));
-  keymap_.set_initialized_callback(std::bind(&Ginn::Impl::keymap_initialized,
-                                             this));
+  keymap_->set_initialized_callback(std::bind(&Ginn::Impl::keymap_initialized,
+                                              this));
 }
 
 
@@ -440,8 +443,9 @@ Ginn::
 Ginn(Configuration const&  config,
      WishSource*           wish_source,
      ApplicationSource*    app_source,
+     Keymap*               keymap,
      ActionSink*           action_sink)
-: impl_(new Impl(config, wish_source, app_source, action_sink))
+: impl_(new Impl(config, wish_source, app_source, keymap, action_sink))
 {
   impl_->load_applications();
 }

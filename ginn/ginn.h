@@ -31,6 +31,7 @@ namespace Ginn
 class ActionSink;
 class ApplicationSource;
 class Configuration;
+class Keymap;
 class WishSource;
 
 /**
@@ -48,6 +49,7 @@ public:
   Ginn(Configuration const&  config,
        WishSource*           wish_source,
        ApplicationSource*    app_source,
+       Keymap*               keymap,
        ActionSink*           action_sink);
 
   /** Puts the Ginn back in the bottle. */

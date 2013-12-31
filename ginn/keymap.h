@@ -29,6 +29,7 @@
 
 namespace Ginn
 {
+class Configuration;
 
 class Keymap
 {
@@ -43,7 +44,7 @@ public:
   struct Impl;
 
 public:
-  Keymap();
+  Keymap(Configuration const& config);
 
   ~Keymap();
 
