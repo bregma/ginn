@@ -32,9 +32,8 @@ namespace Ginn
 
 struct Keymap::Impl
 {
-  Impl(InitializedCallback initialized_callback)
-  : initialized_callback_(initialized_callback)
-  , pid_(-1)
+  Impl()
+  : pid_(-1)
   , out_fd_(-1)
   , err_fd_(-1)
   { }
@@ -112,8 +111,8 @@ cb_err_watch(GIOChannel* channel, GIOCondition cond, gpointer)
 
 
 Keymap::
-Keymap(InitializedCallback const& initialized_callback)
-: impl_(new Impl(initialized_callback))
+Keymap()
+: impl_(new Impl())
 {
   char const* argv[] = { "/usr/bin/xmodmap", "xmodmap", "-pke", NULL };
   gboolean bstat = g_spawn_async_with_pipes(NULL,
@@ -143,6 +142,13 @@ Keymap(InitializedCallback const& initialized_callback)
 Keymap::
 ~Keymap()
 {
+}
+
+
+void Keymap::
+set_initialized_callback(InitializedCallback const& initialized_callback)
+{
+  impl_->initialized_callback_ = initialized_callback;
 }
 
 

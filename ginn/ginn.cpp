@@ -181,7 +181,6 @@ Impl(Configuration const&  config,
 , wish_source_(wish_source)
 , app_source_(app_source)
 , keymap_is_initialized_(false)
-, keymap_(std::bind(&Ginn::Impl::keymap_initialized, this))
 , geis_is_initialized_(false)
 , geis_(std::bind(&Ginn::Impl::geis_new_class, this, std::placeholders::_1),
         std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
@@ -201,6 +200,8 @@ Impl(Configuration const&  config,
   app_source_->set_observer(this);
   action_sink_->set_initialized_callback(std::bind(&Impl::action_sink_initialized,
                                                    this));
+  keymap_.set_initialized_callback(std::bind(&Ginn::Impl::keymap_initialized,
+                                             this));
 }
 
 

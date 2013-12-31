@@ -43,9 +43,12 @@ public:
   struct Impl;
 
 public:
-  Keymap(InitializedCallback const& initialized_callback);
+  Keymap();
 
   ~Keymap();
+
+  void
+  set_initialized_callback(InitializedCallback const& initialized_callback);
 
   Keycode
   to_keycode(std::string const& keysym_name) const;

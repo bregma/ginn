@@ -29,7 +29,6 @@ class TestXMLWishSource
 public:
   TestXMLWishSource()
   : config_(0, nullptr)
-  , keymap_([](){})
   { }
 
   virtual void
