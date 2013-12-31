@@ -28,7 +28,7 @@
 namespace Ginn
 {
 class ApplicationObserver;
-class Configuration;
+
 
 /**
  * An abstract interface for Application sources.

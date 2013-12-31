@@ -28,8 +28,10 @@ nodist_gtest_ginn_SOURCES = \
  $(GTEST_PREFIX)/src/gtest_main.cc
 
 gtest_ginn_SOURCES = \
- fakeactionsink.h fakeactionsink.cpp \
+ fakeactionsink.h        fakeactionsink.cpp \
+ fakeapplicationsource.h fakeapplicationsource.cpp \
  gtest_fake_action_sink.cpp \
+ gtest_fake_application_source.cpp \
  gtest_xml_wish_source.cpp
 
 gtest_ginn_CPPFLAGS = \

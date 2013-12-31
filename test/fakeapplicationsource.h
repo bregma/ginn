@@ -1,6 +1,6 @@
 /**
- * @file ginn/bamfapplicationsource.h
- * @brief Declarations of the Ginn BAMF Application Source class.
+ * @file test/fakeapplicationsource.h
+ * @brief A fake FakeApplicationSource for testing.
  */
 
 /*
@@ -18,41 +18,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_BAMFAPPLICATIONSOURCE_H_
-#define GINN_BAMFAPPLICATIONSOURCE_H_
+#ifndef GINN_FAKEAPPLICATIONSOURCE_H_
+#define GINN_FAKEAPPLICATIONSOURCE_H_
 
 #include "ginn/applicationsource.h"
-#include <memory>
 
 
 namespace Ginn
 {
 
-class Configuration;
-
-/**
- * A factory class to load Applications through BAMF.
- */
-class BamfApplicationSource
+class FakeApplicationSource
 : public ApplicationSource
 {
 public:
-  BamfApplicationSource(Configuration const& config);
-  ~BamfApplicationSource();
+  ~FakeApplicationSource();
 
-void
-set_observer(ApplicationObserver* observer);
+  void
+  set_observer(ApplicationObserver* observer);
 
-Application::List
-get_applications();
-
-private:
-  struct Impl;
-
-  std::unique_ptr<Impl> impl_;
+  Application::List
+  get_applications();
 };
 
-}
+} // namespace Ginn
 
-#endif // GINN_BAMFAPPLICATIONSOURCE_H_
+#endif // GINN_FAKEAPPLICATIONSOURCE_H_
 
