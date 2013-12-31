@@ -62,7 +62,7 @@ frame_matches_window_id(GeisFrame frame, Window::Id window_id)
 
 
 bool GestureWatch::
-matches(GeisEvent event, ActionSink::Ptr const& action_sink)
+matches(GeisEvent event, ActionSink* action_sink)
 {
   GeisAttr attr = geis_event_attr_by_name(event, GEIS_EVENT_ATTRIBUTE_GROUPSET);
   GeisGroupSet groupset = (GeisGroupSet)geis_attr_value_to_pointer(attr);

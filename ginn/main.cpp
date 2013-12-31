@@ -20,12 +20,13 @@
  */
 #include "config.h"
 
-#include "ginn/actionsink.h"
+#include "ginn/x11actionsink.h"
 #include "ginn/applicationsource.h"
 #include "ginn/configuration.h"
 #include "ginn/ginn.h"
 #include "ginn/wishsource.h"
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <utility>
 
@@ -33,34 +34,32 @@
 int
 main(int argc, char* argv[])
 {
+  using namespace Ginn;
+
   try
   {
-    Ginn::Configuration configuration(argc, argv);
-    if (configuration.is_verbose_mode())
+    Configuration config(argc, argv);
+    if (config.is_verbose_mode())
       std::cout << __FUNCTION__ << ": creating components\n";
 
-    Ginn::WishSource::Ptr wish_source
-          = Ginn::WishSource::factory(configuration.wish_source_format(),
-                                      configuration);
-    Ginn::ApplicationSource::Ptr app_source 
-          = Ginn::ApplicationSource::factory(configuration.application_source_type(),
-                                       configuration);
-    Ginn::ActionSink::Ptr action_sink
-          = Ginn::ActionSink::factory(configuration.action_sink_type(),
-                                      configuration);
+    WishSource::Ptr wish_source = WishSource::factory(config.wish_source_format(),
+                                                      config);
+    ApplicationSource::Ptr app_source 
+          = ApplicationSource::factory(config.application_source_type(), config);
+    std::unique_ptr<ActionSink> action_sink(new X11ActionSink(config));
 
-    if (configuration.is_verbose_mode())
+    if (config.is_verbose_mode())
       std::cout << __FUNCTION__ << ": creating Ginn\n";
-    Ginn::Ginn ginn(configuration,
+    Ginn::Ginn ginn(config,
                     std::move(wish_source),
                     std::move(app_source),
-                    std::move(action_sink));
+                    action_sink.get());
 
-    if (configuration.is_verbose_mode())
+    if (config.is_verbose_mode())
       std::cout << __FUNCTION__ << ": starting main loop\n";
     ginn.run();
 
-    if (configuration.is_verbose_mode())
+    if (config.is_verbose_mode())
       std::cout << __FUNCTION__ << ": shutting down cleanly\n";
   }
   catch (std::exception& ex)

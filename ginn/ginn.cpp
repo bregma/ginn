@@ -74,7 +74,7 @@ struct Ginn::Impl
   Impl(Configuration const&      config,
        WishSource::Ptr&&         wish_source,
        ApplicationSource::Ptr&&  app_source,
-       ActionSink::Ptr&&         action_sink);
+       ActionSink*               action_sink);
 
   void
   load_raw_wishes();
@@ -141,7 +141,7 @@ private:
   std::map<std::string, GeisGestureClass>  class_map_;
   GestureWatch::Map                        gesture_map_;
   bool                                     action_sink_is_initialized_;
-  ActionSink::Ptr                          action_sink_;
+  ActionSink*                              action_sink_;
   main_loop_t                              main_loop_;
 };
 
@@ -176,7 +176,7 @@ Ginn::Impl::
 Impl(Configuration const&      config,
      WishSource::Ptr&&         wish_source,
      ApplicationSource::Ptr&&  app_source,
-     ActionSink::Ptr&&         action_sink)
+     ActionSink*               action_sink)
 : config_(config)
 , wish_source_(std::move(wish_source))
 , app_source_(std::move(app_source))
@@ -187,7 +187,7 @@ Impl(Configuration const&      config,
         std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
         std::bind(&Ginn::Impl::geis_initialized, this))
 , action_sink_is_initialized_(false)
-, action_sink_(std::move(action_sink))
+, action_sink_(action_sink)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
 { 
   if (config_.wish_sources().empty())
@@ -439,11 +439,11 @@ Ginn::
 Ginn(Configuration const&   config,
      WishSource::Ptr        wish_source,
      ApplicationSource::Ptr app_source,
-     ActionSink::Ptr        action_sink)
+     ActionSink*            action_sink)
 : impl_(new Impl(config,
                  std::move(wish_source),
                  std::move(app_source),
-                 std::move(action_sink)))
+                 action_sink))
 {
   impl_->load_applications();
 }

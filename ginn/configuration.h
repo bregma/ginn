@@ -21,7 +21,6 @@
 #ifndef GINN_CONFIGURATION_H_
 #define GINN_CONFIGURATION_H_
 
-#include "ginn/actionsink.h"
 #include "ginn/applicationsource.h"
 #include "ginn/wishsource.h"
 #include <memory>
@@ -52,10 +51,6 @@ public:
   /** Gets the wish file format to use. */
   WishSource::Format
   wish_source_format() const;
-
-  /** Gets the action sink type to use.  */
-  ActionSink::Type
-  action_sink_type() const;
 
   /** Gets a list of names of files containing wish definitions. */
   WishSource::NameList const&

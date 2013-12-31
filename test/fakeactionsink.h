@@ -1,6 +1,6 @@
 /**
- * @file ginn/actionsink.h
- * @brief Interface to the Ginn ActionSink interface.
+ * @file test/fakeactionsink.h
+ * @brief A fake ActionSink for testing.
  */
 
 /*
@@ -18,40 +18,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_ACTIONSINK_H_
-#define GINN_ACTIONSINK_H_
+#ifndef GINN_FAKEACTIONSINK_H_
+#define GINN_FAKEACTIONSINK_H_
 
-#include <functional>
+#include "ginn/actionsink.h"
 
 
 namespace Ginn
 {
-class Action;
-
 
 /**
  * A place where actions end up getting sent.
- *
- * This is an interface to the place where actions get performed when a gesture
- * is effected over a window according to a wish.
  */
-class ActionSink
+class FakeActionSink
+: public ActionSink
 {
 public:
-  /** Signal for when the action sink has completed its initialization. */
-  typedef std::function<void()> InitializedCallback;
+  FakeActionSink();
+  ~FakeActionSink();
 
-public:
-  virtual ~ActionSink() = 0;
+  void
+  set_initialized_callback(InitializedCallback const& callback);
 
-  virtual void
-  set_initialized_callback(InitializedCallback const& callback) = 0;
-
-  virtual void
-  perform(Action const& action) = 0;
+  void
+  perform(Action const& action);
 };
 
 } // namespace Ginn
 
-#endif // GINN_ACTIONSINK_H_
+#endif // GINN_FAKEACTIONSINK_H_
 

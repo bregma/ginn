@@ -1,6 +1,8 @@
 /**
- * @file ginn/x11actionsink.h
- * @brief Interface to the Ginn X11 ActionSink module.
+ * @file test/gtest_fake_action_sink.cpp
+ * @brief Unit tests of the fake action sink.
+ * Makes sure the fake action sink works, otherwise you can;t depend on tests
+ * that use it.
  */
 
 /*
@@ -18,45 +20,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_X11ACTIONSINK_H_
-#define GINN_X11ACTIONSINK_H_
-
+#include "fakeactionsink.h"
 #include "ginn/actionsink.h"
+#include <gtest/gtest.h>
 #include <memory>
 
 
-namespace Ginn
+TEST(FakeActionSink, construct)
 {
-class Configuration;
-
-/**
- * A concrete action sink that injects events into the X11 server for an
- * effected wish.
- */
-class X11ActionSink
-: public ActionSink
-{
-public:
-
-  /** Internal implementation of this class. */
-  struct Impl;
-
-public:
-  X11ActionSink(Configuration const& config);
-
-  ~X11ActionSink();
-
-  void
-  set_initialized_callback(InitializedCallback const& callback);
-
-  void
-  perform(Action const& action);
-
-private:
-  std::unique_ptr<Impl> impl_;
-};
-
-} // namespace Ginn
-
-#endif // GINN_X11ACTIONSINK_H_
-
+  std::unique_ptr<Ginn::ActionSink> action_sink(Ginn::FakeActionSink());
+  ASSERT_TRUE(action_sink);
+}

@@ -21,7 +21,6 @@
 #ifndef GINN_GINN_H_
 #define GINN_GINN_H_
 
-#include "ginn/actionsink.h"
 #include "ginn/applicationsource.h"
 #include "ginn/wishsource.h"
 #include <memory>
@@ -29,6 +28,7 @@
 
 namespace Ginn
 {
+  class ActionSink;
   class Configuration;
 
 /**
@@ -46,7 +46,7 @@ public:
   Ginn(Configuration const&   config,
        WishSource::Ptr        wish_source,
        ApplicationSource::Ptr app_source,
-       ActionSink::Ptr        action_sink);
+       ActionSink*            action_sink);
 
   /** Puts the Ginn back in the bottle. */
   ~Ginn();

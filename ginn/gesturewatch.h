@@ -59,7 +59,7 @@ public:
    * @param[in] event The Geis event to match.
    */
   bool
-  matches(GeisEvent event, ActionSink::Ptr const& action_sink);
+  matches(GeisEvent event, ActionSink* action_sink);
 
   friend std::ostream&
   operator<<(std::ostream& ostr, GestureWatch const& watch);

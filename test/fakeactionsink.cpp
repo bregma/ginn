@@ -1,6 +1,6 @@
 /**
- * @file ginn/actionsink.cpp
- * @brief Implementation of the Ginn ActionSink interface.
+ * @file test/fakeactionsink.cpp
+ * @brief A fake ActionSink for testing.
  */
 
 /*
@@ -18,15 +18,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "ginn/actionsink.h"
+#include "test/fakeactionsink.h"
+
 
 namespace Ginn
 {
 
-ActionSink::
-~ActionSink()
-{
-}
+FakeActionSink::
+FakeActionSink()
+{ }
+
+
+FakeActionSink::
+~FakeActionSink()
+{ }
+
+
+void FakeActionSink::
+set_initialized_callback(InitializedCallback const&)
+{ }
+
+void FakeActionSink::
+perform(Action const&)
+{ }
 
 } // namespace Ginn
 
