@@ -21,6 +21,7 @@
 #include "ginn/geis.h"
 
 #include <geis/geis.h>
+#include "ginn/configuration.h"
 #include <glib.h>
 #include <iostream>
 #include <map>
@@ -57,10 +58,10 @@ Geis::Subscription::
  */
 struct Geis::Impl
 {
-  Impl(Geis::EventReceivedCallback const& event_received_callback,
-       Geis::InitializedCallback const&   initialized_callback);
+  Impl(Configuration const& config);
   ~Impl();
 
+  Configuration                           config_;
   ::Geis                                  geis_;
   Geis::EventReceivedCallback             event_received_callback_;
   Geis::InitializedCallback               initialized_callback_;
@@ -94,7 +95,8 @@ geis_gesture_event_ready(::Geis, GeisEvent event, void* context)
   switch (geis_event_type(event))
   {
     case GEIS_EVENT_INIT_COMPLETE:
-      impl->initialized_callback_();
+      if (impl->initialized_callback_)
+        impl->initialized_callback_();
       break;
 
     case GEIS_EVENT_ERROR:
@@ -108,7 +110,8 @@ geis_gesture_event_ready(::Geis, GeisEvent event, void* context)
     case GEIS_EVENT_GESTURE_BEGIN:
     case GEIS_EVENT_GESTURE_UPDATE:
     case GEIS_EVENT_GESTURE_END:
-      impl->event_received_callback_(event);
+      if (impl->event_received_callback_)
+        impl->event_received_callback_(event);
       break;
 
     default:
@@ -148,11 +151,9 @@ geis_class_event_ready(::Geis, GeisEvent event, void* context)
  * Sets up the GEIS dispatch mechanism and lets it go wild.
  */
 Geis::Impl::
-Impl(Geis::EventReceivedCallback const& event_received_callback,
-     Geis::InitializedCallback const&   initialized_callback)
-: geis_(geis_new(GEIS_INIT_TRACK_DEVICES, GEIS_INIT_TRACK_GESTURE_CLASSES, NULL))
-, event_received_callback_(event_received_callback)
-, initialized_callback_(initialized_callback)
+Impl(Configuration const& config)
+: config_(config)
+, geis_(geis_new(GEIS_INIT_TRACK_DEVICES, GEIS_INIT_TRACK_GESTURE_CLASSES, NULL))
 , iochannel_(NULL)
 {
   if (!geis_)
@@ -186,11 +187,11 @@ Geis::Impl::
 
 
 Geis::
-Geis(EventReceivedCallback const& event_received_callback,
-     InitializedCallback const&   initialized_calback)
-: impl_(new Impl(event_received_callback,
-                 initialized_calback))
+Geis(Configuration const& config)
+: impl_(new Impl(config))
 {
+  if (impl_->config_.is_verbose_mode())
+    std::cout << __FUNCTION__ << " created\n";
 }
 
 
@@ -198,6 +199,21 @@ Geis::
 ~Geis()
 {
 }
+
+
+void Geis::
+set_initialized_callback(InitializedCallback const& initialized_callback)
+{
+  impl_->initialized_callback_ = initialized_callback;
+}
+
+
+void Geis::
+set_event_callback(EventReceivedCallback const& event_callback)
+{
+  impl_->event_received_callback_ = event_callback;
+}
+
 
 Geis::Subscription Geis::
 subscribe(Window::Id window_id, Wish::Ptr const& wish)

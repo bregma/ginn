@@ -181,8 +181,7 @@ Impl(Configuration const&  config,
 , keymap_is_initialized_(false)
 , keymap_(keymap)
 , geis_is_initialized_(false)
-, geis_(std::bind(&Ginn::Impl::geis_gesture_event, this, std::placeholders::_1),
-        std::bind(&Ginn::Impl::geis_initialized, this))
+, geis_(config_)
 , action_sink_is_initialized_(false)
 , action_sink_(action_sink)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
@@ -200,6 +199,11 @@ Impl(Configuration const&  config,
                                                    this));
   keymap_->set_initialized_callback(std::bind(&Ginn::Impl::keymap_initialized,
                                               this));
+  geis_.set_initialized_callback(std::bind(&Ginn::Impl::geis_initialized,
+                                           this));
+  geis_.set_event_callback(std::bind(&Ginn::Impl::geis_gesture_event,
+                                      this,
+                                      std::placeholders::_1));
 }
 
 

@@ -30,6 +30,7 @@
 
 namespace Ginn
 {
+class Configuration;
 
 class Geis
 {
@@ -56,10 +57,15 @@ public:
   struct Impl;
 
 public:
-  Geis(EventReceivedCallback const& event_received_callback,
-       InitializedCallback const&   initialized_callback);
+  Geis(Configuration const& config);
 
   ~Geis();
+
+  void
+  set_initialized_callback(InitializedCallback const& initialized_callback);
+
+  void
+  set_event_callback(EventReceivedCallback const& event_callback);
 
   Subscription
   subscribe(Window::Id window_id, Wish::Ptr const& wish);
