@@ -23,7 +23,7 @@
 
 #include "ginn/actionsink.h"
 #include "ginn/application.h"
-#include "ginn/geis.h"
+#include "ginn/gesturesource.h"
 #include "ginn/wish.h"
 #include <iosfwd>
 #include <map>
@@ -47,19 +47,12 @@ public:
   typedef std::map<Window::Id, GestureWatch::List> Map;
 
 public:
-  GestureWatch(Window::Id        window_id,
-               Application::Ptr  app,
-               Wish::Ptr         wish,
-               Geis&             geis);
+  GestureWatch(Window::Id               window_id,
+               Application::Ptr         app,
+               Wish::Ptr                wish,
+               GestureSubscription::Ptr subscription);
 
   ~GestureWatch();
-
-  /**
-   * Indicates if the @p event matches this watch.
-   * @param[in] event The Geis event to match.
-   */
-  bool
-  matches(GeisEvent event, ActionSink* action_sink);
 
   Window::Id
   window_id() const
@@ -73,10 +66,10 @@ public:
   operator<<(std::ostream& ostr, GestureWatch const& watch);
 
 private:
-  Window::Id         window_id_;
-  Application::Ptr   application_;
-  Wish::Ptr          wish_;
-  Geis::Subscription subscription_;
+  Window::Id               window_id_;
+  Application::Ptr         application_;
+  Wish::Ptr                wish_;
+  GestureSubscription::Ptr subscription_;
 };
 
 

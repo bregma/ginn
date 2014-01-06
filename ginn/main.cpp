@@ -57,6 +57,7 @@ main(int argc, char* argv[])
                     wish_source.get(),
                     &app_source,
                     &keymap,
+                    &gesture_source,
                     &action_sink);
 
     if (config.is_verbose_mode())

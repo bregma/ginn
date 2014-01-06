@@ -32,6 +32,7 @@ class ActionSink;
 class ApplicationSource;
 class Configuration;
 class Keymap;
+class GestureSource;
 class WishSource;
 
 /**
@@ -50,6 +51,7 @@ public:
        WishSource*           wish_source,
        ApplicationSource*    app_source,
        Keymap*               keymap,
+       GestureSource*        gesture_source,
        ActionSink*           action_sink);
 
   /** Puts the Ginn back in the bottle. */

@@ -26,7 +26,6 @@ libginn_a_SOURCES = \
 	applicationobserver.h    \
 	bamfapplicationsource.h  bamfapplicationsource.cpp \
 	configuration.h          configuration.cpp \
-	geis.h                   geis.cpp \
 	geisgesturesource.h      geisgesturesource.cpp \
 	gesturesource.h          gesturesource.cpp \
 	gesturewatch.h           gesturewatch.cpp \

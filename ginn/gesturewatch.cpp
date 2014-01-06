@@ -20,23 +20,23 @@
  */
 #include "ginn/gesturewatch.h"
 
-#include "ginn/geis.h"
 #include <iomanip>
 #include <iostream>
+#include <utility>
 
 
 namespace Ginn
 {
 
 GestureWatch::
-GestureWatch(Window::Id        window_id,
-             Application::Ptr  app,
-             Wish::Ptr         wish,
-             Geis&             geis)
+GestureWatch(Window::Id                window_id,
+             Application::Ptr          app,
+             Wish::Ptr                 wish,
+             GestureSubscription::Ptr  subscription)
 : window_id_(window_id)
 , application_(app)
 , wish_(wish)
-, subscription_(geis.subscribe(window_id, wish))
+, subscription_(std::move(subscription))
 {
 }
 
@@ -44,55 +44,6 @@ GestureWatch(Window::Id        window_id,
 GestureWatch::
 ~GestureWatch()
 {
-}
-
-
-static bool
-frame_matches_window_id(GeisFrame frame, Window::Id window_id)
-{
-  GeisAttr attr = geis_frame_attr_by_name(frame,
-                                          GEIS_GESTURE_ATTRIBUTE_EVENT_WINDOW_ID);
-  if (attr)
-  {
-    Window::Id id = geis_attr_value_to_integer(attr);
-    return id == window_id;
-  }
-  return false;
-}
-
-
-bool GestureWatch::
-matches(GeisEvent event, ActionSink* action_sink)
-{
-  GeisAttr attr = geis_event_attr_by_name(event, GEIS_EVENT_ATTRIBUTE_GROUPSET);
-  GeisGroupSet groupset = (GeisGroupSet)geis_attr_value_to_pointer(attr);
-  for (GeisSize i= 0; i < geis_groupset_group_count(groupset); ++i)
-  {
-    GeisGroup group = geis_groupset_group(groupset, i);
-    for (GeisSize j=0; j < geis_group_frame_count(group); ++j)
-    {
-      GeisFrame frame = geis_group_frame(group, j);
-      if (frame_matches_window_id(frame, window_id_))
-      {
-        GeisAttr attr = geis_frame_attr_by_name(frame, wish_->property().c_str());
-        if (attr)
-        {
-            float fval = geis_attr_value_to_float(attr);
-            std::cerr << "gesture attr '" << wish_->property() << "' "
-                      << "value " << fval << " "
-                      << " (min=" << wish_->min() << ", max=" << wish_->max() << ")";
-            if (wish_->min() <= fval && fval <= wish_->max())
-            {
-              action_sink->perform(wish_->action());
-              return true;
-            }
-            std::cerr << "\n";
-            return false;
-        }
-      }
-    }
-  }
-  return false;
 }
 
 

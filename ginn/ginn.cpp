@@ -25,7 +25,7 @@
 #include "ginn/applicationsource.h"
 #include "ginn/applicationobserver.h"
 #include "ginn/configuration.h"
-#include "ginn/geis.h"
+#include "ginn/gesturesource.h"
 #include "ginn/gesturewatch.h"
 #include "ginn/keymap.h"
 #include "ginn/wish.h"
@@ -75,6 +75,7 @@ struct Ginn::Impl
        WishSource*           wish_source,
        ApplicationSource*    app_source,
        Keymap*               keymap,
+       GestureSource*        gesture_source,
        ActionSink*           action_sink);
 
   void
@@ -102,10 +103,10 @@ struct Ginn::Impl
   action_sink_initialized();
 
   void
-  geis_initialized();
+  gesture_source_initialized();
 
   void
-  geis_gesture_event(GeisEvent event);
+  gesture_event(GestureEvent const& event);
 
   void
   create_watches();
@@ -115,7 +116,7 @@ struct Ginn::Impl
   is_initialized() const
   {
     return keymap_is_initialized_
-        && geis_is_initialized_
+        && gesture_source_is_initialized
         && action_sink_is_initialized_;
   }
 
@@ -134,8 +135,8 @@ private:
   Application::List                        apps_;
   bool                                     keymap_is_initialized_;
   Keymap*                                  keymap_;
-  bool                                     geis_is_initialized_;
-  Geis                                     geis_;
+  bool                                     gesture_source_is_initialized;
+  GestureSource*                           gesture_source_;
   GestureWatch::Map                        gesture_map_;
   bool                                     action_sink_is_initialized_;
   ActionSink*                              action_sink_;
@@ -174,14 +175,15 @@ Impl(Configuration const&  config,
      WishSource*           wish_source,
      ApplicationSource*    app_source,
      Keymap*               keymap,
+     GestureSource*        gesture_source,
      ActionSink*           action_sink)
 : config_(config)
 , wish_source_(wish_source)
 , app_source_(app_source)
 , keymap_is_initialized_(false)
 , keymap_(keymap)
-, geis_is_initialized_(false)
-, geis_(config_)
+, gesture_source_is_initialized(false)
+, gesture_source_(gesture_source)
 , action_sink_is_initialized_(false)
 , action_sink_(action_sink)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
@@ -199,9 +201,9 @@ Impl(Configuration const&  config,
                                                    this));
   keymap_->set_initialized_callback(std::bind(&Ginn::Impl::keymap_initialized,
                                               this));
-  geis_.set_initialized_callback(std::bind(&Ginn::Impl::geis_initialized,
+  gesture_source_->set_initialized_callback(std::bind(&Ginn::Impl::gesture_source_initialized,
                                            this));
-  geis_.set_event_callback(std::bind(&Ginn::Impl::geis_gesture_event,
+  gesture_source_->set_event_callback(std::bind(&Ginn::Impl::gesture_event,
                                       this,
                                       std::placeholders::_1));
 }
@@ -347,28 +349,29 @@ keymap_initialized()
  * initialized without a fully initialized Geis.
  */
 void Ginn::Impl::
-geis_initialized()
+gesture_source_initialized()
 {
-  geis_is_initialized_ = true;
+  gesture_source_is_initialized = true;
   if (config_.is_verbose_mode())
     std::cout << "gesture recognizer is initialized\n";
 }
 
 
 /**
- * Reacts to a new gesture event coming from the Geis.
- * @param[in]  event  The Geis event being reported.
+ * Reacts to a new gesture event coming from the gesture source.
+ * @param[in]  event  The gesture event being reported.
  */
 void Ginn::Impl::
-geis_gesture_event(GeisEvent event)
+gesture_event(GestureEvent const& event)
 {
   for (auto const& watchlist: gesture_map_)
   {
     for (auto const& watch: watchlist.second)
     {
-      if (watch->matches(event, action_sink_))
+      if (event.matches(*watch))
       {
-        std::cerr << "gesture event handled for window " << watchlist.first << "\n";
+        action_sink_->perform(watch->wish()->action());
+        std::cerr << "gesture event handled for window " << watch->window_id() << "\n";
         break;
       }
     }
@@ -398,10 +401,13 @@ create_watches()
         {
           for (auto const& w: wish.second)
           {
-            GestureWatch::Ptr watch { new GestureWatch(window.window_id,
-                                                       app.second,
-                                                       w.second,
-                                                       geis_) };
+            GestureWatch::Ptr watch {
+              new GestureWatch(window.window_id,
+                               app.second,
+                               w.second,
+                               gesture_source_->subscribe(window.window_id,
+                                                          w.second))
+            };
             gesture_map_[window.window_id].push_back(std::move(watch));
           }
         }
@@ -431,8 +437,9 @@ Ginn(Configuration const&  config,
      WishSource*           wish_source,
      ApplicationSource*    app_source,
      Keymap*               keymap,
+     GestureSource*        gesture_source,
      ActionSink*           action_sink)
-: impl_(new Impl(config, wish_source, app_source, keymap, action_sink))
+: impl_(new Impl(config, wish_source, app_source, keymap, gesture_source, action_sink))
 {
   impl_->load_applications();
 }
