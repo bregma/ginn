@@ -22,9 +22,13 @@
 #include <gtest/gtest.h>
 #include <memory>
 
+class MockGestureSource
+: public Ginn::FakeGestureSource
+{
+};
+
 
 TEST(FakeGestureSource, construct)
 {
-  std::unique_ptr<Ginn::GestureSource> gesture_source(Ginn::FakeGestureSource());
-  ASSERT_TRUE(gesture_source);
+  MockGestureSource mock_gesture_source;
 }

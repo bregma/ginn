@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -28,6 +28,6 @@
 
 TEST(FakeActionSink, construct)
 {
-  std::unique_ptr<Ginn::ActionSink> action_sink(Ginn::FakeActionSink());
-  ASSERT_TRUE(action_sink);
+  std::unique_ptr<Ginn::ActionSink> action_sink(new Ginn::FakeActionSink);
+  ASSERT_TRUE(action_sink != nullptr);
 }

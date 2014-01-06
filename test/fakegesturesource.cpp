@@ -35,13 +35,17 @@ FakeGestureSource::
 
 
 void FakeGestureSource::
-set_initialized_callback(InitializedCallback const&)
-{ }
+set_initialized_callback(InitializedCallback const& init_callback)
+{
+  init_callback_ = init_callback;
+}
 
 
 void FakeGestureSource::
-set_event_callback(EventReceivedCallback const&)
-{ }
+set_event_callback(EventReceivedCallback const& event_callback)
+{
+  event_callback_ = event_callback;
+}
 
 
 GestureSubscription::Ptr FakeGestureSource::

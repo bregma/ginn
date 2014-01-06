@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -27,6 +27,6 @@
 
 TEST(FakeApplicationSource, construct)
 {
-  std::unique_ptr<Ginn::ApplicationSource> app_source(Ginn::FakeApplicationSource());
-  ASSERT_TRUE(app_source);
+  std::unique_ptr<Ginn::ApplicationSource> app_source(new Ginn::FakeApplicationSource());
+  ASSERT_TRUE(app_source != nullptr);
 }

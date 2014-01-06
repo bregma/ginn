@@ -45,6 +45,10 @@ public:
 
   virtual GestureSubscription::Ptr
   subscribe(Window::Id window_id, Wish::Ptr const& wish);
+
+protected:
+  InitializedCallback   init_callback_;
+  EventReceivedCallback event_callback_;
 };
 
 } // namespace Ginn
