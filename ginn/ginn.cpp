@@ -424,6 +424,7 @@ create_watches()
         std::cout << *watch << "\n";;
       }
     }
+    std::cout << "Ginn initialization complete\n";
   }
 }
 
