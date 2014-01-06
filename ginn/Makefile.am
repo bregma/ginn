@@ -34,6 +34,7 @@ libginn_a_SOURCES = \
 	wishbuilder.h            wishbuilder.cpp \
 	wishsource.h             wishsource.cpp \
 	x11actionsink.h          x11actionsink.cpp \
+	x11keymap.h              x11keymap.cpp \
 	xmlwishsource.h          xmlwishsource.cpp
 
 libginn_a_CPPFLAGS = \

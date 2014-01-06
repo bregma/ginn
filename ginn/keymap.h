@@ -23,13 +23,11 @@
 
 #include <cstdint>
 #include <functional>
-#include <memory>
 #include <string>
 
 
 namespace Ginn
 {
-class Configuration;
 
 class Keymap
 {
@@ -40,22 +38,15 @@ public:
   /** Signal for when Keymap has completed its asynchronous initialization. */
   typedef std::function<void()> InitializedCallback;
 
-  /** The internal implementation of this class. */
-  struct Impl;
-
 public:
-  Keymap(Configuration const& config);
+  virtual
+  ~Keymap() = 0;
 
-  ~Keymap();
+  virtual void
+  set_initialized_callback(InitializedCallback const& initialized_callback) = 0;
 
-  void
-  set_initialized_callback(InitializedCallback const& initialized_callback);
-
-  Keycode
-  to_keycode(std::string const& keysym_name) const;
-
-private:
-  std::unique_ptr<Impl> impl_;
+  virtual Keycode
+  to_keycode(std::string const& keysym_name) const = 0;
 };
 
 } // namespace Ginn

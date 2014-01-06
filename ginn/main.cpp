@@ -20,13 +20,13 @@
  */
 #include "config.h"
 
-#include "ginn/x11actionsink.h"
 #include "ginn/bamfapplicationsource.h"
 #include "ginn/configuration.h"
 #include "ginn/geisgesturesource.h"
 #include "ginn/ginn.h"
-#include "ginn/keymap.h"
 #include "ginn/wishsource.h"
+#include "ginn/x11actionsink.h"
+#include "ginn/x11keymap.h"
 #include <iostream>
 #include <stdexcept>
 #include <utility>
@@ -48,7 +48,7 @@ main(int argc, char* argv[])
                                                       config);
     BamfApplicationSource app_source(config);
     GeisGestureSource gesture_source(config);
-    Keymap keymap(config);
+    X11Keymap x11_keymap(config);
     X11ActionSink action_sink(config);
 
     if (config.is_verbose_mode())
@@ -56,7 +56,7 @@ main(int argc, char* argv[])
     Ginn::Ginn ginn(config,
                     wish_source.get(),
                     &app_source,
-                    &keymap,
+                    &x11_keymap,
                     &gesture_source,
                     &action_sink);
 
