@@ -27,6 +27,7 @@ libginn_a_SOURCES = \
 	bamfapplicationsource.h  bamfapplicationsource.cpp \
 	configuration.h          configuration.cpp \
 	geis.h                   geis.cpp \
+	gesturesource.h          gesturesource.cpp \
 	gesturewatch.h           gesturewatch.cpp \
 	keymap.h                 keymap.cpp \
 	wish.h                   wish.cpp \

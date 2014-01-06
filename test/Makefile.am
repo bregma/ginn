@@ -30,8 +30,10 @@ nodist_gtest_ginn_SOURCES = \
 gtest_ginn_SOURCES = \
  fakeactionsink.h        fakeactionsink.cpp \
  fakeapplicationsource.h fakeapplicationsource.cpp \
+ fakegesturesource.h     fakegesturesource.cpp \
  gtest_fake_action_sink.cpp \
  gtest_fake_application_source.cpp \
+ gtest_fake_gesture_source.cpp \
  gtest_xml_wish_source.cpp
 
 gtest_ginn_CPPFLAGS = \
