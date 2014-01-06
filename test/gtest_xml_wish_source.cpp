@@ -19,9 +19,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "ginn/configuration.h"
-#include "ginn/keymap.h"
+#include "fakekeymap.h"
 #include "ginn/wishsource.h"
+#include "gmock/gmock.h"
 #include <gtest/gtest.h>
+
+
+using namespace ::testing;
+
+
+class MockKeymap
+: public Ginn::FakeKeymap
+{
+public:
+  MOCK_CONST_METHOD1(to_keycode, Keymap::Keycode(std::string const& keysym_name));
+};
+
 
 class TestXMLWishSource
 : public testing::Test
@@ -29,7 +42,7 @@ class TestXMLWishSource
 public:
   TestXMLWishSource()
   : config_(0, nullptr)
-  , keymap_(config_)
+  , keymap_()
   { }
 
   virtual void
@@ -42,7 +55,7 @@ public:
 protected:
   Ginn::Configuration   config_;
   Ginn::WishSource::Ptr source_;
-  Ginn::Keymap          keymap_;
+  MockKeymap            keymap_;
 };
 
 
@@ -75,6 +88,7 @@ TEST_F(TestXMLWishSource, basic)
       "</ginn>" }
   };
 
+  EXPECT_CALL(keymap_, to_keycode(_)).Times(AtLeast(2));
   Ginn::Wish::Table table = source_->get_wishes(raws, &keymap_);
   ASSERT_TRUE(table.size() == 1);
 }
