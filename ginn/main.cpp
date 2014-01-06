@@ -23,6 +23,7 @@
 #include "ginn/x11actionsink.h"
 #include "ginn/bamfapplicationsource.h"
 #include "ginn/configuration.h"
+#include "ginn/geisgesturesource.h"
 #include "ginn/ginn.h"
 #include "ginn/keymap.h"
 #include "ginn/wishsource.h"
@@ -46,6 +47,7 @@ main(int argc, char* argv[])
     WishSource::Ptr wish_source = WishSource::factory(config.wish_source_format(),
                                                       config);
     BamfApplicationSource app_source(config);
+    GeisGestureSource gesture_source(config);
     Keymap keymap(config);
     X11ActionSink action_sink(config);
 
