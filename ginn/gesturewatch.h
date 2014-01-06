@@ -61,6 +61,14 @@ public:
   bool
   matches(GeisEvent event, ActionSink* action_sink);
 
+  Window::Id
+  window_id() const
+  { return window_id_; }
+
+  Wish::Ptr
+  wish() const
+  { return wish_; }
+
   friend std::ostream&
   operator<<(std::ostream& ostr, GestureWatch const& watch);
 

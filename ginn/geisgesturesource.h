@@ -36,6 +36,9 @@ class GeisGestureSource
 : public GestureSource
 {
 public:
+  struct Impl;
+
+public:
   GeisGestureSource(Configuration const& config);
   ~GeisGestureSource();
 
@@ -49,7 +52,6 @@ public:
   subscribe(Window::Id window_id, Wish::Ptr const& wish);
 
 private:
-  struct Impl;
   std::unique_ptr<Impl> impl_;
 };
 
