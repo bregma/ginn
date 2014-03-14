@@ -338,13 +338,6 @@ is_verbose_mode() const
 }
 
 
-ApplicationSource::Type Configuration::
-application_source_type() const
-{
-  return ApplicationSource::Type::BAMF;
-}
-
-
 WishSource::Format Configuration::
 wish_source_format() const
 {
