@@ -22,7 +22,6 @@
 
 #include "ginn/application.h"
 #include "ginn/applicationbuilder.h"
-#include "ginn/applicationobserver.h"
 #include "ginn/configuration.h"
 #include <gio/gdesktopappinfo.h>
 #include <glib.h>
@@ -128,6 +127,7 @@ struct BamfApplicationBuilder
 void
 on_view_opened(BamfMatcher* matcher, BamfView* view, gpointer data)
 {
+#if 0
   ApplicationObserver* observer = static_cast<ApplicationObserver*>(data);
   if (BAMF_IS_APPLICATION(view))
   {
@@ -141,11 +141,13 @@ on_view_opened(BamfMatcher* matcher, BamfView* view, gpointer data)
     BamfWindow* bamf_window = BAMF_WINDOW(view);
     observer->window_added(build_window(matcher, bamf_window));
   }
+#endif
 }
 
 void
 on_view_closed(BamfMatcher* matcher, BamfView* view, gpointer data)
 {
+#if 0
   ApplicationObserver* observer = static_cast<ApplicationObserver*>(data);
   if (BAMF_IS_APPLICATION(view))
   {
@@ -160,6 +162,7 @@ on_view_closed(BamfMatcher* matcher, BamfView* view, gpointer data)
     Window::Id window_id = bamf_window_get_xid(bamf_window);
     observer->window_removed(window_id);
   }
+#endif
 }
 
 struct BamfApplicationSource::Impl
@@ -167,7 +170,6 @@ struct BamfApplicationSource::Impl
   Impl(Configuration const& config)
   : config_(config)
   , matcher_(bamf_matcher_get_default(), g_object_unref)
-  , observer_(nullptr)
   { }
 
   ~Impl()
@@ -175,7 +177,6 @@ struct BamfApplicationSource::Impl
 
   Configuration        config_;
   bamf_matcher_t       matcher_;
-  ApplicationObserver* observer_;
 };
 
 
@@ -193,6 +194,7 @@ BamfApplicationSource::
 { }
 
 
+#if 0
 void BamfApplicationSource::
 set_observer(ApplicationObserver* observer)
 {
@@ -206,6 +208,7 @@ set_observer(ApplicationObserver* observer)
                    (GCallback)on_view_closed,
                    impl_->observer_);
 }
+#endif
 
 void BamfApplicationSource::
 set_window_opened_callback(WindowOpenedCallback const& callback)

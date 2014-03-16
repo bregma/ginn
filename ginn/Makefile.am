@@ -24,7 +24,6 @@ libginn_a_SOURCES = \
 	application.h            application.cpp \
 	applicationbuilder.h     applicationbuilder.cpp \
 	applicationsource.h      applicationsource.cpp \
-	applicationobserver.h    \
 	bamfapplicationsource.h  bamfapplicationsource.cpp \
 	configuration.h          configuration.cpp \
 	geisgesturesource.h      geisgesturesource.cpp \

@@ -28,7 +28,6 @@
 
 namespace Ginn
 {
-class ApplicationObserver;
 
 
 /**
@@ -50,10 +49,6 @@ public:
 
 public:
   virtual ~ApplicationSource() = 0;
-
-  /** Sets the observer. */
-  virtual void
-  set_observer(ApplicationObserver* observer) = 0;
 
   virtual void
   set_window_opened_callback(WindowOpenedCallback const& callback) = 0;

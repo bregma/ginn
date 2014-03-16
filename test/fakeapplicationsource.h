@@ -33,9 +33,6 @@ class FakeApplicationSource
 public:
   ~FakeApplicationSource();
 
-  void
-  set_observer(ApplicationObserver* observer);
-
   virtual void
   set_window_opened_callback(WindowOpenedCallback const& callback) override;
 

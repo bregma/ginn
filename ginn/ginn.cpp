@@ -23,7 +23,6 @@
 
 #include "ginn/actionsink.h"
 #include "ginn/applicationsource.h"
-#include "ginn/applicationobserver.h"
 #include "ginn/configuration.h"
 #include "ginn/gesturesource.h"
 #include "ginn/gesturewatch.h"
@@ -69,7 +68,6 @@ namespace Ginn
  * self-contained as possible.
  */
 struct Ginn::Impl
-: public ApplicationObserver
 {
   Impl(Configuration const&  config,
        WishSource*           wish_source,
@@ -85,16 +83,10 @@ struct Ginn::Impl
   load_applications();
 
   void
-  application_added(Application::Ptr const& application);
+  window_opened(Window const* window);
 
   void
-  application_removed(Application::Id const& application_id);
-
-  void
-  window_added(Window const& window);
-
-  void
-  window_removed(Window::Id window_id);
+  window_closed(Window const* window);
 
   void
   keymap_initialized();
@@ -196,7 +188,13 @@ Impl(Configuration const&  config,
 
   g_idle_add(on_ginn_initialized, this);
 
-  app_source_->set_observer(this);
+  app_source_->set_window_opened_callback(std::bind(&Impl::window_opened,
+                                                    this,
+                                                    std::placeholders::_1));
+  app_source_->set_window_closed_callback(std::bind(&Impl::window_closed,
+                                                    this,
+                                                    std::placeholders::_1));
+
   action_sink_->set_initialized_callback(std::bind(&Impl::action_sink_initialized,
                                                    this));
   keymap_->set_initialized_callback(std::bind(&Ginn::Impl::keymap_initialized,
@@ -239,44 +237,14 @@ load_applications()
 
 
 /**
- * Reacts to a new active application being added.
- * @param[in] application  The new application being added.
- */
-void Ginn::Impl::
-application_added(Application::Ptr const& application)
-{
-  apps_[application->application_id()] = application;
-  if (config_.is_verbose_mode())
-    std::cout << "application added: " << *application << "\n";
-}
-
-
-/**
- * Reacts to an active application being removed.
- * @param[in] application_id  Identifies the application being removed.
- */
-void Ginn::Impl::
-application_removed(Application::Id const& application_id)
-{
-  auto it = apps_.find(application_id);
-  if (it != apps_.end())
-  {
-    if (config_.is_verbose_mode())
-      std::cout << "removing application: " << it->second << "\n";;
-    apps_.erase(it);
-  }
-}
-
-
-/**
- * Reacts to an application window being added.
- * @param[in] window  The new application window being added.
+ * Reacts to an application window being opened.
+ * @param[in] window  The new application window being opened.
  *
  * If the window's application is not known, the window is ignored and will
  * probably be added later when the new-application notification comes in.
  */
 void Ginn::Impl::
-window_added(Window const& window)
+window_opened(Window const*)
 {
 #if 0
   auto it = apps_.find(window.application_id);
@@ -291,12 +259,13 @@ window_added(Window const& window)
 
 
 /**
- * Reacts to an application window being removed.
- * @param[in]  window_id  Identifies the application window being removed.
+ * Reacts to an application window being closed.
+ * @param[in]  window  The application window being closed.
  */
 void Ginn::Impl::
-window_removed(Window::Id window_id)
+window_closed(Window const*)
 {
+#if 0
   for (auto const& it: apps_)
   {
     Window const* window = it.second->window(window_id);
@@ -308,6 +277,7 @@ window_removed(Window::Id window_id)
       break;
     }
   }
+#endif
 }
 
 

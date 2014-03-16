@@ -30,11 +30,6 @@ FakeApplicationSource::
 
 
 void FakeApplicationSource::
-set_observer(ApplicationObserver*)
-{ }
-
-
-void FakeApplicationSource::
 set_window_opened_callback(WindowOpenedCallback const&)
 {
 }

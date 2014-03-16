@@ -41,9 +41,6 @@ public:
   ~BamfApplicationSource();
 
 void
-set_observer(ApplicationObserver* observer);
-
-void
 set_window_opened_callback(WindowOpenedCallback const& callback) override;
 
 void
