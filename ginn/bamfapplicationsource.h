@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -42,6 +42,12 @@ public:
 
 void
 set_observer(ApplicationObserver* observer);
+
+void
+set_window_opened_callback(WindowOpenedCallback const& callback) override;
+
+void
+set_window_closed_callback(WindowClosedCallback const& callback) override;
 
 Application::List
 get_applications();

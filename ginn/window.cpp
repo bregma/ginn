@@ -1,10 +1,10 @@
 /**
- * @file test/fakeapplicationsource.hcpp
- * @brief A fake FakeApplicationSource for testing.
+ * @file ginn/window.cpp
+ * @brief Definitions of the Ginn Application Window class.
  */
 
 /*
- * Copyright 2013-2014 Canonical Ltd.
+ * Copyright 2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -18,42 +18,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "fakeapplicationsource.h"
+#include "ginn/window.h"
+
+#include <iomanip>
+#include <iostream>
 
 
 namespace Ginn
 {
 
-FakeApplicationSource::
-~FakeApplicationSource()
-{ }
-
-
-void FakeApplicationSource::
-set_observer(ApplicationObserver*)
-{ }
-
-
-void FakeApplicationSource::
-set_window_opened_callback(WindowOpenedCallback const&)
+std::ostream&
+operator<<(std::ostream& ostr, Window const& window)
 {
-}
-
-
-void FakeApplicationSource::
-set_window_closed_callback(WindowClosedCallback const&)
-{
-}
-
-
-Application::List FakeApplicationSource::
-get_applications()
-{
-  Application::List app_list;
-  return app_list;
+  return ostr << "window_id="
+              << std::hex << std::setw(8) << std::setfill('0') << std::showbase
+              << window.id_
+              << std::dec
+              << " application*=\"" << window.application_ << "\""
+              << " monitor=" << window.monitor_
+              << " title=\"" << window.title_ << "\"";
 }
 
 
 } // namespace Ginn
-
 

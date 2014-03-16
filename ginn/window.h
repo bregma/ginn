@@ -1,10 +1,10 @@
 /**
- * @file ginn/applicationbuilder.h
- * @brief Declarations of the Ginn ApplicationBuilder interface.
+ * @file ginn/window.h
+ * @brief Declarations of the Ginn Application Window class.
  */
 
 /*
- * Copyright 2013-2014 Canonical Ltd.
+ * Copyright 2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -18,39 +18,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_APPLICATIONBUILDER_H_
-#define GINN_APPLICATIONBUILDER_H_
+#ifndef GINN_WINDOW_H_
+#define GINN_WINDOW_H_
 
-#include "ginn/application.h"
-#include <memory>
 #include <string>
+#include <vector>
 
 
 namespace Ginn
 {
+class Application;
 
 /**
- * Interface for building an Application object.
+ * An application window.
  */
-class ApplicationBuilder
+struct Window
 {
-public:
-  virtual ~ApplicationBuilder() = 0;
+  /** A unique identifier for an application window. */
+  typedef unsigned long       Id;
+  /** A collection of windows */
+  typedef std::vector<Window> List;
 
-  virtual Application::Id
-  application_id() const = 0;
-
-  virtual std::string
-  name() const = 0;
-
-  virtual std::string
-  generic_name() const = 0;
-
-  virtual Window::List
-  windows() const = 0;
+  Id            id_;
+  std::string   title_;
+  Application*  application_;
+  bool          is_active_;
+  bool          is_visible_;
+  int           monitor_;
 };
+
+std::ostream&
+operator<<(std::ostream& ostr, Window const& window);
+
 
 } // namespace Ginn
 
-#endif // GINN_APPLICATIONBUILDER_H_
+#endif // GINN_WINDOW_H_
 

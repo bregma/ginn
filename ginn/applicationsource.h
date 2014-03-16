@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -21,6 +21,7 @@
 #ifndef GINN_APPLICATIONSOURCE_H_
 #define GINN_APPLICATIONSOURCE_H_
 
+#include <functional>
 #include "ginn/application.h"
 #include <string>
 
@@ -41,15 +42,11 @@ class ApplicationObserver;
 class ApplicationSource
 {
 public:
+  /** Signal indicating a new application window has been opened. */
+  typedef std::function<void(Window const*)> WindowOpenedCallback;
 
-  /**
-   * Supported types of application sources.
-   * @todo support additional types of application sources.
-   */
-  enum class Type
-  {
-    BAMF,
-  };
+  /** Signal indicating an application window has been closed. */
+  typedef std::function<void(Window const*)> WindowClosedCallback;
 
 public:
   virtual ~ApplicationSource() = 0;
@@ -57,6 +54,12 @@ public:
   /** Sets the observer. */
   virtual void
   set_observer(ApplicationObserver* observer) = 0;
+
+  virtual void
+  set_window_opened_callback(WindowOpenedCallback const& callback) = 0;
+
+  virtual void
+  set_window_closed_callback(WindowClosedCallback const& callback) = 0;
 
   /** Sources Applications. */
   virtual Application::List

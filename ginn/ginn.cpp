@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -278,6 +278,7 @@ application_removed(Application::Id const& application_id)
 void Ginn::Impl::
 window_added(Window const& window)
 {
+#if 0
   auto it = apps_.find(window.application_id);
   if (it != apps_.end())
   {
@@ -285,6 +286,7 @@ window_added(Window const& window)
       std::cout << "window added: " << window << "\n";
     it->second->add_window(window);
   }
+#endif
 }
 
 
@@ -402,13 +404,13 @@ create_watches()
           for (auto const& w: wish.second)
           {
             GestureWatch::Ptr watch {
-              new GestureWatch(window.window_id,
+              new GestureWatch(window.id_,
                                app.second,
                                w.second,
-                               gesture_source_->subscribe(window.window_id,
+                               gesture_source_->subscribe(window.id_,
                                                           w.second))
             };
-            gesture_map_[window.window_id].push_back(std::move(watch));
+            gesture_map_[window.id_].push_back(std::move(watch));
           }
         }
       }

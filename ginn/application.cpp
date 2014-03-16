@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -22,7 +22,6 @@
 
 #include <algorithm>
 #include "ginn/applicationbuilder.h"
-#include <iomanip>
 #include <iostream>
 #include <utility>
 
@@ -60,7 +59,7 @@ generic_name() const
   return generic_name_;
 }
 
-Application::Windows const& Application::
+Window::List const& Application::
 windows() const
 {
   return windows_;
@@ -71,9 +70,8 @@ Window const* Application::
 window(Window::Id window_id) const
 {
   auto it = std::find_if(windows_.begin(), windows_.end(),
-                         [&window_id](Window const& w) {
-                             return window_id == w.window_id;
-                         });
+                         [&window_id](Window const& w) -> bool
+                         { return window_id == w.id_; });
   if (it == windows_.end())
     return nullptr;
   return &*it;
@@ -91,24 +89,10 @@ void Application::
 remove_window(Window::Id window_id)
 {
   auto it = std::find_if(windows_.begin(), windows_.end(),
-                         [&window_id](Window const& w) {
-                             return window_id == w.window_id;
-                         });
+                         [&window_id](Window const& w) -> bool
+                         { return window_id == w.id_; });
   if (it != windows_.end())
     windows_.erase(it);
-}
-
-
-std::ostream&
-operator<<(std::ostream& ostr, Window const& window)
-{
-  return ostr << "window_id="
-              << std::hex << std::setw(8) << std::setfill('0') << std::showbase
-              << window.window_id
-              << std::dec
-              << " application_id=\"" << window.application_id << "\""
-              << " monitor=" << window.monitor
-              << " title=\"" << window.title << "\"";
 }
 
 

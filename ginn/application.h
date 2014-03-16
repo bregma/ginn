@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -26,30 +26,12 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "ginn/window.h"
 
 
 namespace Ginn
 {
 class ApplicationBuilder;
-
-
-/**
- * Information on an X11 window owned by the app
- *
- * @todo make this a first-class object
- */
-struct Window
-{
-  /** A unique identifier for an application window. */
-  typedef unsigned long Id;
-
-  Id            window_id;
-  std::string   title;
-  std::string   application_id;
-  bool          is_active;
-  bool          is_visible;
-  int           monitor;
-};
 
 
 /**
@@ -64,8 +46,6 @@ public:
   typedef std::shared_ptr<Application> Ptr;
   /** A collection of Applications keyed by application_id. */
   typedef std::map<std::string, Ptr>   List;
-  /** A collection of windows associated with an application. */
-  typedef std::vector<Window>          Windows;
 
 public:
   /** builds an Application */
@@ -81,7 +61,7 @@ public:
   generic_name() const;
 
   /** Gets all current windows for the application. */
-  Windows const&
+  Window::List const&
   windows() const;
 
   /** Gets a particular cuurent window by window_id. */
@@ -101,15 +81,12 @@ public:
   dump(std::ostream& ostr) const;
 
 private:
-  Id          application_id_;  ///< name of the desktop file
-  std::string name_;            ///< Name key in the desktop file
-  std::string generic_name_;    ///< GenericName key in the desktop file
-  Windows     windows_;
+  Id            application_id_;  ///< name of the desktop file
+  std::string   name_;            ///< Name key in the desktop file
+  std::string   generic_name_;    ///< GenericName key in the desktop file
+  Window::List  windows_;         ///< list of open windows
 };
 
-
-std::ostream&
-operator<<(std::ostream& ostr, Window const& window);
 
 inline std::ostream&
 operator<<(std::ostream& ostr, Application const& app)

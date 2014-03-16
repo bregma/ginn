@@ -1,5 +1,6 @@
 # This file is part of Ginn, the general-purpose multi-touch gesture utility.
-# Copyright 2013 Canonical Ltd.
+#
+# Copyright 2013-2014 Canonical Ltd.
 # 
 # Ginn is free software: you can redistribute it and/or modify it under the terms
 # of the GNU General Public License version 3, as published by the Free
@@ -30,6 +31,7 @@ libginn_a_SOURCES = \
 	gesturesource.h          gesturesource.cpp \
 	gesturewatch.h           gesturewatch.cpp \
 	keymap.h                 keymap.cpp \
+	window.h                 window.cpp \
 	wish.h                   wish.cpp \
 	wishbuilder.h            wishbuilder.cpp \
 	wishsource.h             wishsource.cpp \

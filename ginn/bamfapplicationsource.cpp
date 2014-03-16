@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -49,7 +49,7 @@ build_window(BamfMatcher* matcher, BamfWindow* bamf_window)
 
   return Window{ bamf_window_get_xid(bamf_window),
                  (title?title:"???"),
-                 application_id ? application_id : "(none)",
+                 nullptr, /**< @todo fixme */
                  (bool)bamf_view_is_active(BAMF_VIEW(bamf_window)),
                  (bool)bamf_view_is_user_visible(BAMF_VIEW(bamf_window)),
                  bamf_window_get_monitor(bamf_window) };
@@ -101,10 +101,10 @@ struct BamfApplicationBuilder
     return name;
   }
 
-  Application::Windows
+  Window::List
   windows() const
   {
-    Application::Windows windows;
+    Window::List windows;
 
     GList* window_list = bamf_application_get_windows(app_);
     for (GList* window = window_list; window; window = window->next)
@@ -205,6 +205,17 @@ set_observer(ApplicationObserver* observer)
                    "view_closed",
                    (GCallback)on_view_closed,
                    impl_->observer_);
+}
+
+void BamfApplicationSource::
+set_window_opened_callback(WindowOpenedCallback const& callback)
+{
+}
+
+
+void BamfApplicationSource::
+set_window_closed_callback(WindowClosedCallback const& callback)
+{
 }
 
 
