@@ -7,6 +7,7 @@
 aclocal.m4
 autom4te.cache/
 autoscan.log
+bamfapplicationsource
 ChangeLog
 compile
 config.guess
