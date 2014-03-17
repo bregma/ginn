@@ -30,6 +30,13 @@ typedef std::unique_ptr<GMainLoop, void(*)(GMainLoop*)>  main_loop_t;
 
 
 void
+app_source_initialized()
+{
+  std::cerr << __FUNCTION__ << "\n";
+}
+
+
+void
 window_opened(Ginn::Window const* window)
 {
   std::cerr << __FUNCTION__ << ": " << *window << "\n";
@@ -48,9 +55,9 @@ main(int argc, char* argv[])
 {
   Ginn::Configuration config(argc, argv);
   Ginn::BamfApplicationSource app_source(config);
+  app_source.set_initialized_callback(app_source_initialized);
   app_source.set_window_opened_callback(window_opened);
   app_source.set_window_closed_callback(window_closed);
-  app_source.get_applications();
 
   main_loop_t main_loop(g_main_loop_new(NULL, FALSE), g_main_loop_unref);
   g_main_loop_run(main_loop.get());

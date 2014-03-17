@@ -83,6 +83,9 @@ struct Ginn::Impl
   load_applications();
 
   void
+  app_source_initialized();
+
+  void
   window_opened(Window const* window);
 
   void
@@ -108,6 +111,7 @@ struct Ginn::Impl
   is_initialized() const
   {
     return keymap_is_initialized_
+        && app_source_is_initialized_
         && gesture_source_is_initialized
         && action_sink_is_initialized_;
   }
@@ -123,6 +127,7 @@ private:
   Configuration                            config_;
   WishSource*                              wish_source_;
   Wish::Table                              wish_table_;
+  bool                                     app_source_is_initialized_;
   ApplicationSource*                       app_source_;
   Application::List                        apps_;
   bool                                     keymap_is_initialized_;
@@ -171,6 +176,7 @@ Impl(Configuration const&  config,
      ActionSink*           action_sink)
 : config_(config)
 , wish_source_(wish_source)
+, app_source_is_initialized_(false)
 , app_source_(app_source)
 , keymap_is_initialized_(false)
 , keymap_(keymap)
@@ -188,22 +194,13 @@ Impl(Configuration const&  config,
 
   g_idle_add(on_ginn_initialized, this);
 
-  app_source_->set_window_opened_callback(std::bind(&Impl::window_opened,
-                                                    this,
-                                                    std::placeholders::_1));
-  app_source_->set_window_closed_callback(std::bind(&Impl::window_closed,
-                                                    this,
-                                                    std::placeholders::_1));
-
-  action_sink_->set_initialized_callback(std::bind(&Impl::action_sink_initialized,
-                                                   this));
-  keymap_->set_initialized_callback(std::bind(&Ginn::Impl::keymap_initialized,
-                                              this));
-  gesture_source_->set_initialized_callback(std::bind(&Ginn::Impl::gesture_source_initialized,
-                                           this));
-  gesture_source_->set_event_callback(std::bind(&Ginn::Impl::gesture_event,
-                                      this,
-                                      std::placeholders::_1));
+  app_source_->set_initialized_callback(std::bind(&Ginn::Impl::app_source_initialized, this));
+  app_source_->set_window_opened_callback(std::bind(&Impl::window_opened, this, std::placeholders::_1));
+  app_source_->set_window_closed_callback(std::bind(&Impl::window_closed, this, std::placeholders::_1));
+  action_sink_->set_initialized_callback(std::bind(&Impl::action_sink_initialized, this));
+  keymap_->set_initialized_callback(std::bind(&Ginn::Impl::keymap_initialized, this));
+  gesture_source_->set_initialized_callback(std::bind(&Ginn::Impl::gesture_source_initialized, this));
+  gesture_source_->set_event_callback(std::bind(&Ginn::Impl::gesture_event, this, std::placeholders::_1));
 }
 
 
@@ -233,6 +230,15 @@ load_applications()
     for (auto const& application: apps_)
       std::cout << *application.second << "\n";
   }
+}
+
+
+void Ginn::Impl::
+app_source_initialized()
+{
+  app_source_is_initialized_ = true;
+  if (config_.is_verbose_mode())
+    std::cout << "application source is initialized\n";
 }
 
 

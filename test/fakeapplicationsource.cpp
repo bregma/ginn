@@ -30,6 +30,12 @@ FakeApplicationSource::
 
 
 void FakeApplicationSource::
+set_initialized_callback(InitializedCallback const&)
+{
+}
+
+
+void FakeApplicationSource::
 set_window_opened_callback(WindowOpenedCallback const&)
 {
 }

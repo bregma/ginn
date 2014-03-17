@@ -43,14 +43,17 @@ public:
   BamfApplicationSource(Configuration const& config);
   ~BamfApplicationSource();
 
-void
-set_window_opened_callback(WindowOpenedCallback const& callback) override;
+  void
+  set_initialized_callback(InitializedCallback const& callback) override;
 
-void
-set_window_closed_callback(WindowClosedCallback const& callback) override;
+  void
+  set_window_opened_callback(WindowOpenedCallback const& callback) override;
 
-Application::List
-get_applications();
+  void
+  set_window_closed_callback(WindowClosedCallback const& callback) override;
+
+  Application::List
+  get_applications();
 
 private:
   std::unique_ptr<Impl> impl_;

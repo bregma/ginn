@@ -134,9 +134,13 @@ struct BamfApplicationSource::Impl
   void
   remove_window(BamfWindow* bamf_window);
 
+  static gboolean
+  do_initialization(gpointer data);
+
   Configuration         config_;
   bamf_matcher_t        matcher_;
   std::vector<AppPtr>   applications_;
+  InitializedCallback   initialized_callback_;
   WindowOpenedCallback  window_opened_callback_;
   WindowClosedCallback  window_closed_callback_;
 };
@@ -159,7 +163,7 @@ on_view_opened(BamfMatcher*, BamfView* view, gpointer data)
 
 
 void
-on_view_closed(BamfMatcher* matcher, BamfView* view, gpointer data)
+on_view_closed(BamfMatcher*, BamfView* view, gpointer data)
 {
   BamfApplicationSource::Impl* impl = static_cast<BamfApplicationSource::Impl*>(data);
   if (BAMF_IS_APPLICATION(view))
@@ -186,6 +190,7 @@ Impl(Configuration const& config)
                    "view_closed",
                    (GCallback)on_view_closed,
                    this);
+  g_idle_add(do_initialization, this);
 }
 
 
@@ -277,6 +282,39 @@ remove_window(BamfWindow* bamf_window)
 }
 
 
+gboolean BamfApplicationSource::Impl::
+do_initialization(gpointer data)
+{
+  BamfApplicationSource::Impl* impl = static_cast<BamfApplicationSource::Impl*>(data);
+  GList* app_list = bamf_matcher_get_running_applications(impl->matcher_.get());
+  for (GList* app = app_list; app; app = app->next)
+  {
+    if (!BAMF_IS_APPLICATION(app->data))
+      continue;
+
+    auto a = impl->get_application(BAMF_APPLICATION(app->data));
+    if (!a)
+      a = impl->add_application(BAMF_APPLICATION(app->data));
+
+    GList* window_list = bamf_application_get_windows(BAMF_APPLICATION(app->data));
+    for (GList* window = window_list; window; window = window->next)
+    {
+      if (BAMF_IS_WINDOW(window->data))
+      {
+        auto bamf_window = static_cast<BamfWindow*>(window->data);
+        impl->add_window(bamf_window);
+      }
+    }
+    g_list_free(window_list);
+  }
+  g_list_free(app_list);
+
+  if (impl->initialized_callback_)
+    impl->initialized_callback_();
+  return false;
+}
+
+
 BamfApplicationSource::
 BamfApplicationSource(Configuration const& config)
 : impl_(new Impl(config))
@@ -289,6 +327,13 @@ BamfApplicationSource(Configuration const& config)
 BamfApplicationSource::
 ~BamfApplicationSource()
 { }
+
+
+void BamfApplicationSource::
+set_initialized_callback(InitializedCallback const& callback)
+{
+  impl_->initialized_callback_ = callback;
+}
 
 
 void BamfApplicationSource::
@@ -305,32 +350,13 @@ set_window_closed_callback(WindowClosedCallback const& callback)
 }
 
 
+/**
+ * @todo remove this function, it is no longer necessary.
+ */
 Application::List BamfApplicationSource::
 get_applications()
 {
   Application::List apps;
-  GList* app_list = bamf_matcher_get_running_applications(impl_->matcher_.get());
-  for (GList* app = app_list; app; app = app->next)
-  {
-    if (!BAMF_IS_APPLICATION(app->data))
-      continue;
-
-    auto a = impl_->get_application(BAMF_APPLICATION(app->data));
-    if (!a)
-      a = impl_->add_application(BAMF_APPLICATION(app->data));
-
-    GList* window_list = bamf_application_get_windows(BAMF_APPLICATION(app->data));
-    for (GList* window = window_list; window; window = window->next)
-    {
-      if (BAMF_IS_WINDOW(window->data))
-      {
-        auto bamf_window = static_cast<BamfWindow*>(window->data);
-        impl_->add_window(bamf_window);
-      }
-    }
-    g_list_free(window_list);
-  }
-  g_list_free(app_list);
   return apps;
 }
 

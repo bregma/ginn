@@ -41,6 +41,9 @@ namespace Ginn
 class ApplicationSource
 {
 public:
+  /** Signal for when the gesture source has completed its asynch init. */
+  typedef std::function<void()> InitializedCallback;
+
   /** Signal indicating a new application window has been opened. */
   typedef std::function<void(Window const*)> WindowOpenedCallback;
 
@@ -49,6 +52,9 @@ public:
 
 public:
   virtual ~ApplicationSource() = 0;
+
+  virtual void
+  set_initialized_callback(InitializedCallback const& initialized_callback) = 0;
 
   virtual void
   set_window_opened_callback(WindowOpenedCallback const& callback) = 0;
