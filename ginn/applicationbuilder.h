@@ -46,8 +46,10 @@ public:
   virtual std::string
   generic_name() const = 0;
 
+#if 0
   virtual Window::List
   windows() const = 0;
+#endif
 };
 
 } // namespace Ginn

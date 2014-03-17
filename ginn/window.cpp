@@ -20,6 +20,7 @@
  */
 #include "ginn/window.h"
 
+#include "ginn/application.h"
 #include <iomanip>
 #include <iostream>
 
@@ -34,7 +35,7 @@ operator<<(std::ostream& ostr, Window const& window)
               << std::hex << std::setw(8) << std::setfill('0') << std::showbase
               << window.id_
               << std::dec
-              << " application*=\"" << window.application_ << "\""
+              << " application=\"" << window.application_->name() << "\""
               << " monitor=" << window.monitor_
               << " title=\"" << window.title_ << "\"";
 }

@@ -60,9 +60,11 @@ public:
   std::string const&
   generic_name() const;
 
+#if 0
   /** Gets all current windows for the application. */
   Window::List const&
   windows() const;
+#endif
 
   /** Gets a particular cuurent window by window_id. */
   Window const*
@@ -70,7 +72,7 @@ public:
 
   /** Adds a new tracked window. */
   void
-  add_window(Window const& window);
+  add_window(std::unique_ptr<Window> window);
 
   /** Removes a particular cuurent window by window_id. */
   void
@@ -81,10 +83,12 @@ public:
   dump(std::ostream& ostr) const;
 
 private:
-  Id            application_id_;  ///< name of the desktop file
-  std::string   name_;            ///< Name key in the desktop file
-  std::string   generic_name_;    ///< GenericName key in the desktop file
-  Window::List  windows_;         ///< list of open windows
+  typedef std::vector<std::unique_ptr<Window>> Windows;
+
+  Id           application_id_;  ///< name of the desktop file
+  std::string  name_;            ///< Name key in the desktop file
+  std::string  generic_name_;    ///< GenericName key in the desktop file
+  Windows      windows_;         ///< collection of open windows
 };
 
 

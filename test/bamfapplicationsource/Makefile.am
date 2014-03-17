@@ -16,5 +16,13 @@
 noinst_PROGRAMS = bamfapplicationsource
 
 bamfapplicationsource_SOURCES =\
-	bamfapplicationsource.cpp
+  bamfapplicationsource.cpp
+
+bamfapplicationsource_CPPFLAGS =\
+  $(GLIB2_0_CFLAGS)
+
+bamfapplicationsource_LDADD = \
+  $(top_builddir)/ginn/libginn.a \
+  $(BAMF_LIBS) \
+  $(GLIB2_0_LIBS)
 

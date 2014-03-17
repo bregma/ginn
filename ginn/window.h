@@ -36,15 +36,13 @@ struct Window
 {
   /** A unique identifier for an application window. */
   typedef unsigned long       Id;
-  /** A collection of windows */
-  typedef std::vector<Window> List;
 
-  Id            id_;
-  std::string   title_;
-  Application*  application_;
-  bool          is_active_;
-  bool          is_visible_;
-  int           monitor_;
+  Id                  id_;
+  std::string         title_;
+  Application const*  application_;
+  bool                is_active_;
+  bool                is_visible_;
+  int                 monitor_;
 };
 
 std::ostream&

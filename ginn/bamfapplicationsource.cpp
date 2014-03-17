@@ -20,6 +20,7 @@
  */
 #include "ginn/bamfapplicationsource.h"
 
+#include <algorithm>
 #include "ginn/application.h"
 #include "ginn/applicationbuilder.h"
 #include "ginn/configuration.h"
@@ -34,26 +35,6 @@ typedef std::unique_ptr<BamfMatcher, void(*)(gpointer)> bamf_matcher_t;
 
 namespace Ginn
 {
-
-static Window
-build_window(BamfMatcher* matcher, BamfWindow* bamf_window)
-{
-  char const* title = bamf_view_get_name(BAMF_VIEW(bamf_window));
-
-  const gchar* application_id = nullptr;
-  BamfApplication* bamf_app = bamf_matcher_get_application_for_window(matcher,
-                                                                      bamf_window);
-  if (bamf_app)
-    application_id = bamf_application_get_desktop_file(bamf_app);
-
-  return Window{ bamf_window_get_xid(bamf_window),
-                 (title?title:"???"),
-                 nullptr, /**< @todo fixme */
-                 (bool)bamf_view_is_active(BAMF_VIEW(bamf_window)),
-                 (bool)bamf_view_is_user_visible(BAMF_VIEW(bamf_window)),
-                 bamf_window_get_monitor(bamf_window) };
-}
-
 
 struct BamfApplicationBuilder
 : public ApplicationBuilder
@@ -100,10 +81,12 @@ struct BamfApplicationBuilder
     return name;
   }
 
+#if 0
   Window::List
   windows() const
   {
     Window::List windows;
+std::cout << __PRETTY_FUNCTION__ << " begins\n";
 
     GList* window_list = bamf_application_get_windows(app_);
     for (GList* window = window_list; window; window = window->next)
@@ -116,68 +99,182 @@ struct BamfApplicationBuilder
     }
     g_list_free(window_list);
 
+std::cout << __PRETTY_FUNCTION__ << " ends\n";
     return windows;
   }
+#endif
 
   BamfMatcher*     matcher_;
   BamfApplication* app_;
 };
 
 
-void
-on_view_opened(BamfMatcher* matcher, BamfView* view, gpointer data)
-{
-#if 0
-  ApplicationObserver* observer = static_cast<ApplicationObserver*>(data);
-  if (BAMF_IS_APPLICATION(view))
-  {
-    BamfApplication* bamf_app = BAMF_APPLICATION(view);
-    auto a = std::make_shared<Application>(BamfApplicationBuilder(matcher,
-                                                                  bamf_app));
-    observer->application_added(a);
-  }
-  else if (BAMF_IS_WINDOW(view))
-  {
-    BamfWindow* bamf_window = BAMF_WINDOW(view);
-    observer->window_added(build_window(matcher, bamf_window));
-  }
-#endif
-}
+typedef std::unique_ptr<Application> AppPtr;
 
-void
-on_view_closed(BamfMatcher* matcher, BamfView* view, gpointer data)
-{
-#if 0
-  ApplicationObserver* observer = static_cast<ApplicationObserver*>(data);
-  if (BAMF_IS_APPLICATION(view))
-  {
-    BamfApplication* bamf_app = BAMF_APPLICATION(view);
-    auto a = std::make_shared<Application>(BamfApplicationBuilder(matcher,
-                                                                  bamf_app));
-    observer->application_removed(a->application_id());
-  }
-  else if (BAMF_IS_WINDOW(view))
-  {
-    BamfWindow* bamf_window = BAMF_WINDOW(view);
-    Window::Id window_id = bamf_window_get_xid(bamf_window);
-    observer->window_removed(window_id);
-  }
-#endif
-}
 
 struct BamfApplicationSource::Impl
 {
-  Impl(Configuration const& config)
-  : config_(config)
-  , matcher_(bamf_matcher_get_default(), g_object_unref)
-  { }
+  Impl(Configuration const& config);
 
   ~Impl()
   { }
 
-  Configuration        config_;
-  bamf_matcher_t       matcher_;
+  Application*
+  get_application(BamfApplication* bamf_app);
+
+  Application*
+  add_application(BamfApplication* bamf_app);
+
+  void
+  remove_application(BamfApplication* bamf_app);
+
+  void
+  add_window(BamfWindow* bamf_window);
+
+  void
+  remove_window(BamfWindow* bamf_window);
+
+  Configuration         config_;
+  bamf_matcher_t        matcher_;
+  std::vector<AppPtr>   applications_;
+  WindowOpenedCallback  window_opened_callback_;
+  WindowClosedCallback  window_closed_callback_;
 };
+
+
+void
+on_view_opened(BamfMatcher*, BamfView* view, gpointer data)
+{
+  BamfApplicationSource::Impl* impl = static_cast<BamfApplicationSource::Impl*>(data);
+  if (BAMF_IS_APPLICATION(view))
+  {
+    if (!impl->get_application(BAMF_APPLICATION(view)))
+      impl->add_application(BAMF_APPLICATION(view));
+  }
+  else if (BAMF_IS_WINDOW(view))
+  {
+    impl->add_window(BAMF_WINDOW(view));
+  }
+}
+
+
+void
+on_view_closed(BamfMatcher* matcher, BamfView* view, gpointer data)
+{
+  BamfApplicationSource::Impl* impl = static_cast<BamfApplicationSource::Impl*>(data);
+  if (BAMF_IS_APPLICATION(view))
+  {
+    impl->remove_application(BAMF_APPLICATION(view));
+  }
+  else if (BAMF_IS_WINDOW(view))
+  {
+    impl->remove_window(BAMF_WINDOW(view));
+  }
+}
+
+
+BamfApplicationSource::Impl::
+Impl(Configuration const& config)
+: config_(config)
+, matcher_(bamf_matcher_get_default(), g_object_unref)
+{
+  g_signal_connect(G_OBJECT(matcher_.get()),
+                   "view-opened",
+                   (GCallback)on_view_opened,
+                   this);
+  g_signal_connect(G_OBJECT(matcher_.get()),
+                   "view_closed",
+                   (GCallback)on_view_closed,
+                   this);
+}
+
+
+Application* BamfApplicationSource::Impl::
+get_application(BamfApplication* bamf_app)
+{
+  Application* app = nullptr;
+  const gchar* application_id = bamf_application_get_desktop_file(bamf_app);
+  auto it = std::find_if(std::begin(applications_),
+                         std::end(applications_),
+                         [&application_id](AppPtr const& app) -> bool
+                           { return app->application_id() == application_id; });
+  if (it != std::end(applications_))
+    app = it->get();
+  return app;
+}
+
+
+Application* BamfApplicationSource::Impl::
+add_application(BamfApplication* bamf_app)
+{
+  AppPtr a(new Application(BamfApplicationBuilder(matcher_.get(), bamf_app)));
+  if (config_.is_verbose_mode())
+    std::cout << __FUNCTION__ << ": " << *a;
+  applications_.push_back(std::move(a));
+  return applications_.back().get();
+}
+
+
+void BamfApplicationSource::Impl::
+remove_application(BamfApplication* bamf_app)
+{
+  const gchar* application_id = bamf_application_get_desktop_file(bamf_app);
+  auto it = std::find_if(std::begin(applications_),
+                         std::end(applications_),
+                         [&application_id](AppPtr const& app) -> bool
+                           { return app->application_id() == application_id; });
+  if (it != std::end(applications_))
+  {
+    if (config_.is_verbose_mode())
+      std::cout << __FUNCTION__ << ": \"" << (*it)->name() << "\" exited\n";
+    applications_.erase(it);
+  }
+}
+
+
+void BamfApplicationSource::Impl::
+add_window(BamfWindow* bamf_window)
+{
+  auto bamf_app = bamf_matcher_get_application_for_window(matcher_.get(), bamf_window);
+  auto app = get_application(bamf_app);
+  if (!app)
+  {
+    app = add_application(bamf_app);
+  }
+
+  char const* title = bamf_view_get_name(BAMF_VIEW(bamf_window));
+  Window* w = new Window {bamf_window_get_xid(bamf_window),
+                          (title?title:"???"),
+                          app,
+                          (bool)bamf_view_is_active(BAMF_VIEW(bamf_window)),
+                          (bool)bamf_view_is_user_visible(BAMF_VIEW(bamf_window)),
+                          bamf_window_get_monitor(bamf_window) };
+  app->add_window(std::unique_ptr<Window>(w));
+
+  if (window_opened_callback_)
+    window_opened_callback_(w);
+}
+
+
+void BamfApplicationSource::Impl::
+remove_window(BamfWindow* bamf_window)
+{
+  Window::Id window_id = bamf_window_get_xid(bamf_window);
+  for (auto const& app: applications_)
+  {
+    Window const* w = app->window(window_id);
+    if (w)
+    {
+      if (window_closed_callback_)
+      {
+        Window const* w = app->window(window_id);
+        window_closed_callback_(w);
+      }
+      app->remove_window(window_id);
+      break;
+    }
+  }
+}
 
 
 BamfApplicationSource::
@@ -194,31 +291,17 @@ BamfApplicationSource::
 { }
 
 
-#if 0
-void BamfApplicationSource::
-set_observer(ApplicationObserver* observer)
-{
-  impl_->observer_ = observer;
-  g_signal_connect(G_OBJECT(impl_->matcher_.get()),
-                   "view-opened",
-                   (GCallback)on_view_opened,
-                   impl_->observer_);
-  g_signal_connect(G_OBJECT(impl_->matcher_.get()),
-                   "view_closed",
-                   (GCallback)on_view_closed,
-                   impl_->observer_);
-}
-#endif
-
 void BamfApplicationSource::
 set_window_opened_callback(WindowOpenedCallback const& callback)
 {
+  impl_->window_opened_callback_ = callback;
 }
 
 
 void BamfApplicationSource::
 set_window_closed_callback(WindowClosedCallback const& callback)
 {
+  impl_->window_closed_callback_ = callback;
 }
 
 
@@ -232,10 +315,20 @@ get_applications()
     if (!BAMF_IS_APPLICATION(app->data))
       continue;
 
-    auto bamf_app = static_cast<BamfApplication*>(app->data);
-    auto a = std::make_shared<Application>(BamfApplicationBuilder(impl_->matcher_.get(),
-                                                                  bamf_app));
-    apps[a->name()] = a;
+    auto a = impl_->get_application(BAMF_APPLICATION(app->data));
+    if (!a)
+      a = impl_->add_application(BAMF_APPLICATION(app->data));
+
+    GList* window_list = bamf_application_get_windows(BAMF_APPLICATION(app->data));
+    for (GList* window = window_list; window; window = window->next)
+    {
+      if (BAMF_IS_WINDOW(window->data))
+      {
+        auto bamf_window = static_cast<BamfWindow*>(window->data);
+        impl_->add_window(bamf_window);
+      }
+    }
+    g_list_free(window_list);
   }
   g_list_free(app_list);
   return apps;

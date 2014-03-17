@@ -34,7 +34,6 @@ Application(const ApplicationBuilder& builder)
 : application_id_(std::move(builder.application_id()))
 , name_(std::move(builder.name()))
 , generic_name_(std::move(builder.generic_name()))
-, windows_(std::move(builder.windows()))
 {
 }
 
@@ -59,29 +58,31 @@ generic_name() const
   return generic_name_;
 }
 
+#if 0
 Window::List const& Application::
 windows() const
 {
   return windows_;
 }
+#endif
 
 
 Window const* Application::
 window(Window::Id window_id) const
 {
   auto it = std::find_if(windows_.begin(), windows_.end(),
-                         [&window_id](Window const& w) -> bool
-                         { return window_id == w.id_; });
+                         [&window_id](std::unique_ptr<Window> const& w) -> bool
+                         { return window_id == w->id_; });
   if (it == windows_.end())
     return nullptr;
-  return &*it;
+  return it->get();
 }
 
 
 void Application::
-add_window(Window const& window)
+add_window(std::unique_ptr<Window> window)
 {
-  windows_.push_back(window);
+  windows_.push_back(std::move(window));
 }
 
 
@@ -89,8 +90,8 @@ void Application::
 remove_window(Window::Id window_id)
 {
   auto it = std::find_if(windows_.begin(), windows_.end(),
-                         [&window_id](Window const& w) -> bool
-                         { return window_id == w.id_; });
+                         [&window_id](std::unique_ptr<Window> const& w) -> bool
+                         { return window_id == w->id_; });
   if (it != windows_.end())
     windows_.erase(it);
 }
@@ -103,9 +104,9 @@ dump(std::ostream& ostr) const
        << " name=\"" << name() << "\""
        << " generic_name=\"" << generic_name() << "\""
        << "\n";
-  for (auto const& window: windows())
+  for (auto const& window: windows_)
   {
-    std::cout << "    " << window << "\n";;
+    std::cout << "    " << *window << "\n";;
   }
   return ostr;
 }

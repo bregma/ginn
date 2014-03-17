@@ -37,6 +37,9 @@ class BamfApplicationSource
 : public ApplicationSource
 {
 public:
+  struct Impl;
+
+public:
   BamfApplicationSource(Configuration const& config);
   ~BamfApplicationSource();
 
@@ -50,8 +53,6 @@ Application::List
 get_applications();
 
 private:
-  struct Impl;
-
   std::unique_ptr<Impl> impl_;
 };
 

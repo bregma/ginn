@@ -369,6 +369,7 @@ create_watches()
     {
       if (app.first == wish.first)
       {
+#if 0
         for (auto const& window: app.second->windows())
         {
           for (auto const& w: wish.second)
@@ -383,6 +384,7 @@ create_watches()
             gesture_map_[window.id_].push_back(std::move(watch));
           }
         }
+#endif
       }
     }
   }
