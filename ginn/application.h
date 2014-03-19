@@ -60,12 +60,6 @@ public:
   std::string const&
   generic_name() const;
 
-#if 0
-  /** Gets all current windows for the application. */
-  Window::List const&
-  windows() const;
-#endif
-
   /** Gets a particular cuurent window by window_id. */
   Window const*
   window(Window::Id window_id) const;

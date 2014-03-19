@@ -58,22 +58,14 @@ generic_name() const
   return generic_name_;
 }
 
-#if 0
-Window::List const& Application::
-windows() const
-{
-  return windows_;
-}
-#endif
-
 
 Window const* Application::
 window(Window::Id window_id) const
 {
-  auto it = std::find_if(windows_.begin(), windows_.end(),
+  auto it = std::find_if(std::begin(windows_), std::end(windows_),
                          [&window_id](std::unique_ptr<Window> const& w) -> bool
                          { return window_id == w->id_; });
-  if (it == windows_.end())
+  if (it == std::end(windows_))
     return nullptr;
   return it->get();
 }
@@ -89,10 +81,10 @@ add_window(std::unique_ptr<Window> window)
 void Application::
 remove_window(Window::Id window_id)
 {
-  auto it = std::find_if(windows_.begin(), windows_.end(),
+  auto it = std::find_if(std::begin(windows_), std::end(windows_),
                          [&window_id](std::unique_ptr<Window> const& w) -> bool
                          { return window_id == w->id_; });
-  if (it != windows_.end())
+  if (it == std::end(windows_))
     windows_.erase(it);
 }
 

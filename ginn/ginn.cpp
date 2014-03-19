@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ginn/ginn.h"
 
+#include <algorithm>
 #include "ginn/actionsink.h"
 #include "ginn/applicationsource.h"
 #include "ginn/configuration.h"
@@ -80,9 +81,6 @@ struct Ginn::Impl
   load_raw_wishes();
 
   void
-  load_applications();
-
-  void
   app_source_initialized();
 
   void
@@ -129,7 +127,6 @@ private:
   Wish::Table                              wish_table_;
   bool                                     app_source_is_initialized_;
   ApplicationSource*                       app_source_;
-  Application::List                        apps_;
   bool                                     keymap_is_initialized_;
   Keymap*                                  keymap_;
   bool                                     gesture_source_is_initialized;
@@ -217,22 +214,6 @@ load_raw_wishes()
 }
 
 
-/**
- * Loads the cuurent active applications from the confiured source.
- */
-void Ginn::Impl::
-load_applications()
-{
-  apps_ = std::move(app_source_->get_applications());
-  if (config_.is_verbose_mode())
-  {
-    std::cout << apps_.size() << " applications recognized:\n";
-    for (auto const& application: apps_)
-      std::cout << *application.second << "\n";
-  }
-}
-
-
 void Ginn::Impl::
 app_source_initialized()
 {
@@ -250,17 +231,27 @@ app_source_initialized()
  * probably be added later when the new-application notification comes in.
  */
 void Ginn::Impl::
-window_opened(Window const*)
+window_opened(Window const* window)
 {
-#if 0
-  auto it = apps_.find(window.application_id);
-  if (it != apps_.end())
+  auto wish_it = wish_table_.find(window->application_->name());
+  if (wish_it != std::end(wish_table_))
   {
-    if (config_.is_verbose_mode())
-      std::cout << "window added: " << window << "\n";
-    it->second->add_window(window);
-  }
+    for (auto const& w: wish_it->second)
+    {
+#if 0
+      GestureWatch::Ptr watch {
+        new GestureWatch(window->id_,
+                         app.second,
+                         w.second,
+                         gesture_source_->subscribe(window->id_,
+                                                    w.second))
+      };
+      gesture_map_[window->id_].push_back(std::move(watch));
+#else
+      std::cout << "==smw> " << __FUNCTION__ << " adding wish for '" << window->application_->name() << "'\n";
 #endif
+    }
+  }
 }
 
 
@@ -369,32 +360,6 @@ create_watches()
   if (config_.is_verbose_mode())
     std::cout << "creating watches...\n";
 
-  for (auto const& app: apps_)
-  {
-    for (auto const& wish: wish_table_)
-    {
-      if (app.first == wish.first)
-      {
-#if 0
-        for (auto const& window: app.second->windows())
-        {
-          for (auto const& w: wish.second)
-          {
-            GestureWatch::Ptr watch {
-              new GestureWatch(window.id_,
-                               app.second,
-                               w.second,
-                               gesture_source_->subscribe(window.id_,
-                                                          w.second))
-            };
-            gesture_map_[window.id_].push_back(std::move(watch));
-          }
-        }
-#endif
-      }
-    }
-  }
-
   if (config_.is_verbose_mode())
   {
     for (auto const& watchlist: gesture_map_)
@@ -421,9 +386,7 @@ Ginn(Configuration const&  config,
      GestureSource*        gesture_source,
      ActionSink*           action_sink)
 : impl_(new Impl(config, wish_source, app_source, keymap, gesture_source, action_sink))
-{
-  impl_->load_applications();
-}
+{ }
 
 
 /**

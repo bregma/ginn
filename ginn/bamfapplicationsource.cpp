@@ -81,29 +81,6 @@ struct BamfApplicationBuilder
     return name;
   }
 
-#if 0
-  Window::List
-  windows() const
-  {
-    Window::List windows;
-std::cout << __PRETTY_FUNCTION__ << " begins\n";
-
-    GList* window_list = bamf_application_get_windows(app_);
-    for (GList* window = window_list; window; window = window->next)
-    {
-      if (BAMF_IS_WINDOW(window->data))
-      {
-        auto bamf_window = static_cast<BamfWindow*>(window->data);
-        windows.push_back(std::move(build_window(matcher_, bamf_window)));
-      }
-    }
-    g_list_free(window_list);
-
-std::cout << __PRETTY_FUNCTION__ << " ends\n";
-    return windows;
-  }
-#endif
-
   BamfMatcher*     matcher_;
   BamfApplication* app_;
 };
@@ -347,17 +324,6 @@ void BamfApplicationSource::
 set_window_closed_callback(WindowClosedCallback const& callback)
 {
   impl_->window_closed_callback_ = callback;
-}
-
-
-/**
- * @todo remove this function, it is no longer necessary.
- */
-Application::List BamfApplicationSource::
-get_applications()
-{
-  Application::List apps;
-  return apps;
 }
 
 

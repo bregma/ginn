@@ -61,10 +61,6 @@ public:
 
   virtual void
   set_window_closed_callback(WindowClosedCallback const& callback) = 0;
-
-  /** Sources Applications. */
-  virtual Application::List
-  get_applications() = 0;
 };
 }
 

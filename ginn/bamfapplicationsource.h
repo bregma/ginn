@@ -52,9 +52,6 @@ public:
   void
   set_window_closed_callback(WindowClosedCallback const& callback) override;
 
-  Application::List
-  get_applications();
-
 private:
   std::unique_ptr<Impl> impl_;
 };
