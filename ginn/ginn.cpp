@@ -183,6 +183,9 @@ Impl(Configuration const&  config,
 , action_sink_(action_sink)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
 { 
+  using std::bind;
+  using std::placeholders::_1;
+
   if (config_.wish_sources().empty())
     throw std::runtime_error("no wish sources found");
 
@@ -191,13 +194,13 @@ Impl(Configuration const&  config,
 
   g_idle_add(on_ginn_initialized, this);
 
-  app_source_->set_initialized_callback(std::bind(&Ginn::Impl::app_source_initialized, this));
-  app_source_->set_window_opened_callback(std::bind(&Impl::window_opened, this, std::placeholders::_1));
-  app_source_->set_window_closed_callback(std::bind(&Impl::window_closed, this, std::placeholders::_1));
-  action_sink_->set_initialized_callback(std::bind(&Impl::action_sink_initialized, this));
-  keymap_->set_initialized_callback(std::bind(&Ginn::Impl::keymap_initialized, this));
-  gesture_source_->set_initialized_callback(std::bind(&Ginn::Impl::gesture_source_initialized, this));
-  gesture_source_->set_event_callback(std::bind(&Ginn::Impl::gesture_event, this, std::placeholders::_1));
+  app_source_->set_initialized_callback(bind(&Ginn::Impl::app_source_initialized, this));
+  app_source_->set_window_opened_callback(bind(&Impl::window_opened, this, _1));
+  app_source_->set_window_closed_callback(bind(&Impl::window_closed, this, _1));
+  action_sink_->set_initialized_callback(bind(&Impl::action_sink_initialized, this));
+  keymap_->set_initialized_callback(bind(&Ginn::Impl::keymap_initialized, this));
+  gesture_source_->set_initialized_callback(bind(&Ginn::Impl::gesture_source_initialized, this));
+  gesture_source_->set_event_callback(bind(&Ginn::Impl::gesture_event, this, _1));
 }
 
 

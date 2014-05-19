@@ -72,6 +72,16 @@ window(Window::Id window_id) const
 
 
 void Application::
+for_all_windows(WindowVisitor const& window_visitor)
+{
+  for (auto const& window: windows_)
+  {
+    window_visitor(window.get());
+  }
+}
+
+
+void Application::
 add_window(std::unique_ptr<Window> window)
 {
   windows_.push_back(std::move(window));

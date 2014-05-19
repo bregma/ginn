@@ -21,6 +21,7 @@
 #ifndef GINN_APPLICATION_H_
 #define GINN_APPLICATION_H_
 
+#include <functional>
 #include <iosfwd>
 #include <map>
 #include <memory>
@@ -36,6 +37,9 @@ class ApplicationBuilder;
 
 /**
  * A proxy for an application targetted to receive gestural input.
+ *
+ * Cenceptually, at least from the Ginn's point of view, an application is just
+ * a container of zero or more windows.
  */
 class Application
 {
@@ -46,6 +50,8 @@ public:
   typedef std::shared_ptr<Application> Ptr;
   /** A collection of Applications keyed by application_id. */
   typedef std::map<std::string, Ptr>   List;
+  /** A visitor function for window processing. */
+  typedef std::function<void(Window const*)> WindowVisitor;
 
 public:
   /** builds an Application */
@@ -63,6 +69,9 @@ public:
   /** Gets a particular cuurent window by window_id. */
   Window const*
   window(Window::Id window_id) const;
+
+  void
+  for_all_windows(WindowVisitor const& window_visitor);
 
   /** Adds a new tracked window. */
   void

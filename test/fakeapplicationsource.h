@@ -42,8 +42,26 @@ public:
   virtual void
   set_window_closed_callback(WindowClosedCallback const& callback) override;
 
-  Application::List
-  get_applications();
+  void
+  add_application(Application::Id const& id,
+                  std::string const&     name,
+                  std::string const&     generic_name);
+
+  void
+  add_window(Application::Id const& app_id,
+             Window::Id const&      window_id);
+
+  void
+  remove_window(Window::Id window_id);
+
+  void
+  complete_initialization();
+
+private:
+  InitializedCallback  initialized_callback_;
+  WindowOpenedCallback window_opened_callback_;
+  WindowClosedCallback window_closed_callback_;
+  Application::List    apps_;
 };
 
 } // namespace Ginn

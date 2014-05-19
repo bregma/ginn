@@ -1,8 +1,8 @@
 /**
  * @file test/gtest_fake_application_source.cpp
  * @brief Unit tests of the fake action sink.
- * Makes sure the fake action sink works, otherwise you can;t depend on tests
- * that use it.
+ * Makes sure the fake applicaton source works, otherwise you can't depend on
+ * tests that use it.
  */
 
 /*
@@ -21,12 +21,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fakeapplicationsource.h"
+#include <functional>
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <memory>
+
+using namespace Ginn;
+using namespace testing;
 
 
-TEST(FakeApplicationSource, construct)
+class MockObserver
 {
-  std::unique_ptr<Ginn::ApplicationSource> app_source(new Ginn::FakeApplicationSource());
-  ASSERT_TRUE(app_source != nullptr);
+public:
+  ~MockObserver() {}
+  MOCK_METHOD1(window_opened, void(Window const* window));
+  MOCK_METHOD1(window_closed, void(Window const* window));
+};
+
+class FakeApplicationSourceTest
+: public testing::Test
+{
+protected:
+  MockObserver          mock_app_observer_;
+  FakeApplicationSource app_source_;
+};
+
+
+TEST_F(FakeApplicationSourceTest, addApplicationBeforeInit)
+{
+  app_source_.set_window_opened_callback(std::bind(&MockObserver::window_opened,
+                                                   &mock_app_observer_,
+                                                   std::placeholders::_1));
+  app_source_.add_application("id", "name", "generic_name");
+  app_source_.add_window("id", 1000);
+
+  EXPECT_CALL(mock_app_observer_, window_opened(_)).Times(1);
+  app_source_.complete_initialization();
 }
+
+
+TEST_F(FakeApplicationSourceTest, addApplicationAfterInit)
+{
+  EXPECT_CALL(mock_app_observer_, window_opened(_)).Times(1);
+
+  app_source_.set_window_opened_callback(std::bind(&MockObserver::window_opened,
+                                                   &mock_app_observer_,
+                                                   std::placeholders::_1));
+  app_source_.complete_initialization();
+  app_source_.add_application("id", "name", "generic_name");
+  app_source_.add_window("id", 1000);
+}
+
