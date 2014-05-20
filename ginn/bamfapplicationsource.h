@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -37,18 +37,22 @@ class BamfApplicationSource
 : public ApplicationSource
 {
 public:
+  struct Impl;
+
+public:
   BamfApplicationSource(Configuration const& config);
   ~BamfApplicationSource();
 
-void
-set_observer(ApplicationObserver* observer);
+  void
+  set_initialized_callback(InitializedCallback const& callback) override;
 
-Application::List
-get_applications();
+  void
+  set_window_opened_callback(WindowOpenedCallback const& callback) override;
+
+  void
+  set_window_closed_callback(WindowClosedCallback const& callback) override;
 
 private:
-  struct Impl;
-
   std::unique_ptr<Impl> impl_;
 };
 

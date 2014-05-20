@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -22,7 +22,6 @@
 
 #include <algorithm>
 #include "ginn/applicationbuilder.h"
-#include <iomanip>
 #include <iostream>
 #include <utility>
 
@@ -35,7 +34,6 @@ Application(const ApplicationBuilder& builder)
 : application_id_(std::move(builder.application_id()))
 , name_(std::move(builder.name()))
 , generic_name_(std::move(builder.generic_name()))
-, windows_(std::move(builder.windows()))
 {
 }
 
@@ -60,55 +58,44 @@ generic_name() const
   return generic_name_;
 }
 
-Application::Windows const& Application::
-windows() const
-{
-  return windows_;
-}
-
 
 Window const* Application::
 window(Window::Id window_id) const
 {
-  auto it = std::find_if(windows_.begin(), windows_.end(),
-                         [&window_id](Window const& w) {
-                             return window_id == w.window_id;
-                         });
-  if (it == windows_.end())
+  auto it = std::find_if(std::begin(windows_), std::end(windows_),
+                         [&window_id](std::unique_ptr<Window> const& w) -> bool
+                         { return window_id == w->id_; });
+  if (it == std::end(windows_))
     return nullptr;
-  return &*it;
+  return it->get();
 }
 
 
 void Application::
-add_window(Window const& window)
+for_all_windows(WindowVisitor const& window_visitor)
 {
-  windows_.push_back(window);
+  for (auto const& window: windows_)
+  {
+    window_visitor(window.get());
+  }
+}
+
+
+void Application::
+add_window(std::unique_ptr<Window> window)
+{
+  windows_.push_back(std::move(window));
 }
 
 
 void Application::
 remove_window(Window::Id window_id)
 {
-  auto it = std::find_if(windows_.begin(), windows_.end(),
-                         [&window_id](Window const& w) {
-                             return window_id == w.window_id;
-                         });
-  if (it != windows_.end())
+  auto it = std::find_if(std::begin(windows_), std::end(windows_),
+                         [&window_id](std::unique_ptr<Window> const& w) -> bool
+                         { return window_id == w->id_; });
+  if (it == std::end(windows_))
     windows_.erase(it);
-}
-
-
-std::ostream&
-operator<<(std::ostream& ostr, Window const& window)
-{
-  return ostr << "window_id="
-              << std::hex << std::setw(8) << std::setfill('0') << std::showbase
-              << window.window_id
-              << std::dec
-              << " application_id=\"" << window.application_id << "\""
-              << " monitor=" << window.monitor
-              << " title=\"" << window.title << "\"";
 }
 
 
@@ -119,9 +106,9 @@ dump(std::ostream& ostr) const
        << " name=\"" << name() << "\""
        << " generic_name=\"" << generic_name() << "\""
        << "\n";
-  for (auto const& window: windows())
+  for (auto const& window: windows_)
   {
-    std::cout << "    " << window << "\n";;
+    std::cout << "    " << *window << "\n";;
   }
   return ostr;
 }

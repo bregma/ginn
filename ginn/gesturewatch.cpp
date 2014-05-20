@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -54,7 +54,7 @@ operator<<(std::ostream& ostr, GestureWatch const& watch)
   return ostr << "app '" << watch.application_->name()
               << "' window "
               << std::hex << std::setw(8) << std::setfill('0') << std::showbase
-              << watch.window_id_ << std::dec << " '" << w->title << "'";
+              << watch.window_id_ << std::dec << " '" << w->title_ << "'";
 }
 
 

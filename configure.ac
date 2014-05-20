@@ -1,5 +1,5 @@
 # This file is part of Ginn, the general-purpose multi-touch gesture utility.
-# Copyright 2013 Canonical Ltd.
+# Copyright 2013-2014 Canonical Ltd.
 # 
 # Ginn is free software: you can redistribute it and/or modify it under the terms
 # of the GNU General Public License version 3, as published by the Free
@@ -54,5 +54,6 @@ AC_CONFIG_FILES([Makefile
                  ginn/Makefile
                  data/Makefile
                  test/Makefile
+                 test/bamfapplicationsource/Makefile
                  doc/Makefile])
 AC_OUTPUT

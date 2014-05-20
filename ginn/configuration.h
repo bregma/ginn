@@ -44,10 +44,6 @@ public:
   bool
   is_verbose_mode() const;
 
-  /** Gets the application source type to use.  */
-  ApplicationSource::Type
-  application_source_type() const;
-
   /** Gets the wish file format to use. */
   WishSource::Format
   wish_source_format() const;

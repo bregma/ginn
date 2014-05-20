@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -21,9 +21,9 @@
 #include "config.h"
 #include "ginn/ginn.h"
 
+#include <algorithm>
 #include "ginn/actionsink.h"
 #include "ginn/applicationsource.h"
-#include "ginn/applicationobserver.h"
 #include "ginn/configuration.h"
 #include "ginn/gesturesource.h"
 #include "ginn/gesturewatch.h"
@@ -69,7 +69,6 @@ namespace Ginn
  * self-contained as possible.
  */
 struct Ginn::Impl
-: public ApplicationObserver
 {
   Impl(Configuration const&  config,
        WishSource*           wish_source,
@@ -82,19 +81,13 @@ struct Ginn::Impl
   load_raw_wishes();
 
   void
-  load_applications();
+  app_source_initialized();
 
   void
-  application_added(Application::Ptr const& application);
+  window_opened(Window const* window);
 
   void
-  application_removed(Application::Id const& application_id);
-
-  void
-  window_added(Window const& window);
-
-  void
-  window_removed(Window::Id window_id);
+  window_closed(Window const* window);
 
   void
   keymap_initialized();
@@ -116,6 +109,7 @@ struct Ginn::Impl
   is_initialized() const
   {
     return keymap_is_initialized_
+        && app_source_is_initialized_
         && gesture_source_is_initialized
         && action_sink_is_initialized_;
   }
@@ -131,8 +125,8 @@ private:
   Configuration                            config_;
   WishSource*                              wish_source_;
   Wish::Table                              wish_table_;
+  bool                                     app_source_is_initialized_;
   ApplicationSource*                       app_source_;
-  Application::List                        apps_;
   bool                                     keymap_is_initialized_;
   Keymap*                                  keymap_;
   bool                                     gesture_source_is_initialized;
@@ -179,6 +173,7 @@ Impl(Configuration const&  config,
      ActionSink*           action_sink)
 : config_(config)
 , wish_source_(wish_source)
+, app_source_is_initialized_(false)
 , app_source_(app_source)
 , keymap_is_initialized_(false)
 , keymap_(keymap)
@@ -188,6 +183,9 @@ Impl(Configuration const&  config,
 , action_sink_(action_sink)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
 { 
+  using std::bind;
+  using std::placeholders::_1;
+
   if (config_.wish_sources().empty())
     throw std::runtime_error("no wish sources found");
 
@@ -196,16 +194,13 @@ Impl(Configuration const&  config,
 
   g_idle_add(on_ginn_initialized, this);
 
-  app_source_->set_observer(this);
-  action_sink_->set_initialized_callback(std::bind(&Impl::action_sink_initialized,
-                                                   this));
-  keymap_->set_initialized_callback(std::bind(&Ginn::Impl::keymap_initialized,
-                                              this));
-  gesture_source_->set_initialized_callback(std::bind(&Ginn::Impl::gesture_source_initialized,
-                                           this));
-  gesture_source_->set_event_callback(std::bind(&Ginn::Impl::gesture_event,
-                                      this,
-                                      std::placeholders::_1));
+  app_source_->set_initialized_callback(bind(&Ginn::Impl::app_source_initialized, this));
+  app_source_->set_window_opened_callback(bind(&Impl::window_opened, this, _1));
+  app_source_->set_window_closed_callback(bind(&Impl::window_closed, this, _1));
+  action_sink_->set_initialized_callback(bind(&Impl::action_sink_initialized, this));
+  keymap_->set_initialized_callback(bind(&Ginn::Impl::keymap_initialized, this));
+  gesture_source_->set_initialized_callback(bind(&Ginn::Impl::gesture_source_initialized, this));
+  gesture_source_->set_event_callback(bind(&Ginn::Impl::gesture_event, this, _1));
 }
 
 
@@ -222,79 +217,55 @@ load_raw_wishes()
 }
 
 
-/**
- * Loads the cuurent active applications from the confiured source.
- */
 void Ginn::Impl::
-load_applications()
+app_source_initialized()
 {
-  apps_ = std::move(app_source_->get_applications());
+  app_source_is_initialized_ = true;
   if (config_.is_verbose_mode())
-  {
-    std::cout << apps_.size() << " applications recognized:\n";
-    for (auto const& application: apps_)
-      std::cout << *application.second << "\n";
-  }
+    std::cout << "application source is initialized\n";
 }
 
 
 /**
- * Reacts to a new active application being added.
- * @param[in] application  The new application being added.
- */
-void Ginn::Impl::
-application_added(Application::Ptr const& application)
-{
-  apps_[application->application_id()] = application;
-  if (config_.is_verbose_mode())
-    std::cout << "application added: " << *application << "\n";
-}
-
-
-/**
- * Reacts to an active application being removed.
- * @param[in] application_id  Identifies the application being removed.
- */
-void Ginn::Impl::
-application_removed(Application::Id const& application_id)
-{
-  auto it = apps_.find(application_id);
-  if (it != apps_.end())
-  {
-    if (config_.is_verbose_mode())
-      std::cout << "removing application: " << it->second << "\n";;
-    apps_.erase(it);
-  }
-}
-
-
-/**
- * Reacts to an application window being added.
- * @param[in] window  The new application window being added.
+ * Reacts to an application window being opened.
+ * @param[in] window  The new application window being opened.
  *
  * If the window's application is not known, the window is ignored and will
  * probably be added later when the new-application notification comes in.
  */
 void Ginn::Impl::
-window_added(Window const& window)
+window_opened(Window const* window)
 {
-  auto it = apps_.find(window.application_id);
-  if (it != apps_.end())
+  auto wish_it = wish_table_.find(window->application_->name());
+  if (wish_it != std::end(wish_table_))
   {
-    if (config_.is_verbose_mode())
-      std::cout << "window added: " << window << "\n";
-    it->second->add_window(window);
+    for (auto const& w: wish_it->second)
+    {
+#if 0
+      GestureWatch::Ptr watch {
+        new GestureWatch(window->id_,
+                         app.second,
+                         w.second,
+                         gesture_source_->subscribe(window->id_,
+                                                    w.second))
+      };
+      gesture_map_[window->id_].push_back(std::move(watch));
+#else
+      std::cout << "==smw> " << __FUNCTION__ << " adding wish for '" << window->application_->name() << "'\n";
+#endif
+    }
   }
 }
 
 
 /**
- * Reacts to an application window being removed.
- * @param[in]  window_id  Identifies the application window being removed.
+ * Reacts to an application window being closed.
+ * @param[in]  window  The application window being closed.
  */
 void Ginn::Impl::
-window_removed(Window::Id window_id)
+window_closed(Window const*)
 {
+#if 0
   for (auto const& it: apps_)
   {
     Window const* window = it.second->window(window_id);
@@ -306,6 +277,7 @@ window_removed(Window::Id window_id)
       break;
     }
   }
+#endif
 }
 
 
@@ -391,30 +363,6 @@ create_watches()
   if (config_.is_verbose_mode())
     std::cout << "creating watches...\n";
 
-  for (auto const& app: apps_)
-  {
-    for (auto const& wish: wish_table_)
-    {
-      if (app.first == wish.first)
-      {
-        for (auto const& window: app.second->windows())
-        {
-          for (auto const& w: wish.second)
-          {
-            GestureWatch::Ptr watch {
-              new GestureWatch(window.window_id,
-                               app.second,
-                               w.second,
-                               gesture_source_->subscribe(window.window_id,
-                                                          w.second))
-            };
-            gesture_map_[window.window_id].push_back(std::move(watch));
-          }
-        }
-      }
-    }
-  }
-
   if (config_.is_verbose_mode())
   {
     for (auto const& watchlist: gesture_map_)
@@ -441,9 +389,7 @@ Ginn(Configuration const&  config,
      GestureSource*        gesture_source,
      ActionSink*           action_sink)
 : impl_(new Impl(config, wish_source, app_source, keymap, gesture_source, action_sink))
-{
-  impl_->load_applications();
-}
+{ }
 
 
 /**
