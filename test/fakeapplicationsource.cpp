@@ -96,6 +96,21 @@ add_application(Application::Id const& id,
 
 
 void FakeApplicationSource::
+remove_application(Application::Id const& id)
+{
+  auto const& app_it = apps_.find(id);
+  if (app_it != std::end(apps_))
+  {
+    app_it->second->for_all_windows([this](Window const* window)
+    {
+      if (window_closed_callback_)
+        window_closed_callback_(window);
+    });
+  }
+}
+
+
+void FakeApplicationSource::
 add_window(Application::Id const& app_id,
            Window::Id const&      window_id)
 {
@@ -115,9 +130,10 @@ remove_window(Window::Id window_id)
 {
   for (auto app: apps_)
   {
-    if (app.second->window(window_id))
+    if (Window const* window = app.second->window(window_id))
     {
-      /** @todo */
+      if (window_closed_callback_)
+        window_closed_callback_(window);
     }
   }
 }

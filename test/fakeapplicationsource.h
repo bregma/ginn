@@ -55,6 +55,9 @@ public:
   remove_window(Window::Id window_id);
 
   void
+  remove_application(Application::Id const& id);
+
+  void
   complete_initialization();
 
 private:
