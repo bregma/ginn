@@ -21,6 +21,7 @@ libginn_a_SOURCES = \
 	action.h                 action.cpp \
 	actionbuilder.h          actionbuilder.cpp \
 	actionsink.h             actionsink.cpp \
+	activewishes.h           activewishes.cpp \
 	application.h            application.cpp \
 	applicationbuilder.h     applicationbuilder.cpp \
 	applicationsource.h      applicationsource.cpp \
