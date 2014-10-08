@@ -51,7 +51,7 @@ public:
 class GestureSubscription
 {
 public:
-  typedef std::unique_ptr<GestureSubscription> Ptr;
+  using Ptr = std::unique_ptr<GestureSubscription>;
 
 public:
   virtual
@@ -66,10 +66,10 @@ class GestureSource
 {
 public:
   /** Signal indicating a new gesture event has been received. */
-  typedef std::function<void(GestureEvent const&)> EventReceivedCallback;
+  using EventReceivedCallback = std::function<void(GestureEvent const&)>;
 
   /** Signal for when the gesture source has completed its asynch initi. */
-  typedef std::function<void()> InitializedCallback;
+  using InitializedCallback = std::function<void()>;
 
 public:
   virtual

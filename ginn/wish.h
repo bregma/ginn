@@ -55,11 +55,11 @@ class Wish
 {
 public:
   /** A (shared) pointer to a Wish. */
-  typedef std::shared_ptr<Wish>             Ptr;
+  using Ptr = std::shared_ptr<Wish>;
   /** A collection of wishes. */
-  typedef std::map<std::string, Ptr>        List;
+  using List = std::map<std::string, Ptr>;
   /** A collection of wishes grouped by application name. */
-  typedef std::map<std::string, Wish::List> Table;
+  using Table = std::map<std::string, Wish::List>;
 
 public:
   Wish(const WishBuilder& builder);

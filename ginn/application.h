@@ -45,13 +45,13 @@ class Application
 {
 public:
   /** A unique identifier for an application. */
-  typedef std::string                  Id;
+  using Id = std::string;
   /** A (shared) pointer to an Applciation. */
-  typedef std::shared_ptr<Application> Ptr;
+  using Ptr = std::shared_ptr<Application>;
   /** A collection of Applications keyed by application_id. */
-  typedef std::map<std::string, Ptr>   List;
+  using List = std::map<std::string, Ptr>;
   /** A visitor function for window processing. */
-  typedef std::function<void(Window const*)> WindowVisitor;
+  using WindowVisitor = std::function<void(Window const*)>;
 
 public:
   /** builds an Application */
@@ -86,7 +86,7 @@ public:
   dump(std::ostream& ostr) const;
 
 private:
-  typedef std::vector<std::unique_ptr<Window>> Windows;
+  using Windows = std::vector<std::unique_ptr<Window>>;
 
   Id           application_id_;  ///< name of the desktop file
   std::string  name_;            ///< Name key in the desktop file

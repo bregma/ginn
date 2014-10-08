@@ -31,7 +31,7 @@
 #include <utility>
 
 
-typedef std::vector<std::string> ConfigPath;
+using ConfigPath = std::vector<std::string>;
 
 
 /**

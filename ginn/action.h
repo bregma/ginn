@@ -73,7 +73,7 @@ public:
   };
 
   /** A collection of action events that make up an actipon. */
-  typedef std::vector<Event> EventList;
+  using EventList = std::vector<Event>;
 
 public:
   /** Constructs an Action with no data. */

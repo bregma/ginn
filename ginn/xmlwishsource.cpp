@@ -80,10 +80,10 @@ public:
 namespace Ginn
 {
 
-typedef std::unique_ptr<xmlRelaxNGParserCtxt> ParserCtxtPtr;
-typedef std::unique_ptr<xmlRelaxNG>           SchemaPtr;
-typedef std::unique_ptr<xmlRelaxNGValidCtxt>  ValidatorPtr;
-typedef std::unique_ptr<xmlDoc>               XmlDocPtr;
+using ParserCtxtPtr = std::unique_ptr<xmlRelaxNGParserCtxt>;
+using SchemaPtr     = std::unique_ptr<xmlRelaxNG>;
+using ValidatorPtr  = std::unique_ptr<xmlRelaxNGValidCtxt>;
+using XmlDocPtr     = std::unique_ptr<xmlDoc>;
 
   
 /**

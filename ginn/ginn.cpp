@@ -39,7 +39,7 @@
 
 
 /** C++ wrapper for GMainLoop */
-typedef std::unique_ptr<GMainLoop, void(*)(GMainLoop*)>  main_loop_t;
+using main_loop_t = std::unique_ptr<GMainLoop, void(*)(GMainLoop*)>;
 
 /**
  * Signal handler for INT and TERM signals
@@ -123,19 +123,19 @@ struct Ginn::Impl
   on_ginn_initialized(gpointer data);
 
 private:
-  Configuration                            config_;
-  WishSource*                              wish_source_;
-  Wish::Table                              wish_table_;
-  bool                                     app_source_is_initialized_;
-  ApplicationSource*                       app_source_;
-  bool                                     keymap_is_initialized_;
-  Keymap*                                  keymap_;
-  bool                                     gesture_source_is_initialized;
-  GestureSource*                           gesture_source_;
-  GestureWatch::Map                        gesture_map_;
-  bool                                     action_sink_is_initialized_;
-  ActionSink*                              action_sink_;
-  main_loop_t                              main_loop_;
+  Configuration          config_;
+  WishSource*            wish_source_;
+  Wish::Table            wish_table_;
+  bool                   app_source_is_initialized_;
+  ApplicationSource*     app_source_;
+  bool                   keymap_is_initialized_;
+  Keymap*                keymap_;
+  bool                   gesture_source_is_initialized;
+  GestureSource*         gesture_source_;
+  GestureWatch::Map      gesture_map_;
+  bool                   action_sink_is_initialized_;
+  ActionSink*            action_sink_;
+  main_loop_t            main_loop_;
 };
 
 

@@ -42,13 +42,13 @@ class ApplicationSource
 {
 public:
   /** Signal for when the gesture source has completed its asynch init. */
-  typedef std::function<void()> InitializedCallback;
+  using InitializedCallback = std::function<void()>;
 
   /** Signal indicating a new application window has been opened. */
-  typedef std::function<void(Window const*)> WindowOpenedCallback;
+  using WindowOpenedCallback = std::function<void(Window const*)>;
 
   /** Signal indicating an application window has been closed. */
-  typedef std::function<void(Window const*)> WindowClosedCallback;
+  using WindowClosedCallback = std::function<void(Window const*)>;
 
 public:
   virtual ~ApplicationSource() = 0;

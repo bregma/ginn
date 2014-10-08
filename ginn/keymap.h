@@ -33,10 +33,10 @@ class Keymap
 {
 public:
   /** The encoded key (may have to change for non-X11 support). */
-  typedef std::uint8_t Keycode;
+  using Keycode = std::uint8_t;
 
   /** Signal for when Keymap has completed its asynchronous initialization. */
-  typedef std::function<void()> InitializedCallback;
+  using InitializedCallback = std::function<void()>;
 
 public:
   virtual

@@ -48,7 +48,7 @@ namespace Ginn
 class ActiveWishes
 {
 public:
-  typedef std::function<void(Wish const&, Window const&)> Callback;
+  using Callback = std::function<void(Wish const&, Window const&)>;
 
   struct Impl;
 

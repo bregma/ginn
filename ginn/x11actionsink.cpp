@@ -33,8 +33,8 @@
 namespace Ginn
 {
 
-typedef std::function<void()> Callback;
-typedef std::queue<Callback> CallbackQueue;
+using Callback = std::function<void()>;
+using CallbackQueue = std::queue<Callback>;
 
 struct X11ActionSink::Impl
 {

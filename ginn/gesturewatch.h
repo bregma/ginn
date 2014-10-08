@@ -40,11 +40,11 @@ class GestureWatch
 {
 public:
   /** A pointer to a watch. */
-  typedef std::unique_ptr<GestureWatch> Ptr;
+  using Ptr = std::unique_ptr<GestureWatch>;
   /** A list of gesture watches. */
-  typedef std::vector<GestureWatch::Ptr> List;
+  using List = std::vector<GestureWatch::Ptr>;
   /** Collection mapping a windowid to gesture watches. */
-  typedef std::map<Window::Id, GestureWatch::List> Map;
+  using Map = std::map<Window::Id, GestureWatch::List>;
 
 public:
   GestureWatch(Window::Id               window_id,

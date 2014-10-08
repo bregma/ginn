@@ -30,7 +30,7 @@
 #include <libbamf/bamf-matcher.h>
 
 
-typedef std::unique_ptr<BamfMatcher, void(*)(gpointer)> bamf_matcher_t;
+using bamf_matcher_t = std::unique_ptr<BamfMatcher, void(*)(gpointer)>;
 
 
 namespace Ginn
@@ -86,7 +86,7 @@ struct BamfApplicationBuilder
 };
 
 
-typedef std::unique_ptr<Application> AppPtr;
+using AppPtr = std::unique_ptr<Application>;
 
 
 struct BamfApplicationSource::Impl
