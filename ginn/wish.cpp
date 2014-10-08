@@ -20,8 +20,9 @@
  */
 #include "ginn/wish.h"
 
-#include <utility>
 #include "ginn/wishbuilder.h"
+#include <iostream>
+#include <utility>
 
 
 namespace Ginn
@@ -38,6 +39,13 @@ Wish(const WishBuilder& builder)
 , max_(builder.max())
 , action_(std::move(builder.action()))
 {
+}
+
+std::ostream&
+operator<<(std::ostream& ostr, Wish const& wish)
+{
+  ostr << wish.name() << " {" << wish.gesture() << wish.touches() << "}";
+  return ostr;
 }
 
 

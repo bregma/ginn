@@ -22,6 +22,7 @@
 #include "ginn/ginn.h"
 
 #include <algorithm>
+#include <cassert>
 #include "ginn/actionsink.h"
 #include "ginn/applicationsource.h"
 #include "ginn/configuration.h"
@@ -236,7 +237,14 @@ app_source_initialized()
 void Ginn::Impl::
 window_opened(Window const* window)
 {
-  auto wish_it = wish_table_.find(window->application_->name());
+  if (!window)
+    assert("logic error: NULL window");
+
+  Application const* app = window->application_;
+  if (!app)
+    assert("logic error: NULL window application");
+
+  auto wish_it = wish_table_.find(app->name());
   if (wish_it != std::end(wish_table_))
   {
     for (auto const& w: wish_it->second)
@@ -251,7 +259,8 @@ window_opened(Window const* window)
       };
       gesture_map_[window->id_].push_back(std::move(watch));
 #else
-      std::cout << "==smw> " << __FUNCTION__ << " adding wish for '" << window->application_->name() << "'\n";
+      if (config_.is_verbose_mode())
+        std::cout << __FUNCTION__ << " adding wish for '" << window->application_->name() << "'\n";
 #endif
     }
   }

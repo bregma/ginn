@@ -30,6 +30,7 @@ namespace Ginn
 {
   class ApplicationSource;
   class Configuration;
+  class GestureSource;
   class Window;
   class Wish;
   class WishSource;
@@ -54,7 +55,8 @@ public:
 public:
   ActiveWishes(Configuration const& config,
                Wish::Table const&   wishes,
-               ApplicationSource*   application_source);
+               ApplicationSource*   application_source,
+               GestureSource*       gesture_source);
 
   ActiveWishes();
 

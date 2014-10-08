@@ -20,19 +20,36 @@
  */
 #include "ginn/activewishes.h"
 
+#include <cassert>
 #include "ginn/applicationsource.h"
 #include "ginn/configuration.h"
+#include "ginn/gesturesource.h"
 #include <iostream>
+#include <vector>
 
 
 namespace Ginn
 {
 
+/**
+ * A tuple relating a Wish, an Application Window, and a Gesture Subscription.
+ */
+struct WishWindowSub
+{
+  Wish::Ptr                wish_;
+  Window const*            window_;
+  GestureSubscription::Ptr subscription_;
+};
+
+using WishSubs = std::vector<WishWindowSub>;
+
+
 struct ActiveWishes::Impl
 {
   Impl(Configuration const& config,
        Wish::Table const&   wishes,
-       ApplicationSource*   app_source);
+       ApplicationSource*   app_source,
+       GestureSource*       gesture_source);
 
   void
   window_opened(Window const* window);
@@ -43,6 +60,8 @@ struct ActiveWishes::Impl
   Configuration      config_;
   Wish::Table        wishes_;
   ApplicationSource* app_source_;
+  GestureSource*     gesture_source_;
+  WishSubs           wish_subs_;
   Callback           wish_granted_callback_;
   Callback           wish_revoked_callback_;
 };
@@ -51,10 +70,12 @@ struct ActiveWishes::Impl
 ActiveWishes::Impl::
 Impl(Configuration const& config,
      Wish::Table const&   wishes,
-     ApplicationSource*   app_source)
+     ApplicationSource*   app_source,
+     GestureSource*       gesture_source)
 : config_(config)
 , wishes_(wishes)
 , app_source_(app_source)
+, gesture_source_(gesture_source)
 {
   using std::bind;
   using std::placeholders::_1;
@@ -67,58 +88,53 @@ Impl(Configuration const& config,
 void ActiveWishes::Impl::
 window_opened(Window const* window)
 {
-  if (config_.is_verbose_mode())
-    std::cout << __PRETTY_FUNCTION__ << " window added: " << *window << "\n";
-#if 0
-  auto app = apps_.find(window.application_id);
-  if (app != apps_.end())
-  {
-    if (config_.is_verbose_mode())
-      std::cout << "window added: " << *window << "\n";
-    app->second->add_window(window);
+  assert(window != nullptr);
 
-    if (wish_granted_callback_)
+  Application const* app = window->application_;
+  assert(app != nullptr);
+
+  auto wish_table_it = wishes_.find(app->application_id());
+  if (wish_table_it != std::end(wishes_))
+  {
+    for (auto const& wish: wish_table_it->second)
     {
-      for (auto const& appwish: wishes_)
-      {
-        if (app->first == appwish.first)
-        {
-          for (auto const& wish: appwish.second)
-          {
-            wish_granted_callback_(*wish.second, *window);
-          }
-        }
-      }
+      if (config_.is_verbose_mode())
+        std::cout << __PRETTY_FUNCTION__ << " granting wish '" << wish.second->name() << "'for window: " << *window << "\n";
+
+      /** @todo: actually grant wish */
+      wish_subs_.push_back(WishWindowSub{wish.second,
+                                         window,
+                                         gesture_source_->subscribe(window->id_, wish.second)});
+
+      if (wish_granted_callback_)
+        wish_granted_callback_(*wish.second, *window);
     }
   }
-#endif
 }
 
 
 void ActiveWishes::Impl::
 window_closed(Window const* window)
 {
-  if (window)
+  if (!window)
+    assert("logic error: NULL window");
+
+  if (config_.is_verbose_mode())
+    std::cout << __PRETTY_FUNCTION__ << " window removed: " << *window << "\n";;
+  for(auto it = std::begin(wish_subs_); it != std::end(wish_subs_); )
   {
-    if (config_.is_verbose_mode())
-      std::cout << __PRETTY_FUNCTION__ << " window removed: " << *window << "\n";;
-#if 0
-    if (wish_revoked_callback_)
+    if (it->window_ == window)
     {
-      for (auto const& appwish: wishes_)
+      if (wish_revoked_callback_)
       {
-        if (app.first == appwish.first)
-        {
-          for (auto const& wish: appwish.second)
-          {
-            wish_revoked_callback_(*wish.second, *window);
-          }
-        }
+        wish_revoked_callback_(*it->wish_, *window);
       }
+      it = wish_subs_.erase(it);
     }
-    app.second->remove_window(window_id);
-    break;
-#endif
+    else
+    {
+      ++it;
+    }
   }
 }
 
@@ -126,8 +142,9 @@ window_closed(Window const* window)
 ActiveWishes::
 ActiveWishes(Configuration const& config,
              Wish::Table const&   wishes,
-             ApplicationSource*   app_source)
-: impl_(new Impl(config, wishes, app_source))
+             ApplicationSource*   app_source,
+             GestureSource*       gesture_source)
+: impl_(new Impl(config, wishes, app_source, gesture_source))
 {
 }
 

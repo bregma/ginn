@@ -29,80 +29,83 @@
 
 namespace Ginn
 {
-  class WishBuilder;
+class WishBuilder;
 
 
-  /**
-   * A description of a mapping between a multi-touch gesture and an action.
-   *
-   * A Wish has two parts:  a description of the the gesture and a description
-   * of the action to take when the gesture occurs.  generally, the action
-   * consists of sending a keyboard or mouse click event back through the X
-   * server.
-   *
-   * Wishes are grouped into collections and the collections associated with
-   * applications.
-   *
-   * @todo Refine the internals of this class to maybe hide stuff better.
-   *
-   * @todo Break the Table key into a separate class so apps can be matched by
-   * name, generic_name, or desktop_name.
-   *
-   * @todo Redesign wishes to allow for more complex (continuation) gestures,
-   * like tap-and-hold, with timeouts etc.
-   */
-  class Wish
-  {
-  public:
-    /** A (shared) pointer to a Wish. */
-    typedef std::shared_ptr<Wish>             Ptr;
-    /** A collection of wishes. */
-    typedef std::map<std::string, Ptr>        List;
-    /** A collection of wishes grouped by application name. */
-    typedef std::map<std::string, Wish::List> Table;
+/**
+ * A description of a mapping between a multi-touch gesture and an action.
+ *
+ * A Wish has two parts:  a description of the the gesture and a description
+ * of the action to take when the gesture occurs.  generally, the action
+ * consists of sending a keyboard or mouse click event back through the X
+ * server.
+ *
+ * Wishes are grouped into collections and the collections associated with
+ * applications.
+ *
+ * @todo Refine the internals of this class to maybe hide stuff better.
+ *
+ * @todo Break the Table key into a separate class so apps can be matched by
+ * name, generic_name, or desktop_name.
+ *
+ * @todo Redesign wishes to allow for more complex (continuation) gestures,
+ * like tap-and-hold, with timeouts etc.
+ */
+class Wish
+{
+public:
+  /** A (shared) pointer to a Wish. */
+  typedef std::shared_ptr<Wish>             Ptr;
+  /** A collection of wishes. */
+  typedef std::map<std::string, Ptr>        List;
+  /** A collection of wishes grouped by application name. */
+  typedef std::map<std::string, Wish::List> Table;
 
-  public:
-    Wish(const WishBuilder& builder);
+public:
+  Wish(const WishBuilder& builder);
 
-    /** Gets the name of the wish. this should be unique within a Wish::List. */
-    std::string const&
-    name() const
-    { return name_; }
+  /** Gets the name of the wish. this should be unique within a Wish::List. */
+  std::string const&
+  name() const
+  { return name_; }
 
-    std::string const&
-    gesture() const
-    { return gesture_; }
+  std::string const&
+  gesture() const
+  { return gesture_; }
 
-    int
-    touches() const
-    { return touches_; }
+  int
+  touches() const
+  { return touches_; }
 
-    std::string const&
-    property() const
-    { return property_; }
+  std::string const&
+  property() const
+  { return property_; }
 
-    float
-    min() const
-    { return min_; }
+  float
+  min() const
+  { return min_; }
 
-    float
-    max() const
-    { return max_; }
+  float
+  max() const
+  { return max_; }
 
-    Action const&
-    action() const
-    { return action_; }
+  Action const&
+  action() const
+  { return action_; }
 
-  private:
-    std::string name_;
-    std::string gesture_;
-    int         touches_;
-    std::string when_;
-    std::string property_;
-    float       min_;
-    float       max_;
-    Action      action_;
-  };
+private:
+  std::string name_;
+  std::string gesture_;
+  int         touches_;
+  std::string when_;
+  std::string property_;
+  float       min_;
+  float       max_;
+  Action      action_;
+};
+
+std::ostream&
+operator<<(std::ostream& ostr, Wish const& wish);
 
 }
 

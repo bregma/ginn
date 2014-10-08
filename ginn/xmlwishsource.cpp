@@ -269,27 +269,55 @@ XmlWishBuilder(xmlNodePtr const& node, Keymap* keymap)
  */
 struct XmlWishSource::Impl
 {
-  /** @todo: add proper error handling to schema load/parse */
-  Impl(Configuration const& config)
-  : config_(config)
-  {
-    std::string const& schema_file_name = config_.wish_schema_file_name();
-    if (schema_file_name != Configuration::WISH_NO_VALIDATE)
-    {
-      ctxt_ = ParserCtxtPtr(xmlRelaxNGNewParserCtxt(schema_file_name.c_str()));
-      schema_ = SchemaPtr(xmlRelaxNGParse(ctxt_.get()));
-      vctxt_ = ValidatorPtr(xmlRelaxNGNewValidCtxt(schema_.get()));
-    }
-  }
+  Impl(Configuration const& config);
 
   ~Impl()
   { }
+
+  void
+  wish_table_merge(Wish::Table& lhs, Wish::Table const& rhs);
 
   Configuration config_;
   ParserCtxtPtr ctxt_;
   SchemaPtr     schema_;
   ValidatorPtr  vctxt_;
 };
+
+
+/** @todo: add proper error handling to schema load/parse */
+XmlWishSource::Impl::
+Impl(Configuration const& config)
+: config_(config)
+{
+  std::string const& schema_file_name = config_.wish_schema_file_name();
+  if (schema_file_name != Configuration::WISH_NO_VALIDATE)
+  {
+    ctxt_ = ParserCtxtPtr(xmlRelaxNGNewParserCtxt(schema_file_name.c_str()));
+    schema_ = SchemaPtr(xmlRelaxNGParse(ctxt_.get()));
+    vctxt_ = ValidatorPtr(xmlRelaxNGNewValidCtxt(schema_.get()));
+  }
+}
+
+
+/**
+ * Merges rhs into lhs, with rhs replacing lhs where keys are dupolicated.
+ * @param[inout] lhs The destination Wish::Table
+ * @param[in]    rhs The source Wish::Table
+ */
+void XmlWishSource::Impl::
+wish_table_merge(Wish::Table& lhs, Wish::Table const& rhs)
+{
+  for (auto const& p: rhs)
+  {
+    if (config_.is_verbose_mode())
+    {
+      std::cout << "  adding wishes for app '" << p.first << "'\n";
+      for (auto const& wish: p.second)
+        std::cout << "    " << *wish.second << "\n";
+    }
+    lhs[p.first] = p.second;
+  }
+}
 
 
 XmlWishSource::
@@ -370,23 +398,10 @@ process_ginn_node(xmlNodePtr node, Keymap* keymap, Wish::Table& wish_table)
 }
 
 
-/**
- * Merges rhs into lhs, with rhs replacing lhs where keys are dupolicated.
- * @param[inout] lhs The destination Wish::Table
- * @param[in]    rhs The source Wish::Table
- */
-static void
-wish_table_merge(Wish::Table& lhs, Wish::Table const& rhs)
-{
-  for (auto const& p: rhs)
-    lhs[p.first] = p.second;
-}
-
-
 static Wish::Table
 load_wishes(ValidatorPtr const&          vctxt,
             WishSource::RawSource const& raw_source,
-            Keymap*                keymap)
+            Keymap*                      keymap)
 {
   Wish::Table wish_table;
 
@@ -441,8 +456,8 @@ get_wishes(WishSource::RawSourceList const& raw_wishes, Keymap* keymap)
     if (impl_->config_.is_verbose_mode())
       std::cout << __FUNCTION__ << "(): "
                 << " loading '" << raw_source.name << "'\n";
-    wish_table_merge(wish_table,
-                     load_wishes(impl_->vctxt_, raw_source, keymap));
+    impl_->wish_table_merge(wish_table,
+                            load_wishes(impl_->vctxt_, raw_source, keymap));
   }
   return wish_table;
 }
