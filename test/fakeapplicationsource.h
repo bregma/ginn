@@ -31,6 +31,7 @@ class FakeApplicationSource
 : public ApplicationSource
 {
 public:
+  FakeApplicationSource();
   ~FakeApplicationSource();
 
   void
@@ -60,7 +61,11 @@ public:
   void
   complete_initialization();
 
+  void
+  report_windows() override;
+
 private:
+  bool                 is_initialized_;
   InitializedCallback  initialized_callback_;
   WindowOpenedCallback window_opened_callback_;
   WindowClosedCallback window_closed_callback_;

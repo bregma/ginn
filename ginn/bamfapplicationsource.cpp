@@ -21,6 +21,7 @@
 #include "ginn/bamfapplicationsource.h"
 
 #include <algorithm>
+#include <cassert>
 #include "ginn/application.h"
 #include "ginn/applicationbuilder.h"
 #include "ginn/configuration.h"
@@ -176,12 +177,20 @@ get_application(BamfApplication* bamf_app)
 {
   Application* app = nullptr;
   const gchar* application_id = bamf_application_get_desktop_file(bamf_app);
-  auto it = std::find_if(std::begin(applications_),
-                         std::end(applications_),
-                         [&application_id](AppPtr const& app) -> bool
-                           { return app->application_id() == application_id; });
-  if (it != std::end(applications_))
-    app = it->get();
+  if (nullptr == application_id)
+  {
+    if (config_.is_verbose_mode())
+      std::cerr << "warning: no desktop file for application\n";
+  }
+  else
+  {
+    auto it = std::find_if(std::begin(applications_),
+                           std::end(applications_),
+                           [&application_id](AppPtr const& app) -> bool
+                             { return app->application_id() == application_id; });
+    if (it != std::end(applications_))
+      app = it->get();
+  }
   return app;
 }
 
@@ -326,6 +335,19 @@ set_window_closed_callback(WindowClosedCallback const& callback)
   impl_->window_closed_callback_ = callback;
 }
 
+
+void BamfApplicationSource::
+report_windows()
+{
+  if (impl_->window_opened_callback_)
+  {
+    for (auto const& app: impl_->applications_)
+    {
+      app->for_all_windows([this](Window const* w)
+          { impl_->window_opened_callback_(w); });
+    }
+  }
+}
 
 } // namespace Ginn
 

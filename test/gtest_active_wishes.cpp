@@ -31,6 +31,7 @@
 
 using namespace Ginn;
 using Ginn::Test::Environment;
+using std::bind;
 using std::placeholders::_1;
 using std::placeholders::_2;
 
@@ -59,15 +60,42 @@ public:
   ActiveWishesTest()
   : wish_source_(WishSource::factory(WishSource::Format::XML,
                                      Environment::config()))
-  { }
+  , active_wishes_(Environment::config(), &gesture_source_)
+  {
+    app_source_.set_initialized_callback(bind(&ActiveWishesTest::app_source_initialized, this));
+    app_source_.set_window_opened_callback(bind(&ActiveWishesTest::window_opened, this, _1));
+    app_source_.set_window_closed_callback(bind(&ActiveWishesTest::window_closed, this, _1));
+    active_wishes_.set_wish_granted_callback(bind(&ActiveWishesTest::callback_counter, this, _1, _2));
+    active_wishes_.set_wish_revoked_callback(bind(&ActiveWishesTest::callback_counter, this, _1, _2));
+  }
 
   void
   SetUp()
   { callback_count_ = 0; }
 
   void
+  app_source_initialized()
+  {
+    app_source_.report_windows();
+  }
+
+  void
+  window_opened(Window const* window)
+  {
+    active_wishes_.grant_wishes_for_window(wish_table_, window);
+  }
+
+  void
+  window_closed(Window const* window)
+  {
+    active_wishes_.revoke_wishes_for_window(window);
+  }
+
+  void
   callback_counter(Wish const&, Window const&)
-  { ++callback_count_; }
+  {
+    ++callback_count_;
+  }
 
 protected:
   WishSource::Ptr        wish_source_;
@@ -75,6 +103,7 @@ protected:
   FakeApplicationSource  app_source_;
   FakeGestureSource      gesture_source_;
   Wish::Table            wish_table_;
+  ActiveWishes           active_wishes_;
   int                    callback_count_;
 };
 
@@ -85,9 +114,6 @@ TEST_F(ActiveWishesTest, empty_wishes)
     { "empty_wishes", "<ginn></ginn>" }
   };
   wish_table_ = wish_source_->get_wishes(raws, &fake_keymap_);
-
-  ActiveWishes active_wishes(Environment::config(), wish_table_, &app_source_, &gesture_source_);
-  active_wishes.set_wish_granted_callback(std::bind(&ActiveWishesTest::callback_counter, this, _1, _2));
   app_source_.complete_initialization();
 
   EXPECT_EQ(callback_count_, 0);
@@ -97,9 +123,6 @@ TEST_F(ActiveWishesTest, empty_wishes)
 TEST_F(ActiveWishesTest, empty_applications)
 {
   wish_table_ = wish_source_->get_wishes(one_wish_app, &fake_keymap_);
-
-  ActiveWishes active_wishes(Environment::config(), wish_table_, &app_source_, &gesture_source_);
-  active_wishes.set_wish_granted_callback(std::bind(&ActiveWishesTest::callback_counter, this, _1, _2));
   app_source_.complete_initialization();
 
   EXPECT_EQ(callback_count_, 0);
@@ -112,9 +135,6 @@ TEST_F(ActiveWishesTest, single_match_before_init)
 
   app_source_.add_application("test-app-id", "app-name", "generic_name");
   app_source_.add_window("test-app-id", 1000);
-
-  ActiveWishes active_wishes(Environment::config(), wish_table_, &app_source_, &gesture_source_);
-  active_wishes.set_wish_granted_callback(std::bind(&ActiveWishesTest::callback_counter, this, _1, _2));
   app_source_.complete_initialization();
 
   EXPECT_EQ(callback_count_, 1);
@@ -128,9 +148,6 @@ TEST_F(ActiveWishesTest, multiple_match_before_init)
   app_source_.add_application("test-app-id", "app-name", "dummy");
   app_source_.add_window("test-app-id", 0x1001);
   app_source_.add_window("test-app-id", 0x1002);
-
-  ActiveWishes active_wishes(Environment::config(), wish_table_, &app_source_, &gesture_source_);
-  active_wishes.set_wish_granted_callback(std::bind(&ActiveWishesTest::callback_counter, this, _1, _2));
   app_source_.complete_initialization();
 
   EXPECT_EQ(callback_count_, 2);
@@ -142,13 +159,9 @@ TEST_F(ActiveWishesTest, single_match_after_init)
   wish_table_ = wish_source_->get_wishes(one_wish_app, &fake_keymap_);
 
   app_source_.add_application("test-app-id", "app-name", "dummy");
-
-  ActiveWishes active_wishes(Environment::config(), wish_table_, &app_source_, &gesture_source_);
-  active_wishes.set_wish_granted_callback(std::bind(&ActiveWishesTest::callback_counter, this, _1, _2));
   app_source_.complete_initialization();
 
   app_source_.add_window("test-app-id", 0x1001);
-
   EXPECT_EQ(callback_count_, 1);
 }
 
@@ -159,13 +172,10 @@ TEST_F(ActiveWishesTest, remove_window)
   app_source_.add_application("test-app-id", "dummy", "dummy");
   app_source_.add_window("test-app-id", 0x1001);
   app_source_.add_window("test-app-id", 0x1002);
-
-  ActiveWishes active_wishes(Environment::config(), wish_table_, &app_source_, &gesture_source_);
-  active_wishes.set_wish_revoked_callback(std::bind(&ActiveWishesTest::callback_counter, this, _1, _2));
   app_source_.complete_initialization();
+  callback_count_ = 0;
 
   app_source_.remove_window(0x1001);
-
   EXPECT_EQ(callback_count_, 1);
 }
 

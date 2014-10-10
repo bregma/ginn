@@ -28,11 +28,9 @@
 
 namespace Ginn
 {
-  class ApplicationSource;
   class Configuration;
   class GestureSource;
   class Window;
-  class Wish;
   class WishSource;
 
 /**
@@ -53,12 +51,7 @@ public:
   struct Impl;
 
 public:
-  ActiveWishes(Configuration const& config,
-               Wish::Table const&   wishes,
-               ApplicationSource*   application_source,
-               GestureSource*       gesture_source);
-
-  ActiveWishes();
+  ActiveWishes(Configuration const& config, GestureSource* gesture_source);
 
   ~ActiveWishes();
 
@@ -67,6 +60,12 @@ public:
 
   void
   set_wish_revoked_callback(Callback const& wish_revoked_callback);
+
+  void
+  grant_wishes_for_window(Wish::Table const& wishes, Window const* window);
+
+  void
+  revoke_wishes_for_window(Window const* window);
 
 private:
   std::unique_ptr<Impl> impl_;
