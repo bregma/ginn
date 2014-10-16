@@ -29,7 +29,7 @@
 
 namespace Ginn
 {
-class GestureWatch;
+class Window;
 
 /**
  * An abstract class wrapping gesture events.
@@ -41,7 +41,7 @@ public:
   ~GestureEvent() = 0;
 
   virtual bool
-  matches(GestureWatch const&) const = 0;
+  matches(Window const* window, Wish::Ptr const& wish) const = 0;
 };
 
 

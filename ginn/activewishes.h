@@ -28,7 +28,9 @@
 
 namespace Ginn
 {
+  class ActionSink;
   class Configuration;
+  class GestureEvent;
   class GestureSource;
   class Window;
   class WishSource;
@@ -66,6 +68,10 @@ public:
 
   void
   revoke_wishes_for_window(Window const* window);
+
+  void
+  process_gesture_event(GestureEvent const& gesture_event,
+                        ActionSink*         action_sink);
 
 private:
   std::unique_ptr<Impl> impl_;

@@ -21,6 +21,7 @@
 #include "ginn/activewishes.h"
 
 #include <cassert>
+#include "ginn/actionsink.h"
 #include "ginn/applicationsource.h"
 #include "ginn/configuration.h"
 #include "ginn/gesturesource.h"
@@ -157,6 +158,17 @@ revoke_wishes_for_window(Window const* window)
     std::cout << __PRETTY_FUNCTION__ << " window removed: " << *window << "\n";;
 }
 
+
+void ActiveWishes::
+process_gesture_event(GestureEvent const& gesture_event,
+                      ActionSink*         action_sink)
+{
+  for (auto const& active_wish: impl_->wish_subs_)
+  {
+    if (gesture_event.matches(active_wish.window_, active_wish.wish_))
+      action_sink->perform(active_wish.wish_->action());
+  }
+}
 
 } // namespace Ginn
 

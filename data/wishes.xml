@@ -259,25 +259,25 @@
 
     <application name="Terminal">
     <wish gesture="Drag" fingers="2">
-      <action name="action5" when="update">
+      <action name="action5u" when="update">
         <trigger prop="delta y" min="20" max="80"/>
         <key>Page_Up</key>
       </action>
     </wish>
     <wish gesture="Drag" fingers="2">
-      <action name="action6" when="update">
+      <action name="action6d" when="update">
         <trigger prop="delta y" min="-80" max="-20"/>
         <key>Page_Down</key>
       </action>
     </wish>
     <wish gesture="Drag" fingers="2">
-      <action name="action5" when="update">
+      <action name="action5l" when="update">
         <trigger prop="delta x" min="20" max="80"/>
         <key>Left</key>
       </action>
     </wish>
     <wish gesture="Drag" fingers="2">
-      <action name="action6" when="update">
+      <action name="action6r" when="update">
         <trigger prop="delta x" min="-80" max="-20"/>
         <key>Right</key>
       </action>

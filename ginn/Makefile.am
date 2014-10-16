@@ -29,7 +29,6 @@ libginn_a_SOURCES = \
 	configuration.h          configuration.cpp \
 	geisgesturesource.h      geisgesturesource.cpp \
 	gesturesource.h          gesturesource.cpp \
-	gesturewatch.h           gesturewatch.cpp \
 	keymap.h                 keymap.cpp \
 	window.h                 window.cpp \
 	wish.h                   wish.cpp \

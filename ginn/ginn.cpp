@@ -312,20 +312,7 @@ gesture_source_initialized()
 void Ginn::Impl::
 gesture_event(GestureEvent const& event)
 {
-#if 0
-  for (auto const& watchlist: gesture_map_)
-  {
-    for (auto const& watch: watchlist.second)
-    {
-      if (event.matches(*watch))
-      {
-        action_sink_->perform(watch->wish()->action());
-        std::cerr << "gesture event handled for window " << watch->window_id() << "\n";
-        break;
-      }
-    }
-  }
-#endif
+  active_wishes_.process_gesture_event(event, action_sink_);
 }
 
 
