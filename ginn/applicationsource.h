@@ -42,27 +42,47 @@ class ApplicationSource
 {
 public:
   /** Signal for when the gesture source has completed its asynch init. */
-  typedef std::function<void()> InitializedCallback;
+  using InitializedCallback = std::function<void()>;
 
   /** Signal indicating a new application window has been opened. */
-  typedef std::function<void(Window const*)> WindowOpenedCallback;
+  using WindowOpenedCallback = std::function<void(Window const*)>;
 
   /** Signal indicating an application window has been closed. */
-  typedef std::function<void(Window const*)> WindowClosedCallback;
+  using WindowClosedCallback = std::function<void(Window const*)>;
 
 public:
   virtual ~ApplicationSource() = 0;
 
+  /**
+   * Sets a callback to be invoked when the app source has completed its
+   * asynchronous initialization.
+   */
   virtual void
   set_initialized_callback(InitializedCallback const& initialized_callback) = 0;
 
+  /**
+   * Sets a callback to be invoked when a new window has been opened.
+   */
   virtual void
   set_window_opened_callback(WindowOpenedCallback const& callback) = 0;
 
+  /**
+   * Sets a callback to be invoked when a window has been closed.
+   */
   virtual void
   set_window_closed_callback(WindowClosedCallback const& callback) = 0;
+
+  /**
+   * Reports all currently known windows.
+   *
+   * Should be used after asynchronous initialization has been signalled and the
+   * caller is ready to report any windows discovered during initialization.
+   */
+  virtual void
+  report_windows() = 0;
 };
-}
+
+} // namespace Ginn
 
 #endif // GINN_APPLICATIONSOURCE_H_
 

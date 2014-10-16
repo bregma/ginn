@@ -35,7 +35,7 @@ class Application;
 struct Window
 {
   /** A unique identifier for an application window. */
-  typedef unsigned long       Id;
+  using Id = unsigned long;
 
   Id                  id_;
   std::string         title_;

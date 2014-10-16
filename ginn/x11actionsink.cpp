@@ -33,8 +33,8 @@
 namespace Ginn
 {
 
-typedef std::function<void()> Callback;
-typedef std::queue<Callback> CallbackQueue;
+using Callback = std::function<void()>;
+using CallbackQueue = std::queue<Callback>;
 
 struct X11ActionSink::Impl
 {
@@ -164,7 +164,8 @@ set_initialized_callback(InitializedCallback const& callback)
 void X11ActionSink::
 perform(Action const& action)
 {
-  std::cerr << action << "\n";
+  if (impl_->config_.is_verbose_mode())
+    std::cout << __PRETTY_FUNCTION__ << " " << action << "\n";
   static const xcb_window_t none = { XCB_NONE };
   static const std::map<Action::EventType, uint8_t> type_map = {
     { Action::EventType::key_press,      XCB_KEY_PRESS      },

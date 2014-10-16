@@ -51,7 +51,7 @@ set_event_callback(EventReceivedCallback const& event_callback)
 GestureSubscription::Ptr FakeGestureSource::
 subscribe(Window::Id, Wish::Ptr const&)
 {
-  GestureSubscription::Ptr p;
+  GestureSubscription::Ptr p{ new MockGestureSubscription };
   return p;
 }
 

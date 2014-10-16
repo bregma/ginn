@@ -22,11 +22,12 @@
 #include "ginn/ginn.h"
 
 #include <algorithm>
+#include <cassert>
 #include "ginn/actionsink.h"
+#include "ginn/activewishes.h"
 #include "ginn/applicationsource.h"
 #include "ginn/configuration.h"
 #include "ginn/gesturesource.h"
-#include "ginn/gesturewatch.h"
 #include "ginn/keymap.h"
 #include "ginn/wish.h"
 #include "ginn/wishsource.h"
@@ -38,7 +39,7 @@
 
 
 /** C++ wrapper for GMainLoop */
-typedef std::unique_ptr<GMainLoop, void(*)(GMainLoop*)>  main_loop_t;
+using main_loop_t = std::unique_ptr<GMainLoop, void(*)(GMainLoop*)>;
 
 /**
  * Signal handler for INT and TERM signals
@@ -101,9 +102,6 @@ struct Ginn::Impl
   void
   gesture_event(GestureEvent const& event);
 
-  void
-  create_watches();
-
   /** Indicates if all the asynch Ginn init has completed. */
   bool
   is_initialized() const
@@ -122,19 +120,19 @@ struct Ginn::Impl
   on_ginn_initialized(gpointer data);
 
 private:
-  Configuration                            config_;
-  WishSource*                              wish_source_;
-  Wish::Table                              wish_table_;
-  bool                                     app_source_is_initialized_;
-  ApplicationSource*                       app_source_;
-  bool                                     keymap_is_initialized_;
-  Keymap*                                  keymap_;
-  bool                                     gesture_source_is_initialized;
-  GestureSource*                           gesture_source_;
-  GestureWatch::Map                        gesture_map_;
-  bool                                     action_sink_is_initialized_;
-  ActionSink*                              action_sink_;
-  main_loop_t                              main_loop_;
+  Configuration          config_;
+  WishSource*            wish_source_;
+  Wish::Table            wish_table_;
+  bool                   app_source_is_initialized_;
+  ApplicationSource*     app_source_;
+  bool                   keymap_is_initialized_;
+  Keymap*                keymap_;
+  bool                   gesture_source_is_initialized;
+  GestureSource*         gesture_source_;
+  ActiveWishes           active_wishes_;
+  bool                   action_sink_is_initialized_;
+  ActionSink*            action_sink_;
+  main_loop_t            main_loop_;
 };
 
 
@@ -154,7 +152,7 @@ on_ginn_initialized(gpointer data)
   Ginn::Impl* ginn = (Ginn::Impl*)data;
   if (ginn->is_initialized())
   {
-    ginn->create_watches();
+    ginn->app_source_->report_windows();
     return false;
   }
   return true;
@@ -179,6 +177,7 @@ Impl(Configuration const&  config,
 , keymap_(keymap)
 , gesture_source_is_initialized(false)
 , gesture_source_(gesture_source)
+, active_wishes_(config_, gesture_source_)
 , action_sink_is_initialized_(false)
 , action_sink_(action_sink)
 , main_loop_(g_main_loop_new(NULL, FALSE), g_main_loop_unref)
@@ -236,25 +235,11 @@ app_source_initialized()
 void Ginn::Impl::
 window_opened(Window const* window)
 {
-  auto wish_it = wish_table_.find(window->application_->name());
-  if (wish_it != std::end(wish_table_))
-  {
-    for (auto const& w: wish_it->second)
-    {
-#if 0
-      GestureWatch::Ptr watch {
-        new GestureWatch(window->id_,
-                         app.second,
-                         w.second,
-                         gesture_source_->subscribe(window->id_,
-                                                    w.second))
-      };
-      gesture_map_[window->id_].push_back(std::move(watch));
-#else
-      std::cout << "==smw> " << __FUNCTION__ << " adding wish for '" << window->application_->name() << "'\n";
-#endif
-    }
-  }
+  assert(window != nullptr);
+
+  if (config_.is_verbose_mode())
+    std::cout << __FUNCTION__ << ": adding wish for '" << window->application_->name() << "'\n";
+  active_wishes_.grant_wishes_for_window(wish_table_, window);
 }
 
 
@@ -263,21 +248,12 @@ window_opened(Window const* window)
  * @param[in]  window  The application window being closed.
  */
 void Ginn::Impl::
-window_closed(Window const*)
+window_closed(Window const* window)
 {
-#if 0
-  for (auto const& it: apps_)
-  {
-    Window const* window = it.second->window(window_id);
-    if (window)
-    {
-      if (config_.is_verbose_mode())
-        std::cout << "window removed: " << *window << "\n";;
-      it.second->remove_window(window_id);
-      break;
-    }
-  }
-#endif
+  assert(window != nullptr);
+  active_wishes_.revoke_wishes_for_window(window);
+  if (config_.is_verbose_mode())
+    std::cout << __FUNCTION__ << " removed wish for window '" << *window << "'\n";
 }
 
 
@@ -336,44 +312,7 @@ gesture_source_initialized()
 void Ginn::Impl::
 gesture_event(GestureEvent const& event)
 {
-  for (auto const& watchlist: gesture_map_)
-  {
-    for (auto const& watch: watchlist.second)
-    {
-      if (event.matches(*watch))
-      {
-        action_sink_->perform(watch->wish()->action());
-        std::cerr << "gesture event handled for window " << watch->window_id() << "\n";
-        break;
-      }
-    }
-  }
-}
-
-
-/**
- * Creates the initial gesture watches.
- *
- * Requires a fully-initialized Ginn (wishes loaded, Geis initialized, action
- * sink ready).
- */
-void Ginn::Impl::
-create_watches()
-{
-  if (config_.is_verbose_mode())
-    std::cout << "creating watches...\n";
-
-  if (config_.is_verbose_mode())
-  {
-    for (auto const& watchlist: gesture_map_)
-    {
-      for (auto const& watch: watchlist.second)
-      {
-        std::cout << *watch << "\n";;
-      }
-    }
-    std::cout << "Ginn initialization complete\n";
-  }
+  active_wishes_.process_gesture_event(event, action_sink_);
 }
 
 

@@ -59,6 +59,12 @@ private:
 
 
 FakeApplicationSource::
+FakeApplicationSource()
+: is_initialized_(false)
+{ }
+
+
+FakeApplicationSource::
 ~FakeApplicationSource()
 { }
 
@@ -118,7 +124,7 @@ add_window(Application::Id const& app_id,
   if (app_it != std::end(apps_))
   {
     std::unique_ptr<Window> window(new Window{ window_id, "A Window", app_it->second.get(), true, true, 0 });
-    if (window_opened_callback_)
+    if (is_initialized_ && window_opened_callback_)
       window_opened_callback_(window.get());
     app_it->second->add_window(std::move(window));
   }
@@ -142,6 +148,15 @@ remove_window(Window::Id window_id)
 void FakeApplicationSource::
 complete_initialization()
 {
+  is_initialized_ = true;
+  if (initialized_callback_)
+    initialized_callback_();
+}
+
+
+void FakeApplicationSource::
+report_windows()
+{
   for (auto const& app: apps_)
   {
     app.second->for_all_windows([this](Window const* window)
@@ -150,8 +165,6 @@ complete_initialization()
         window_opened_callback_(window);
     });
   }
-  if (initialized_callback_)
-    initialized_callback_();
 }
 
 

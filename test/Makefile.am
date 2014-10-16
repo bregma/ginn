@@ -30,18 +30,18 @@ libgmock_a_CPPFLAGS = \
   $(GMOCK_CPPFLAGS) \
   $(GTEST_CPPFLAGS)
 
-nodist_gmock_ginn_SOURCES = \
-  $(GMOCK_PREFIX)/src/gmock_main.cc
-
 gmock_ginn_SOURCES = \
+  environment.h             environment.cpp \
   fakeactionsink.h          fakeactionsink.cpp \
   fakeapplicationsource.h   fakeapplicationsource.cpp \
   fakegesturesource.h       fakegesturesource.cpp \
   fakekeymap.h              fakekeymap.cpp \
+  gtest_active_wishes.cpp \
   gtest_fake_action_sink.cpp \
   gtest_fake_application_source.cpp \
   gtest_fake_gesture_source.cpp \
-  gtest_xml_wish_source.cpp
+  gtest_xml_wish_source.cpp \
+  main.cpp
 
 gmock_ginn_CPPFLAGS = \
   -I$(top_srcdir) \

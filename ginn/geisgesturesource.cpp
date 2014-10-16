@@ -22,7 +22,6 @@
 
 #include <geis/geis.h>
 #include "ginn/configuration.h"
-#include "ginn/gesturewatch.h"
 #include <glib.h>
 #include <iostream>
 #include <map>
@@ -57,12 +56,11 @@ struct GeisGestureEvent
   }
 
   bool
-  matches(GestureWatch const& gesture_watch) const
+  matches(Window const* window, Wish::Ptr const& wish) const
   {
-    if (frames_.find(gesture_watch.window_id()) != frames_.end())
+    if (frames_.find(window->id_) != frames_.end())
     {
-      GeisFrame frame = frames_.at(gesture_watch.window_id());
-      Wish::Ptr wish = gesture_watch.wish();
+      GeisFrame frame = frames_.at(window->id_);
       GeisAttr attr = geis_frame_attr_by_name(frame, wish->property().c_str());
       if (attr)
       {

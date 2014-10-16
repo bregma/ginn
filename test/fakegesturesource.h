@@ -22,13 +22,27 @@
 #define GINN_FAKEGESTURESOURCE_H_
 
 #include "ginn/gesturesource.h"
+#include <gmock/gmock.h>
 
 
 namespace Ginn
 {
 
 /**
- * A place where actions end up getting sent.
+ * A fake subscription to gesture events.
+ */
+class MockGestureSubscription
+: public GestureSubscription
+{
+public:
+  MOCK_METHOD0(destructor, void());
+
+  virtual ~MockGestureSubscription() { destructor(); }
+};
+
+
+/**
+ * A fake source for gesture subscriptions.
  */
 class FakeGestureSource
 : public GestureSource

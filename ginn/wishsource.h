@@ -40,7 +40,7 @@ class Keymap;
 class WishSource
 {
 public:
-  typedef std::unique_ptr<WishSource> Ptr;
+  using Ptr = std::unique_ptr<WishSource>;
 
   /**
    * Supported formats for wish sources.
@@ -52,7 +52,7 @@ public:
   };
 
   /** A collection of named wish sources. */
-  typedef std::vector<std::string> NameList;
+  using NameList = std::vector<std::string>;
 
   /** A memory image of a raw wish source. */
   struct RawSource
@@ -62,7 +62,7 @@ public:
   };
 
   /** A collection of raw sources */
-  typedef std::vector<RawSource> RawSourceList;
+  using RawSourceList = std::vector<RawSource>;
 
 public:
   virtual ~WishSource() = 0;

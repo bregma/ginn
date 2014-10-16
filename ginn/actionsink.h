@@ -39,7 +39,7 @@ class ActionSink
 {
 public:
   /** Signal for when the action sink has completed its initialization. */
-  typedef std::function<void()> InitializedCallback;
+  using InitializedCallback = std::function<void()>;
 
 public:
   virtual ~ActionSink() = 0;

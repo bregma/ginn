@@ -28,6 +28,8 @@
 using namespace Ginn;
 using namespace testing;
 
+using std::bind;
+
 
 class MockObserver
 {
@@ -40,6 +42,16 @@ public:
 class FakeApplicationSourceTest
 : public testing::Test
 {
+public:
+  FakeApplicationSourceTest()
+  {
+    app_source_.set_initialized_callback(bind(&FakeApplicationSourceTest::app_source_initialized, this));
+  }
+
+  void
+  app_source_initialized()
+  { app_source_.report_windows(); }
+
 protected:
   MockObserver          mock_app_observer_;
   FakeApplicationSource app_source_;
@@ -48,9 +60,9 @@ protected:
 
 TEST_F(FakeApplicationSourceTest, addWindowBeforeInit)
 {
-  app_source_.set_window_opened_callback(std::bind(&MockObserver::window_opened,
-                                                   &mock_app_observer_,
-                                                   std::placeholders::_1));
+  app_source_.set_window_opened_callback(bind(&MockObserver::window_opened,
+                                              &mock_app_observer_,
+                                              std::placeholders::_1));
   app_source_.add_application("id", "name", "generic_name");
   app_source_.add_window("id", 1000);
 
@@ -63,9 +75,9 @@ TEST_F(FakeApplicationSourceTest, addWindowAfterInit)
 {
   EXPECT_CALL(mock_app_observer_, window_opened(_)).Times(1);
 
-  app_source_.set_window_opened_callback(std::bind(&MockObserver::window_opened,
-                                                   &mock_app_observer_,
-                                                   std::placeholders::_1));
+  app_source_.set_window_opened_callback(bind(&MockObserver::window_opened,
+                                              &mock_app_observer_,
+                                              std::placeholders::_1));
   app_source_.complete_initialization();
   app_source_.add_application("id", "name", "generic_name");
   app_source_.add_window("id", 1000);
@@ -79,9 +91,9 @@ TEST_F(FakeApplicationSourceTest, removeWindow)
   app_source_.add_application("id", "name", "generic_name");
   app_source_.add_window("id", 1000);
   app_source_.complete_initialization();
-  app_source_.set_window_closed_callback(std::bind(&MockObserver::window_closed,
-                                                   &mock_app_observer_,
-                                                   std::placeholders::_1));
+  app_source_.set_window_closed_callback(bind(&MockObserver::window_closed,
+                                              &mock_app_observer_,
+                                              std::placeholders::_1));
   app_source_.remove_window(1000);
 }
 
@@ -93,9 +105,9 @@ TEST_F(FakeApplicationSourceTest, removeApplication)
   app_source_.add_application("id", "name", "generic_name");
   app_source_.add_window("id", 1000);
   app_source_.complete_initialization();
-  app_source_.set_window_closed_callback(std::bind(&MockObserver::window_closed,
-                                                   &mock_app_observer_,
-                                                   std::placeholders::_1));
+  app_source_.set_window_closed_callback(bind(&MockObserver::window_closed,
+                                              &mock_app_observer_,
+                                              std::placeholders::_1));
   app_source_.remove_application("id");
 }
 

@@ -52,6 +52,9 @@ public:
   void
   set_window_closed_callback(WindowClosedCallback const& callback) override;
 
+  void
+  report_windows() override;
+
 private:
   std::unique_ptr<Impl> impl_;
 };
