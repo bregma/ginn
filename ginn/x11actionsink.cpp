@@ -126,8 +126,6 @@ public:
       std::cerr << "XTest version error: " << e->error_code << "\n";
       free(e);
     }
-#else
-    std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "\n";
 #endif
   }
 
@@ -176,15 +174,23 @@ perform(Action const& action)
 
   for (auto const& event: action)
   {
-    xcb_void_cookie_t cookie = xcb_test_fake_input(impl_->connection_,
+    xcb_void_cookie_t cookie = xcb_test_fake_input_checked(impl_->connection_,
                                                    type_map.at(event.type),
                                                    event.code,
-                                                   0,
+                                                   XCB_CURRENT_TIME,
                                                    none,
                                                    0, 0, 0);
+#if 0
     impl_->callback_queue_.push(std::bind(&Impl::check_fake_input,
                                           impl_.get(),
                                           cookie));
+#endif
+    xcb_generic_error_t *err = xcb_request_check(impl_->connection_, cookie);
+    if (err)
+    {
+      std::cerr << __PRETTY_FUNCTION__ << ": error sending input\n";
+    }
+    xcb_flush(impl_->connection_);
   }
 }
 
