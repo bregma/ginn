@@ -19,6 +19,7 @@ bamfapplicationsource_SOURCES =\
   bamfapplicationsource.cpp
 
 bamfapplicationsource_CPPFLAGS =\
+  -I$(top_srcdir) \
   $(GLIB2_0_CFLAGS)
 
 bamfapplicationsource_LDADD = \

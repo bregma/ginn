@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -48,7 +48,8 @@ public:
   virtual void
   SetUp()
   {
-    source_ = Ginn::WishSource::factory(Ginn::WishSource::Format::XML, config_);
+    source_ = Ginn::WishSource::factory(Ginn::WishSourceConfig::Format::XML,
+                                        config_);
     ASSERT_NE(source_, nullptr);
   };
 

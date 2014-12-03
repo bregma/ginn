@@ -1,10 +1,10 @@
 /**
  * @file wishsource.cpp
- * @brief DEfinition of the Ginn WishSource interface class.
+ * @brief Definition of the Ginn WishSource interface class.
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -44,10 +44,10 @@ WishSource::
  * @returns the identified wish source object.
  */
 WishSource::Ptr WishSource::
-factory(Format format, Configuration const& configuration)
+factory(WishSourceConfig::Format format, Configuration const& configuration)
 {
   Ptr source;
-  if (format == Format::XML)
+  if (format == WishSourceConfig::Format::XML)
     source.reset(new XmlWishSource(configuration));
   return source;
 }
@@ -60,7 +60,7 @@ factory(Format format, Configuration const& configuration)
  * @returns a collection of loaded raw wish sources.
  */
 WishSource::RawSourceList WishSource::
-read_raw_sources(NameList const& wish_file_names)
+read_raw_sources(WishSourceConfig::SourceNameList const& wish_file_names)
 {
   RawSourceList raw_source_list;
   for (auto const& file_name: wish_file_names)

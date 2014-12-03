@@ -58,7 +58,7 @@ class ActiveWishesTest
 {
 public:
   ActiveWishesTest()
-  : wish_source_(WishSource::factory(WishSource::Format::XML,
+  : wish_source_(WishSource::factory(WishSourceConfig::Format::XML,
                                      Environment::config()))
   , active_wishes_(Environment::config(), &gesture_source_)
   {

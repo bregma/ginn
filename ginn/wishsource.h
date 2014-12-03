@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -22,6 +22,7 @@
 #define GINN_WISHSOURCE_H_
 
 #include "ginn/wish.h"
+#include "ginn/wishsourceconfig.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -42,18 +43,6 @@ class WishSource
 public:
   using Ptr = std::unique_ptr<WishSource>;
 
-  /**
-   * Supported formats for wish sources.
-   * @todo support additional wish file formats
-   */
-  enum class Format
-  {
-    XML,
-  };
-
-  /** A collection of named wish sources. */
-  using NameList = std::vector<std::string>;
-
   /** A memory image of a raw wish source. */
   struct RawSource
   {
@@ -69,11 +58,11 @@ public:
 
   /** Creates a concrete WishSource. */
   static Ptr
-  factory(Format format, Configuration const& configration);
+  factory(WishSourceConfig::Format format, Configuration const& configration);
 
   /** Reads the raw wishes into a buffer. */
   static RawSourceList
-  read_raw_sources(NameList const& wish_file_names);
+  read_raw_sources(WishSourceConfig::SourceNameList const& wish_file_names);
 
   /** Gets wishes from the source. */
   virtual Wish::Table

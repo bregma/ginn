@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -22,7 +22,7 @@
 #define GINN_CONFIGURATION_H_
 
 #include "ginn/applicationsource.h"
-#include "ginn/wishsource.h"
+#include "ginn/wishsourceconfig.h"
 #include <memory>
 #include <string>
 
@@ -34,6 +34,7 @@ namespace Ginn
  * Consolidated configuration values.
  */
 class Configuration
+: public WishSourceConfig
 {
 public:
   Configuration(int argc, char* argv[]);
@@ -45,19 +46,16 @@ public:
   is_verbose_mode() const;
 
   /** Gets the wish file format to use. */
-  WishSource::Format
-  wish_source_format() const;
+  Format
+  wish_source_format() const override;
 
   /** Gets a list of names of files containing wish definitions. */
-  WishSource::NameList const&
-  wish_sources() const;
-
-  /** Special schema file name indicating 'do not validate'. */
-  static const std::string WISH_NO_VALIDATE;
+  SourceNameList const&
+  wish_sources() const override;
 
   /** Gets the name of the wish schema file. */
   std::string const&
-  wish_schema_file_name() const;
+  wish_schema_file_name() const override;
 
 private:
   struct Impl;
