@@ -273,6 +273,7 @@ Configuration(int argc, char* argv[])
 
   std::string arg_wish_schema_file_name;
 
+  optind = 0; // see getopt(2)
   while (1)
   {
     int option_index = 0;
