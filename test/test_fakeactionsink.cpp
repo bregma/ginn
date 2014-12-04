@@ -1,10 +1,12 @@
 /**
- * @file test/gtest_fake_gesture_source.cpp
- * @brief Unit tests of the fake gesture_source.
+ * @file test/test_fakeactionsink.cpp
+ * @brief Unit tests of the fake action sink.
+ * Makes sure the fake action sink works, otherwise you can;t depend on tests
+ * that use it.
  */
 
 /*
- * Copyright 2014 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -18,17 +20,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "fakegesturesource.h"
+#include "fakeactionsink.h"
+#include "ginn/actionsink.h"
 #include <gtest/gtest.h>
 #include <memory>
 
-class MockGestureSource
-: public Ginn::FakeGestureSource
-{
-};
 
-
-TEST(FakeGestureSource, construct)
+TEST(FakeActionSink, construct)
 {
-  MockGestureSource mock_gesture_source;
+  std::unique_ptr<Ginn::ActionSink> action_sink(new Ginn::FakeActionSink);
+  ASSERT_TRUE(action_sink != nullptr);
 }

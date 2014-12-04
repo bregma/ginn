@@ -1,5 +1,5 @@
 /**
- * @file test/gtest_active_wishes.cpp
+ * @file test/test_activewishes.cpp
  * @brief Unit tests of the active wishes module.
  */
 

@@ -1,5 +1,5 @@
 /**
- * @file test/gtest_xml_wish_source.cpp
+ * @file test/test_xmlwishsource.cpp
  * @brief Unit tests of teh XML wish source module.
  */
 
