@@ -30,6 +30,8 @@ libginn_a_SOURCES = \
 	geisgesturesource.h      geisgesturesource.cpp \
 	gesturesource.h          gesturesource.cpp \
 	gesturewatch.h           gesturewatch.cpp \
+	ginn.h                   ginn.cpp \
+	ginnconfig.h             ginnconfig.cpp \
 	keymap.h                 keymap.cpp \
 	window.h                 window.cpp \
 	wish.h                   wish.cpp \
@@ -52,7 +54,6 @@ libginn_a_CPPFLAGS = \
 	$(XTEST_CFLAGS)
 
 ginn_SOURCES = \
-	ginn.h ginn.cpp \
 	main.cpp
 
 ginn_CPPFLAGS = \

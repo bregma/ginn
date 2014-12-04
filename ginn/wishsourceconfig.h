@@ -21,6 +21,7 @@
 #ifndef GINN_WISHSOURCECONFIG_H_
 #define GINN_WISHSOURCECONFIG_H_
 
+#include "ginn/ginnconfig.h"
 #include <string>
 #include <vector>
 
@@ -32,6 +33,7 @@ namespace Ginn
  * Consolidated configuration values.
  */
 class WishSourceConfig
+: public GinnConfig
 {
 public:
   /**

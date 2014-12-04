@@ -43,7 +43,7 @@ public:
 
   /** Indicates the program should be verbose about what its doing.  */
   bool
-  is_verbose_mode() const;
+  is_verbose_mode() const override;
 
   /** Gets the wish file format to use. */
   Format
