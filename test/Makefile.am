@@ -36,6 +36,7 @@ verify_ginn_SOURCES = \
   fakeapplicationsource.h   fakeapplicationsource.cpp \
   fakegesturesource.h       fakegesturesource.cpp \
   fakekeymap.h              fakekeymap.cpp \
+  mockwishsourceconfig.h \
   test_activewishes.cpp \
   test_config.cpp \
   test_fakeactionsink.cpp \

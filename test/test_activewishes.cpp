@@ -58,8 +58,7 @@ class ActiveWishesTest
 {
 public:
   ActiveWishesTest()
-  : wish_source_(WishSource::factory(WishSourceConfig::Format::XML,
-                                     Environment::config()))
+  : wish_source_(WishSource::factory(&Environment::config()))
   , active_wishes_(Environment::config(), &gesture_source_)
   {
     app_source_.set_initialized_callback(bind(&ActiveWishesTest::app_source_initialized, this));

@@ -44,26 +44,33 @@ WishSource::
  * @returns the identified wish source object.
  */
 WishSource::Ptr WishSource::
-factory(WishSourceConfig::Format format, Configuration const& configuration)
+factory(WishSourceConfig const* config)
 {
   Ptr source;
-  if (format == WishSourceConfig::Format::XML)
-    source.reset(new XmlWishSource(configuration));
+  switch (config->wish_source_format())
+  {
+    case WishSourceConfig::Format::XML:
+      source.reset(new XmlWishSource(config));
+      break;
+    default:
+      std::clog << "invalid WIsh source format\n";
+      break;
+  }
   return source;
 }
 
 
 /**
  * Reads the raw sources from the named files into in-memory buffers.
- * @param[in] wish_file_names a collection of wish files to read
+ * @param[in] config  A WishSourceConfig
  *
  * @returns a collection of loaded raw wish sources.
  */
 WishSource::RawSourceList WishSource::
-read_raw_sources(WishSourceConfig::SourceNameList const& wish_file_names)
+read_raw_sources(WishSourceConfig const* config)
 {
   RawSourceList raw_source_list;
-  for (auto const& file_name: wish_file_names)
+  for (auto const& file_name: config->wish_sources())
   {
     std::ifstream ifs(file_name);
     if (ifs)

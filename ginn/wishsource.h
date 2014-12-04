@@ -58,11 +58,11 @@ public:
 
   /** Creates a concrete WishSource. */
   static Ptr
-  factory(WishSourceConfig::Format format, Configuration const& configration);
+  factory(WishSourceConfig const* config);
 
   /** Reads the raw wishes into a buffer. */
   static RawSourceList
-  read_raw_sources(WishSourceConfig::SourceNameList const& wish_file_names);
+  read_raw_sources(WishSourceConfig const* config);
 
   /** Gets wishes from the source. */
   virtual Wish::Table

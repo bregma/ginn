@@ -37,7 +37,7 @@ class XmlWishSource
 : public WishSource
 {
 public:
-  XmlWishSource(Configuration const& configuration);
+  XmlWishSource(WishSourceConfig const* config);
   ~XmlWishSource();
 
   Wish::Table

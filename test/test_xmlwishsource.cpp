@@ -18,11 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "ginn/configuration.h"
 #include "fakekeymap.h"
 #include "ginn/wishsource.h"
 #include "gmock/gmock.h"
 #include <gtest/gtest.h>
+#include "test/mockwishsourceconfig.h"
 
 
 using namespace ::testing;
@@ -41,22 +41,23 @@ class TestXMLWishSource
 {
 public:
   TestXMLWishSource()
-  : config_(0, nullptr)
-  , keymap_()
-  { }
+  : keymap_()
+  {
+    EXPECT_CALL(config_, wish_source_format()).WillOnce(Return(Ginn::WishSourceConfig::Format::XML));
+    EXPECT_CALL(config_, wish_schema_file_name()).WillOnce(ReturnRef(Ginn::WishSourceConfig::WISH_NO_VALIDATE));
+  }
 
   virtual void
   SetUp()
   {
-    source_ = Ginn::WishSource::factory(Ginn::WishSourceConfig::Format::XML,
-                                        config_);
+    source_ = Ginn::WishSource::factory(&config_);
     ASSERT_NE(source_, nullptr);
   };
 
 protected:
-  Ginn::Configuration   config_;
-  Ginn::WishSource::Ptr source_;
-  MockKeymap            keymap_;
+  NiceMock<MockWishSourceConfig>  config_;
+  Ginn::WishSource::Ptr           source_;
+  MockKeymap                      keymap_;
 };
 
 

@@ -23,10 +23,10 @@
 #include <algorithm>
 #include <cstring>
 #include "ginn/actionbuilder.h"
-#include "ginn/configuration.h"
 #include "ginn/keymap.h"
 #include "ginn/wishbuilder.h"
 #include "ginn/wish.h"
+#include "ginn/wishsourceconfig.h"
 #include <iostream>
 #include <iterator>
 #include <libxml/xmlreader.h>
@@ -269,7 +269,7 @@ XmlWishBuilder(xmlNodePtr const& node, Keymap* keymap)
  */
 struct XmlWishSource::Impl
 {
-  Impl(Configuration const& config);
+  Impl(WishSourceConfig const* config);
 
   ~Impl()
   { }
@@ -277,20 +277,20 @@ struct XmlWishSource::Impl
   void
   wish_table_merge(Wish::Table& lhs, Wish::Table const& rhs);
 
-  Configuration config_;
-  ParserCtxtPtr ctxt_;
-  SchemaPtr     schema_;
-  ValidatorPtr  vctxt_;
+  WishSourceConfig const*  config_;
+  ParserCtxtPtr            ctxt_;
+  SchemaPtr                schema_;
+  ValidatorPtr             vctxt_;
 };
 
 
 /** @todo: add proper error handling to schema load/parse */
 XmlWishSource::Impl::
-Impl(Configuration const& config)
+Impl(WishSourceConfig const* config)
 : config_(config)
 {
-  std::string const& schema_file_name = config_.wish_schema_file_name();
-  if (schema_file_name != Configuration::WISH_NO_VALIDATE)
+  std::string const& schema_file_name = config_->wish_schema_file_name();
+  if (schema_file_name != WishSourceConfig::WISH_NO_VALIDATE)
   {
     ctxt_ = ParserCtxtPtr(xmlRelaxNGNewParserCtxt(schema_file_name.c_str()));
     schema_ = SchemaPtr(xmlRelaxNGParse(ctxt_.get()));
@@ -309,7 +309,7 @@ wish_table_merge(Wish::Table& lhs, Wish::Table const& rhs)
 {
   for (auto const& p: rhs)
   {
-    if (config_.is_verbose_mode())
+    if (config_->is_verbose_mode())
     {
       std::cout << "  adding wishes for app '" << p.first << "'\n";
       for (auto const& wish: p.second)
@@ -321,10 +321,10 @@ wish_table_merge(Wish::Table& lhs, Wish::Table const& rhs)
 
 
 XmlWishSource::
-XmlWishSource(Configuration const& configuration)
-: impl_(new Impl(configuration))
+XmlWishSource(WishSourceConfig const* config)
+: impl_(new Impl(config))
 {
-  if (impl_->config_.is_verbose_mode())
+  if (impl_->config_->is_verbose_mode())
     std::cout << __FUNCTION__ << " created\n";
 }
 
@@ -453,7 +453,7 @@ get_wishes(WishSource::RawSourceList const& raw_wishes, Keymap* keymap)
   Wish::Table wish_table;
   for (auto const& raw_source: raw_wishes)
   {
-    if (impl_->config_.is_verbose_mode())
+    if (impl_->config_->is_verbose_mode())
       std::cout << __FUNCTION__ << "(): "
                 << " loading '" << raw_source.name << "'\n";
     impl_->wish_table_merge(wish_table,
