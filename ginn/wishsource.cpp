@@ -1,10 +1,10 @@
 /**
  * @file wishsource.cpp
- * @brief DEfinition of the Ginn WishSource interface class.
+ * @brief Definition of the Ginn WishSource interface class.
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -44,26 +44,33 @@ WishSource::
  * @returns the identified wish source object.
  */
 WishSource::Ptr WishSource::
-factory(Format format, Configuration const& configuration)
+factory(WishSourceConfig const* config)
 {
   Ptr source;
-  if (format == Format::XML)
-    source.reset(new XmlWishSource(configuration));
+  switch (config->wish_source_format())
+  {
+    case WishSourceConfig::Format::XML:
+      source.reset(new XmlWishSource(config));
+      break;
+    default:
+      std::clog << "invalid WIsh source format\n";
+      break;
+  }
   return source;
 }
 
 
 /**
  * Reads the raw sources from the named files into in-memory buffers.
- * @param[in] wish_file_names a collection of wish files to read
+ * @param[in] config  A WishSourceConfig
  *
  * @returns a collection of loaded raw wish sources.
  */
 WishSource::RawSourceList WishSource::
-read_raw_sources(NameList const& wish_file_names)
+read_raw_sources(WishSourceConfig const* config)
 {
   RawSourceList raw_source_list;
-  for (auto const& file_name: wish_file_names)
+  for (auto const& file_name: config->wish_sources())
   {
     std::ifstream ifs(file_name);
     if (ifs)

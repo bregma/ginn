@@ -1,10 +1,10 @@
 /**
- * @file ginn/xmlwishsource.h
- * @brief Declarations of the Ginn XML Wish Source class.
+ * @file ginn/wishsourceconfig.cpp
+ * @brief Declarations of the Ginn Wish Source Confiuration interface.
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -18,38 +18,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GINN_XMLWISHSOURCE_H_
-#define GINN_XMLWISHSOURCE_H_
-
-#include "ginn/wishsource.h"
-#include <memory>
-#include <string>
-
+#include "ginn/wishsourceconfig.h"
 
 namespace Ginn
 {
-class Configuration;
 
-/**
- * A factory class to load wishes from an XML file.
- */
-class XmlWishSource
-: public WishSource
+WishSourceConfig::
+~WishSourceConfig() 
 {
-public:
-  XmlWishSource(WishSourceConfig const* config);
-  ~XmlWishSource();
-
-  Wish::Table
-  get_wishes(RawSourceList const& raw_wishes, Keymap* keymap);
-
-private:
-  struct Impl;
-
-  std::unique_ptr<Impl> impl_;
-};
-
 }
 
-#endif // GINN_XMLWISHSOURCE_H_
+
+const std::string WishSourceConfig::WISH_NO_VALIDATE = "<no validate>";
+
+} // namespace Ginn
 

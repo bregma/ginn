@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2014 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -100,10 +100,10 @@ config_search_path()
 /**
  * Creates an ordered list of wish definition files.
  */
-static Ginn::WishSource::NameList
+static Ginn::WishSourceConfig::SourceNameList
 find_wish_sources(std::string const& arg_wish_file_name, ConfigPath const& path)
 {
-  Ginn::WishSource::NameList name_list;
+  Ginn::WishSourceConfig::SourceNameList name_list;
 
   if (!arg_wish_file_name.empty())
   {
@@ -198,16 +198,14 @@ find_wish_schema_file(std::string const& arg_wish_schema_file_name,
 namespace Ginn
 {
 
-const std::string Configuration::WISH_NO_VALIDATE = "<no validate>";
-
 struct Configuration::Impl
 {
   Impl();
 
-  bool                 is_verbose_mode;
-  ConfigPath           config_path;
-  std::string          wish_schema_file_name;
-  WishSource::NameList wish_sources;
+  bool            is_verbose_mode;
+  ConfigPath      config_path;
+  std::string     wish_schema_file_name;
+  SourceNameList  wish_sources;
 };
 
 
@@ -275,6 +273,7 @@ Configuration(int argc, char* argv[])
 
   std::string arg_wish_schema_file_name;
 
+  optind = 0; // see getopt(2)
   while (1)
   {
     int option_index = 0;
@@ -338,14 +337,14 @@ is_verbose_mode() const
 }
 
 
-WishSource::Format Configuration::
+WishSourceConfig::Format Configuration::
 wish_source_format() const
 {
-  return WishSource::Format::XML;
+  return WishSourceConfig::Format::XML;
 }
 
 
-WishSource::NameList const& Configuration::
+WishSourceConfig::SourceNameList const& Configuration::
 wish_sources() const
 {
   return impl_->wish_sources;

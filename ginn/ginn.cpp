@@ -209,7 +209,7 @@ Impl(Configuration const&  config,
 void Ginn::Impl::
 load_raw_wishes()
 {
-  WishSource::RawSourceList raw_sources = WishSource::read_raw_sources(config_.wish_sources());
+  WishSource::RawSourceList raw_sources = WishSource::read_raw_sources(&config_);
   wish_table_ = wish_source_->get_wishes(raw_sources, keymap_);
   if (config_.is_verbose_mode())
     std::cout << wish_table_.size() << " raw wishes loaded\n";

@@ -1,5 +1,5 @@
 /**
- * @file test/gtest_fake_action_sink.cpp
+ * @file test/test_fakeactionsink.cpp
  * @brief Unit tests of the fake action sink.
  * Makes sure the fake action sink works, otherwise you can;t depend on tests
  * that use it.

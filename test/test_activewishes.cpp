@@ -1,5 +1,5 @@
 /**
- * @file test/gtest_active_wishes.cpp
+ * @file test/test_activewishes.cpp
  * @brief Unit tests of the active wishes module.
  */
 
@@ -58,8 +58,7 @@ class ActiveWishesTest
 {
 public:
   ActiveWishesTest()
-  : wish_source_(WishSource::factory(WishSource::Format::XML,
-                                     Environment::config()))
+  : wish_source_(WishSource::factory(&Environment::config()))
   , active_wishes_(Environment::config(), &gesture_source_)
   {
     app_source_.set_initialized_callback(bind(&ActiveWishesTest::app_source_initialized, this));

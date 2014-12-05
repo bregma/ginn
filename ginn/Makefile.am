@@ -29,11 +29,14 @@ libginn_a_SOURCES = \
 	configuration.h          configuration.cpp \
 	geisgesturesource.h      geisgesturesource.cpp \
 	gesturesource.h          gesturesource.cpp \
+	ginn.h                   ginn.cpp \
+	ginnconfig.h             ginnconfig.cpp \
 	keymap.h                 keymap.cpp \
 	window.h                 window.cpp \
 	wish.h                   wish.cpp \
 	wishbuilder.h            wishbuilder.cpp \
 	wishsource.h             wishsource.cpp \
+	wishsourceconfig.h       wishsourceconfig.cpp \
 	x11actionsink.h          x11actionsink.cpp \
 	x11keymap.h              x11keymap.cpp \
 	xmlwishsource.h          xmlwishsource.cpp
@@ -50,7 +53,6 @@ libginn_a_CPPFLAGS = \
 	$(XTEST_CFLAGS)
 
 ginn_SOURCES = \
-	ginn.h ginn.cpp \
 	main.cpp
 
 ginn_CPPFLAGS = \

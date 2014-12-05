@@ -44,8 +44,7 @@ main(int argc, char* argv[])
     if (config.is_verbose_mode())
       cout << __FUNCTION__ << ": creating components\n";
 
-    WishSource::Ptr wish_source = WishSource::factory(config.wish_source_format(),
-                                                      config);
+    WishSource::Ptr wish_source = WishSource::factory(&config);
     BamfApplicationSource app_source(config);
     GeisGestureSource gesture_source(config);
     X11Keymap x11_keymap(config);

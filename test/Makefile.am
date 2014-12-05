@@ -18,7 +18,7 @@ SUBDIRS = bamfapplicationsource
 if BUILD_TESTS
 
 check_LIBRARIES = libgmock.a
-check_PROGRAMS = gmock_ginn
+check_PROGRAMS = verify_ginn
 TESTS = $(check_PROGRAMS)
 
 nodist_libgmock_a_SOURCES = \
@@ -30,26 +30,28 @@ libgmock_a_CPPFLAGS = \
   $(GMOCK_CPPFLAGS) \
   $(GTEST_CPPFLAGS)
 
-gmock_ginn_SOURCES = \
+verify_ginn_SOURCES = \
   environment.h             environment.cpp \
   fakeactionsink.h          fakeactionsink.cpp \
   fakeapplicationsource.h   fakeapplicationsource.cpp \
   fakegesturesource.h       fakegesturesource.cpp \
   fakekeymap.h              fakekeymap.cpp \
-  gtest_active_wishes.cpp \
-  gtest_fake_action_sink.cpp \
-  gtest_fake_application_source.cpp \
-  gtest_fake_gesture_source.cpp \
-  gtest_xml_wish_source.cpp \
+  mockwishsourceconfig.h \
+  test_activewishes.cpp \
+  test_config.cpp \
+  test_fakeactionsink.cpp \
+  test_fakeapplicationsource.cpp \
+  test_fakegesturesource.cpp \
+  test_xmlwishsource.cpp \
   main.cpp
 
-gmock_ginn_CPPFLAGS = \
+verify_ginn_CPPFLAGS = \
   -I$(top_srcdir) \
   -I$(top_builddir) \
   $(GMOCK_CPPFLAGS) \
   $(GTEST_CPPFLAGS)
 
-gmock_ginn_LDADD = \
+verify_ginn_LDADD = \
   $(top_builddir)/ginn/libginn.a \
   $(BAMF_LIBS) \
   $(GEIS_LIBS) \

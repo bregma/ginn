@@ -1,6 +1,6 @@
 /**
- * @file test/gtest_fake_gesture_source.cpp
- * @brief Unit tests of the fake gesture_source.
+ * @file ginn/ginnconfig.cpp
+ * @brief Declarations of the Ginn (global) Confiuration interface.
  */
 
 /*
@@ -18,17 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "fakegesturesource.h"
-#include <gtest/gtest.h>
-#include <memory>
+#include "ginn/ginnconfig.h"
 
-class MockGestureSource
-: public Ginn::FakeGestureSource
+
+namespace Ginn
 {
-};
 
+GinnConfig::
+~GinnConfig() 
+{ }
 
-TEST(FakeGestureSource, construct)
-{
-  MockGestureSource mock_gesture_source;
-}
+} // namespace Ginn
+
