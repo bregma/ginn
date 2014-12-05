@@ -1,0 +1,44 @@
+Gesture types
+  0 "Drag"
+  1 "Pinch" 
+  2 "Rotate" 
+ 15 "Tap" 
+
+Attributes types with some examples:
+ "device id" = 13
+ "timestamp" = 180598198
+ "root window id" = 254
+ "event window id" = 159825921
+ "child window id" = 159825921
+ "focus x" = 0.000000
+ "focus y" = 0.000000
+ "gesture name" = "Drag" 
+ "touches" = 1
+
+ "delta x" = -8.933333 // Drag
+ "delta y" = 22.000000
+ "velocity x" = -0.638095
+ "velocity y" = 1.571429
+ "position x" = 634.533386
+ "position y" = 482.777771
+
+ "angle delta" = -0.358113 //Rotate
+ "angular velocity" = -0.029843
+ "angle" = -1.159999
+
+ "radius delta" = -44.935688 //Pinch
+ "radial velocity" = -3.209692
+ "radius" = 180.466690
+
+ "tap time" = 74.000000 //Tap
+ "position x" = 740.933350
+ "position y" = 469.333344
+
+ "boundingbox x1" = 634.533386
+ "boundingbox y1" = 482.777771
+ "boundingbox x2" = 634.533386
+ "boundingbox y2" = 482.777771
+ "touch 0 id" = 1079.000000
+ "touch 0 x" = 634.533386
+ "touch 0 y" = 482.777771
+

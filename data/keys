@@ -1,0 +1,189 @@
+
+Common possible keys to be used with Ginn.
+Please note that these are only a subset taken from /usr/include/X11/keysymdef.h
+
+  BackSpace      /* Back space, back char */
+  Tab          
+  Linefeed       /* Linefeed, LF */
+  Clear        
+  Return         /* Return, enter */
+  Pause          /* Pause, hold */
+  Scroll_Lock  
+  Sys_Req      
+  Escape       
+  Delete         /* Delete, rubout */
+
+/* Cursor control & motion */
+
+  Home         
+  Left           /* Move left, left arrow */
+  Up             /* Move up, up arrow */
+  Right          /* Move right, right arrow */
+  Down           /* Move down, down arrow */
+  Prior          /* Prior, previous */
+  Page_Up      
+  Next           /* Next */
+  Page_Down    
+  End            /* EOL */
+  Begin          /* BOL */
+
+
+/* Keypad functions, keypad numbers cleverly chosen to map to ASCII */
+
+  KP_Space       /* Space */
+  KP_Tab       
+  KP_Enter       /* Enter */
+  KP_F1          /* PF1, KP_A, ... */
+  KP_F2        
+  KP_F3        
+  KP_F4        
+  KP_Home      
+  KP_Left      
+  KP_Up        
+  KP_Right     
+  KP_Down      
+  KP_Prior     
+  KP_Page_Up   
+  KP_Next      
+  KP_Page_Down 
+  KP_End       
+  KP_Begin     
+  KP_Insert    
+  KP_Delete    
+  KP_Equal       /* Equals */
+  KP_Multiply  
+  KP_Add       
+  KP_Separator   /* Separator, often comma */
+  KP_Subtract  
+  KP_Decimal   
+  KP_Divide    
+
+  KP_0         
+  KP_1         
+  KP_2         
+  KP_3         
+  KP_4         
+  KP_5         
+  KP_6         
+  KP_7         
+  KP_8         
+  KP_9         
+
+/* Modifiers */
+
+  Shift_L        /* Left shift */
+  Shift_R        /* Right shift */
+  Control_L      /* Left control */
+  Control_R      /* Right control */
+  Caps_Lock      /* Caps lock */
+  Shift_Lock     /* Shift lock */
+
+  Meta_L         /* Left meta */
+  Meta_R         /* Right meta */
+  Alt_L          /* Left alt */
+  Alt_R          /* Right alt */
+  Super_L        /* Left super */
+  Super_R        /* Right super */
+  Hyper_L        /* Left hyper */
+  Hyper_R        /* Right hyper */
+
+/* Keys  */
+
+  space          /* SPACE */
+  exclam         /* EXCLAMATION MARK */
+  quotedbl       /* QUOTATION MARK */
+  numbersign     /* NUMBER SIGN */
+  dollar         /* DOLLAR SIGN */
+  percent        /* PERCENT SIGN */
+  ampersand      /* AMPERSAND */
+  apostrophe     /* APOSTROPHE */
+  quoteright 
+  parenleft      /* LEFT PARENTHESIS */
+  parenright     /* RIGHT PARENTHESIS */
+  asterisk       /* ASTERISK */
+  plus           /* PLUS SIGN */
+  comma          /* COMMA */
+  minus          /* HYPHEN-MINUS */
+  period         /* FULL STOP */
+  slash          /* SOLIDUS */
+  0              /* DIGIT ZERO */
+  1              /* DIGIT ONE */
+  2              /* DIGIT TWO */
+  3              /* DIGIT THREE */
+  4              /* DIGIT FOUR */
+  5              /* DIGIT FIVE */
+  6              /* DIGIT SIX */
+  7              /* DIGIT SEVEN */
+  8              /* DIGIT EIGHT */
+  9              /* DIGIT NINE */
+  colon          /* COLON */
+  semicolon      /* SEMICOLON */
+  less           /* LESS-THAN SIGN */
+  equal          /* EQUALS SIGN */
+  greater        /* GREATER-THAN SIGN */
+  question       /* QUESTION MARK */
+  at             /* COMMERCIAL AT */
+  A 
+  B 
+  C 
+  D 
+  E 
+  F 
+  G 
+  H 
+  I 
+  J 
+  K 
+  L 
+  M 
+  N 
+  O 
+  P 
+  Q 
+  R 
+  S 
+  T 
+  U 
+  V 
+  W 
+  X 
+  Y 
+  Z 
+  bracketleft    /* LEFT SQUARE BRACKET */
+  backslash      /* REVERSE SOLIDUS */
+  bracketright   /* RIGHT SQUARE BRACKET */
+  asciicircum    /* CIRCUMFLEX ACCENT */
+  underscore     /* LOW LINE */
+  grave          /* GRAVE ACCENT */
+  quoteleft
+  a
+  b
+  c
+  d
+  e
+  f
+  g
+  h
+  i
+  j
+  k
+  l
+  m
+  n
+  o
+  p
+  q
+  r
+  s
+  t
+  u
+  v
+  w
+  x
+  y
+  z
+  braceleft      /* LEFT CURLY BRACKET */
+  bar            /* VERTICAL LINE */
+  braceright     /* RIGHT CURLY BRACKET */
+  asciitilde     /* TILDE */
+

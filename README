@@ -1,0 +1,12 @@
+Ginn
+===========================================================
+
+Ginn is a gesture to action converter.
+It reads configurations from wishes.xml file and inject keys/mouse buttons
+
+Please read the man file for more informations.
+
+
+You can install the binary for your system version,
+or install from sources using this command
+./autogen && ./configure && make && sudo make install

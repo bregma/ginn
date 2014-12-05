@@ -1,0 +1,14 @@
+
+Fix X crashes :
+	Too many Open/Close XDisplay may be the cause of problems !
+
+Fix gestures parameters comparison:
+	Limit the number of supported parameters (now is 18)
+
+Add support for DBus
+
+Add support for injecting Mouse buttons
+		DONE
+Add support for libbamf:
+	Be able to inject gestures inside selected apps.
+		DONE
