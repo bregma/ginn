@@ -238,7 +238,9 @@ window_opened(Window const* window)
   assert(window != nullptr);
 
   if (config_.is_verbose_mode())
-    std::cout << __FUNCTION__ << ": adding wish for '" << window->application_->name() << "'\n";
+    std::cout << __FUNCTION__ << ": adding wish for"
+              << " '" << window->application_->name() << "'"
+              << " window '" << window->title_ << "'\n";
   active_wishes_.grant_wishes_for_window(wish_table_, window);
 }
 

@@ -162,8 +162,6 @@ set_initialized_callback(InitializedCallback const& callback)
 void X11ActionSink::
 perform(Action const& action)
 {
-  if (impl_->config_.is_verbose_mode())
-    std::cout << __PRETTY_FUNCTION__ << " " << action << "\n";
   static const xcb_window_t none = { XCB_NONE };
   static const std::map<Action::EventType, uint8_t> type_map = {
     { Action::EventType::key_press,      XCB_KEY_PRESS      },
@@ -188,7 +186,8 @@ perform(Action const& action)
     xcb_generic_error_t *err = xcb_request_check(impl_->connection_, cookie);
     if (err)
     {
-      std::cerr << __PRETTY_FUNCTION__ << ": error sending input\n";
+      std::cerr << "error " << (int)err->error_code << " sending input\n";
+      free(err);
     }
     xcb_flush(impl_->connection_);
   }
